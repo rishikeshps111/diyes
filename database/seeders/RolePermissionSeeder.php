@@ -21,6 +21,12 @@ class RolePermissionSeeder extends Seeder
             'Dashboard' => [
                 'dashboard.view',
             ],
+            'Department' => [
+                'view.department',
+                'create.department',
+                'edit.department',
+                'delete.department',
+            ],
         ];
 
         $permissionNames = [];
