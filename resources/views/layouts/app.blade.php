@@ -19,9 +19,7 @@
       class="bi bi-arrow-up-short"></i></a>
 
   @include('layouts.partials.scripts')
-  <script src="{{ asset('assets/js/calendar.js') }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js"></script>
-  <script src="https://kit.fontawesome.com/111740f521.js" crossorigin="anonymous"></script>
+
 </body>
 
 </html>

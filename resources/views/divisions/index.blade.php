@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Departments')
+@section('title', 'Divisions')
 
 @section('content')
   <div class="page-title">
-    <h3>Departments</h3>
+    <h3>Divisions</h3>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-        <li class="breadcrumb-item">Masters</li>
-        <li class="breadcrumb-item active">Departments</li>
+        <li class="breadcrumb-item">Academic Management</li>
+        <li class="breadcrumb-item active">Divisions</li>
       </ol>
     </nav>
   </div>
@@ -22,16 +22,15 @@
             <div class="row">
               <div class="col-lg-4 mb-3">
                 <div class="o-f-inp">
-                  <label for="department_name_filter">Department Name</label>
-                  <input type="text" id="department_name_filter" class="form-control shadow-none"
-                    placeholder="Search by department name">
-                </div>
-              </div>
-              <div class="col-lg-4 mb-3">
-                <div class="o-f-inp">
-                  <label for="department_head_filter">Department Head</label>
-                  <input type="text" id="department_head_filter" class="form-control shadow-none"
-                    placeholder="Search by department head">
+                  <label for="grade_filter">Grade</label>
+                  <select id="grade_filter" class="form-select shadow-none">
+                    <option value="">--- Select ---</option>
+                    @foreach ($grades as $grade)
+                      <option value="{{ $grade->id }}">
+                        {{ $grade->grade }}{{ $grade->academicYear ? ' - '.$grade->academicYear->academic_year : '' }}
+                      </option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
               <div class="col-lg-4 mb-3">
@@ -63,8 +62,8 @@
             <div class="btn-flex">
               <a class="add-btn bg-filter" data-bs-toggle="collapse" href="#filterCollapse" role="button"
                 aria-expanded="false" aria-controls="filterCollapse">Filters</a>
-              @can('create.department')
-                <a href="{{ route('departments.create') }}" class="add-btn">Add New</a>
+              @can('create.division')
+                <a href="{{ route('divisions.create') }}" class="add-btn">Add New</a>
               @endcan
             </div>
           </div>
@@ -77,7 +76,7 @@
                 <div class="col-lg-5">
                   <div class="entry-select">
                     <p>Showing</p>
-                    <select id="departmentPerPage" class="form-select shadow-none">
+                    <select id="divisionPerPage" class="form-select shadow-none">
                       <option value="10">10</option>
                       <option value="25">25</option>
                       <option value="50">50</option>
@@ -88,32 +87,34 @@
                 </div>
                 <div class="col-lg-7">
                   <div class="table-search">
-                    <label for="departmentTableSearch" class="nowrap">Search</label>
-                    <input type="text" id="departmentTableSearch" class="form-control shadow-none"
+                    <label for="divisionTableSearch" class="nowrap">Search</label>
+                    <input type="text" id="divisionTableSearch" class="form-control shadow-none"
                       placeholder="Search...">
-                    <form id="departmentExportForm" method="POST" class="d-inline-flex flex-shrink-0">
+                    <form id="divisionExportForm" method="POST" class="d-inline-flex flex-shrink-0">
                       @csrf
                       <button type="button" class="exp-btn" data-loading-text="Exporting..."
-                        data-export-url="{{ route('departments.export.excel') }}">Export Excel</button>
+                        data-export-url="{{ route('divisions.export.excel') }}">Export Excel</button>
                       <button type="button" class="exp-btn" data-loading-text="Exporting..."
-                        data-export-url="{{ route('departments.export.pdf') }}">Export PDF</button>
+                        data-export-url="{{ route('divisions.export.pdf') }}">Export PDF</button>
                     </form>
                   </div>
                 </div>
               </div>
 
               <div class="table-over">
-                <table id="departmentsTable" class="align-middle mb-0 table table-custom mt-3 w-100">
+                <table id="divisionsTable" class="align-middle mb-0 table table-custom mt-3 w-100">
                   <thead>
                     <tr>
                       <th>
-                        <input type="checkbox" id="selectAllDepartments">
+                        <input type="checkbox" id="selectAllDivisions">
                       </th>
                       <th>SL No</th>
-                      <th>Department Code</th>
-                      <th>Department Name</th>
-                      <th>Department Head</th>
-                      <th>Teachers</th>
+                      <th>Code</th>
+                      <th>Grade</th>
+                      <th>Division</th>
+                      <th>Teacher</th>
+                      <th>Room Number</th>
+                      <th>Capacity</th>
                       <th>Status</th>
                       <th>Actions</th>
                       <th class="d-none">Created At</th>
@@ -130,5 +131,5 @@
 @endsection
 
 @push('scripts')
-  @include('departments.partials.js')
+  @include('divisions.partials.js')
 @endpush

@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('divisions', function (Blueprint $table) {
+            $table->id();
+            $table->string('code')->unique();
+            $table->string('division');
+            $table->foreignId('grade_id')->constrained()->cascadeOnDelete();
+            $table->unsignedInteger('capacity');
+            $table->string('class_teacher')->nullable();
+            $table->unsignedInteger('room_number')->nullable();
+            $table->boolean('is_active')->default(false);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('divisions');
+    }
+};

@@ -4,6 +4,7 @@
 <title>@yield('title', config('app.name', 'Diyes'))</title>
 <meta content="" name="description">
 <meta content="" name="keywords">
+<link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
 
 <link href="https://fonts.gstatic.com" rel="preconnect">
 <link
@@ -13,6 +14,7 @@
 <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
 <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/vendor/quill/quill.snow.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/vendor/quill/quill.bubble.css') }}" rel="stylesheet">

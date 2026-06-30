@@ -21,11 +21,53 @@ class RolePermissionSeeder extends Seeder
             'Dashboard' => [
                 'dashboard.view',
             ],
+            'Academic Year' => [
+                'view.academic-year',
+                'create.academic-year',
+                'edit.academic-year',
+                'delete.academic-year',
+            ],
+            'Grade' => [
+                'view.grade',
+                'create.grade',
+                'edit.grade',
+                'delete.grade',
+            ],
+            'Division' => [
+                'view.division',
+                'create.division',
+                'edit.division',
+                'delete.division',
+            ],
             'Department' => [
                 'view.department',
                 'create.department',
                 'edit.department',
                 'delete.department',
+            ],
+            'Designation' => [
+                'view.designation',
+                'create.designation',
+                'edit.designation',
+                'delete.designation',
+            ],
+            'Classroom' => [
+                'view.classroom',
+                'create.classroom',
+                'edit.classroom',
+                'delete.classroom',
+            ],
+            'Venue' => [
+                'view.venue',
+                'create.venue',
+                'edit.venue',
+                'delete.venue',
+            ],
+            'Holiday' => [
+                'view.holiday',
+                'create.holiday',
+                'edit.holiday',
+                'delete.holiday',
             ],
         ];
 

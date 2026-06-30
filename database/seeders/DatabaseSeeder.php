@@ -16,7 +16,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(RolePermissionSeeder::class);
+        $this->call(AcademicYearSeeder::class);
+        $this->call(GradeSeeder::class);
+        $this->call(DivisionSeeder::class);
         $this->call(DepartmentSeeder::class);
+        $this->call(DesignationSeeder::class);
+        $this->call(ClassroomSeeder::class);
+        $this->call(VenueSeeder::class);
+        $this->call(HolidaySeeder::class);
 
         $user = User::query()->updateOrCreate(
             ['email' => 'admin@gmail.com'],
