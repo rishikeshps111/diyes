@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -24,10 +25,11 @@ class DepartmentController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('can:view.department', only: ['index', 'data', 'exportExcel', 'exportPdf']),
-            new Middleware('can:create.department', only: ['create', 'store']),
-            new Middleware('can:edit.department', only: ['edit', 'update', 'toggleStatus']),
-            new Middleware('can:delete.department', only: ['destroy']),
+            'auth',
+            new Middleware(PermissionMiddleware::using('view.department'), ['index', 'data', 'exportExcel', 'exportPdf']),
+            new Middleware(PermissionMiddleware::using('create.department'), ['create', 'store']),
+            new Middleware(PermissionMiddleware::using('edit.department'), ['edit', 'update', 'toggleStatus']),
+            new Middleware(PermissionMiddleware::using('delete.department'), ['destroy']),
         ];
     }
 
