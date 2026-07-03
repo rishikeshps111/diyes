@@ -98,26 +98,17 @@
                 @enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
-                <label for="applicable_branch">Applicable Branch</label>
-                <input type="text" name="applicable_branch" id="applicable_branch"
-                  class="form-control shadow-none @error('applicable_branch') is-invalid @enderror"
-                  value="{{ old('applicable_branch', $holiday->applicable_branch) }}">
-                @error('applicable_branch')
-                  <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-              </div>
-              <div class="col-lg-4 o-f-inp mb-3">
-                <label for="applicable_classes">Applicable Classes</label>
-                <select name="applicable_classes" id="applicable_classes"
-                  class="form-select shadow-none @error('applicable_classes') is-invalid @enderror">
+                <label for="applicable_for">Applicable For <span class="text-danger">*</span></label>
+                <select name="applicable_for" id="applicable_for"
+                  class="form-select shadow-none @error('applicable_for') is-invalid @enderror">
                   <option value="">--- Select ---</option>
-                  @foreach ($applicableClasses as $applicableClass)
-                    <option value="{{ $applicableClass }}" @selected(old('applicable_classes', $holiday->applicable_classes) === $applicableClass)>
-                      {{ $applicableClass }}
+                  @foreach ($applicableForOptions as $applicableFor)
+                    <option value="{{ $applicableFor }}" @selected(old('applicable_for', $holiday->applicable_for) === $applicableFor)>
+                      {{ $applicableFor }}
                     </option>
                   @endforeach
                 </select>
-                @error('applicable_classes')
+                @error('applicable_for')
                   <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
               </div>

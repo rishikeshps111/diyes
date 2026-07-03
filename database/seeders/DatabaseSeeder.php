@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(ModulePrefixSeeder::class);
         $this->call(RolePermissionSeeder::class);
         $this->call(AcademicYearSeeder::class);
         $this->call(GradeSeeder::class);
@@ -37,7 +38,7 @@ class DatabaseSeeder extends Seeder
         $user = User::query()->updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
-                'employee_code' => 'EMP0001',
+                'employee_code' => app(\App\Services\PrefixCodeService::class)->format('user', 1),
                 'username' => 'admin',
                 'name' => 'Admin',
                 'phone_country_code' => '+91',

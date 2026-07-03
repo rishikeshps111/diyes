@@ -23,8 +23,7 @@
         <th>Holiday Date</th>
         <th>Start Date</th>
         <th>End Date</th>
-        <th>Branch</th>
-        <th>Applicable Classes</th>
+        <th>Applicable For</th>
         <th>Status</th>
         <th>Description</th>
       </tr>
@@ -39,8 +38,7 @@
           <td>{{ $holiday->holiday_date?->format('d M Y') ?? '-' }}</td>
           <td>{{ $holiday->start_date?->format('d M Y') ?? '-' }}</td>
           <td>{{ $holiday->end_date?->format('d M Y') ?? '-' }}</td>
-          <td>{{ $holiday->applicable_branch ?? '-' }}</td>
-          <td>{{ $holiday->applicable_classes ?? '-' }}</td>
+          <td>{{ $holiday->applicable_for ?: '-' }}</td>
           <td>{{ $holiday->is_active ? 'Active' : 'Inactive' }}</td>
           <td>{{ $holiday->description ?? '-' }}</td>
         </tr>

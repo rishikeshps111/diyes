@@ -31,6 +31,11 @@ class RolePermissionSeeder extends Seeder
             }
         }
 
+        Permission::query()
+            ->where('guard_name', $guard)
+            ->where('name', 'delete.module-prefix')
+            ->delete();
+
         $admin = Role::findOrCreate('admin', $guard);
         $admin->syncPermissions(
             Permission::query()

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class AcademicYearService
 {
+    public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
+
     public function query(array $filters = []): Builder
     {
         return AcademicYear::query()
@@ -32,14 +34,7 @@ class AcademicYearService
 
     public function nextCode(): string
     {
-        $lastCode = AcademicYear::query()
-            ->where('code', 'like', 'AY%')
-            ->orderByDesc('id')
-            ->value('code');
-
-        $nextNumber = $lastCode ? ((int) preg_replace('/\D/', '', $lastCode)) + 1 : 1;
-
-        return 'AY'.str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+        return $this->prefixCodeService->next('academic_year', AcademicYear::class);
     }
 
     public function create(array $data): AcademicYear
@@ -108,7 +103,7 @@ class AcademicYearService
     private function deactivateOthers(?AcademicYear $exceptAcademicYear = null): void
     {
         AcademicYear::query()
-            ->when($exceptAcademicYear, fn (Builder $query) => $query->whereKeyNot($exceptAcademicYear->id))
+            ->when($exceptAcademicYear, fn(Builder $query) => $query->whereKeyNot($exceptAcademicYear->id))
             ->update(['is_active' => false]);
     }
 }

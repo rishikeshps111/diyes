@@ -16,6 +16,7 @@
   <section class="section dashboard ">
     <div class="dashboard-btns">
       <ul>
+        <li><a href="{{ route('holidays.calendar') }}">Holiday Calendar</a></li>
         <li><a href="{{ asset('timetable-management/generate-table.html') }}">Generate Timetable</a></li>
         <li><a href="{{ asset('timetable-management/add-substitute.html') }}">Assign Substitute</a></li>
         <li><a href="{{ asset('timetable-management/regular-timetable.html') }}">Publish Timetable</a></li>

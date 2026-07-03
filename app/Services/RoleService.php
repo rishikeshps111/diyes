@@ -130,6 +130,10 @@ class RoleService
                 'edit.holiday',
                 'delete.holiday',
             ],
+            'Module Prefix' => [
+                'view.module-prefix',
+                'edit.module-prefix',
+            ],
             'Teacher' => [
                 'view.teacher',
                 'create.teacher',

@@ -17,8 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'holiday_date',
     'start_date',
     'end_date',
-    'applicable_branch',
-    'applicable_classes',
+    'applicable_for',
     'is_active',
     'description',
 ])]
@@ -27,22 +26,17 @@ class Holiday extends Model
     use HasFactory;
 
     public const HOLIDAY_TYPES = [
-        'National',
-        'Festival',
-        'School Event',
-        'Local Holiday',
-        'Exam Break',
-        'Vacation',
-        'Other',
+        'Public',
+        'festival',
+        'Optional',
+        'Others',
     ];
 
-    public const APPLICABLE_CLASSES = [
-        'All Classes',
-        'Primary',
-        'Middle School',
-        'High School',
-        'Higher Secondary',
-        'Selected Classes',
+    public const APPLICABLE_FOR = [
+        'All',
+        'Non Teaching Staff',
+        'Teaching Staff',
+        'Students',
     ];
 
     /**

@@ -30,8 +30,7 @@ class HolidayRequest extends FormRequest
             'holiday_date' => ['required', 'date'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'applicable_branch' => ['nullable', 'string', 'max:255'],
-            'applicable_classes' => ['nullable', 'string', Rule::in(Holiday::APPLICABLE_CLASSES)],
+            'applicable_for' => ['required', 'string', Rule::in(Holiday::APPLICABLE_FOR)],
             'is_active' => ['required', 'boolean'],
             'description' => ['nullable', 'string'],
         ];

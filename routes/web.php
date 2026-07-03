@@ -8,6 +8,7 @@ use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\ModulePrefixController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
@@ -111,9 +112,14 @@ Route::middleware('auth')->group(function () {
     Route::post('holidays/export/pdf', [HolidayController::class, 'exportPdf'])->name('holidays.export.pdf');
     Route::patch('holidays/{holiday}/toggle-status', [HolidayController::class, 'toggleStatus'])
         ->name('holidays.toggle-status');
+    Route::get('holidays/calendar', [HolidayController::class, 'calendar'])->name('holidays.calendar');
 
     Route::resource('holidays', HolidayController::class)
         ->except('show');
+
+    Route::get('module-prefixes/data', [ModulePrefixController::class, 'data'])->name('module-prefixes.data');
+    Route::resource('module-prefixes', ModulePrefixController::class)
+        ->except(['create', 'store', 'show', 'destroy']);
 
     Route::get('teachers/data', [TeacherController::class, 'data'])->name('teachers.data');
     Route::post('teachers/export/excel', [TeacherController::class, 'exportExcel'])->name('teachers.export.excel');

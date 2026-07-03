@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Department;
+use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
 
 class DepartmentSeeder extends Seeder
@@ -12,9 +13,11 @@ class DepartmentSeeder extends Seeder
      */
     public function run(): void
     {
+        $codeService = app(PrefixCodeService::class);
+
         $departments = [
             [
-                'department_code' => 'DEP001',
+                'department_code' => $codeService->format('department', 1),
                 'department_name' => 'Mathematics',
                 'department_head' => null,
                 'description' => 'Mathematics and applied mathematics department.',
@@ -23,7 +26,7 @@ class DepartmentSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'department_code' => 'DEP002',
+                'department_code' => $codeService->format('department', 2),
                 'department_name' => 'Science',
                 'department_head' => 'Mathematics',
                 'description' => 'Science department covering physics, chemistry, and biology.',
@@ -32,7 +35,7 @@ class DepartmentSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'department_code' => 'DEP003',
+                'department_code' => $codeService->format('department', 3),
                 'department_name' => 'English',
                 'department_head' => 'Mathematics',
                 'description' => 'English language and literature department.',
@@ -41,7 +44,7 @@ class DepartmentSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'department_code' => 'DEP004',
+                'department_code' => $codeService->format('department', 4),
                 'department_name' => 'Social Studies',
                 'department_head' => 'English',
                 'description' => 'History, civics, geography, and social science department.',
@@ -50,7 +53,7 @@ class DepartmentSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'department_code' => 'DEP005',
+                'department_code' => $codeService->format('department', 5),
                 'department_name' => 'Computer Science',
                 'department_head' => 'Science',
                 'description' => 'Computer science and information technology department.',
@@ -62,8 +65,9 @@ class DepartmentSeeder extends Seeder
 
         foreach ($departments as $department) {
             Department::query()->updateOrCreate(
-                ['department_code' => $department['department_code']],
+                ['department_name' => $department['department_name']],
                 [
+                    'department_code' => $department['department_code'],
                     'department_name' => $department['department_name'],
                     'department_head' => $department['department_head'],
                     'description' => $department['description'],

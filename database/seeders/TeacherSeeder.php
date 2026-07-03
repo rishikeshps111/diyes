@@ -9,6 +9,7 @@ use App\Models\District;
 use App\Models\Grade;
 use App\Models\State;
 use App\Models\Teacher;
+use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
 
 class TeacherSeeder extends Seeder
@@ -41,10 +42,11 @@ class TeacherSeeder extends Seeder
         $designationId = fn (string $name): int => $designations->firstWhere('designation_name', $name)?->id
             ?? $designations->first()->id;
         $gradeId = fn (int $index): int => $grades->get($index)?->id ?? $grades->first()->id;
+        $codeService = app(PrefixCodeService::class);
 
         $teachers = [
             [
-                'employee_id' => 'EMP0001',
+                'employee_id' => $codeService->format('teacher', 1),
                 'name' => 'Anitha Joseph',
                 'gender' => 'Female',
                 'date_of_birth' => '1986-04-12',
@@ -64,7 +66,7 @@ class TeacherSeeder extends Seeder
                 'is_verified' => true,
             ],
             [
-                'employee_id' => 'EMP0002',
+                'employee_id' => $codeService->format('teacher', 2),
                 'name' => 'Rahul Menon',
                 'gender' => 'Male',
                 'date_of_birth' => '1990-09-22',
@@ -84,7 +86,7 @@ class TeacherSeeder extends Seeder
                 'is_verified' => true,
             ],
             [
-                'employee_id' => 'EMP0003',
+                'employee_id' => $codeService->format('teacher', 3),
                 'name' => 'Priya Nair',
                 'gender' => 'Female',
                 'date_of_birth' => '1993-01-18',
@@ -107,7 +109,7 @@ class TeacherSeeder extends Seeder
 
         foreach ($teachers as $teacher) {
             Teacher::query()->updateOrCreate(
-                ['employee_id' => $teacher['employee_id']],
+                ['email' => $teacher['email']],
                 [
                     ...$teacher,
                     'phone_country_code' => '+91',

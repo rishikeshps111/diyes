@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Classroom;
 use App\Models\Department;
+use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
 
 class ClassroomSeeder extends Seeder
@@ -23,10 +24,11 @@ class ClassroomSeeder extends Seeder
 
         $departmentId = fn (string $name): int => $departments->firstWhere('department_name', $name)?->id
             ?? $departments->first()->id;
+        $codeService = app(PrefixCodeService::class);
 
         $classrooms = [
             [
-                'code' => 'CLS001',
+                'code' => $codeService->format('classroom', 1),
                 'room_name' => 'Room 101',
                 'building' => 'Main Block',
                 'floor' => 'First Floor',
@@ -38,7 +40,7 @@ class ClassroomSeeder extends Seeder
                 'remarks' => 'Primary smart classroom for middle school.',
             ],
             [
-                'code' => 'CLS002',
+                'code' => $codeService->format('classroom', 2),
                 'room_name' => 'Science Lab',
                 'building' => 'Science Block',
                 'floor' => 'Ground Floor',
@@ -50,7 +52,7 @@ class ClassroomSeeder extends Seeder
                 'remarks' => 'Shared physics and chemistry lab.',
             ],
             [
-                'code' => 'CLS003',
+                'code' => $codeService->format('classroom', 3),
                 'room_name' => 'Computer Lab A',
                 'building' => 'IT Block',
                 'floor' => 'Second Floor',
@@ -62,7 +64,7 @@ class ClassroomSeeder extends Seeder
                 'remarks' => 'Computer practical classroom.',
             ],
             [
-                'code' => 'CLS004',
+                'code' => $codeService->format('classroom', 4),
                 'room_name' => 'Seminar Hall',
                 'building' => 'Admin Block',
                 'floor' => 'First Floor',
@@ -77,7 +79,7 @@ class ClassroomSeeder extends Seeder
 
         foreach ($classrooms as $classroom) {
             Classroom::query()->updateOrCreate(
-                ['code' => $classroom['code']],
+                ['room_name' => $classroom['room_name']],
                 $classroom,
             );
         }

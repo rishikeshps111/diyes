@@ -9,6 +9,8 @@ use Illuminate\Support\Arr;
 
 class DepartmentService
 {
+    public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
+
     public function query(array $filters = []): Builder
     {
         return Department::query()
@@ -34,14 +36,7 @@ class DepartmentService
 
     public function nextDepartmentCode(): string
     {
-        $lastCode = Department::query()
-            ->where('department_code', 'like', 'DEP%')
-            ->orderByDesc('id')
-            ->value('department_code');
-
-        $nextNumber = $lastCode ? ((int) preg_replace('/\D/', '', $lastCode)) + 1 : 1;
-
-        return 'DEP'.str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+        return $this->prefixCodeService->next('department', Department::class, 'department_code');
     }
 
     public function create(array $data): Department

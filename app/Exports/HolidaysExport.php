@@ -29,8 +29,7 @@ class HolidaysExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
             'Holiday Date',
             'Start Date',
             'End Date',
-            'Branch',
-            'Applicable Classes',
+            'Applicable For',
             'Status',
             'Description',
         ];
@@ -46,8 +45,7 @@ class HolidaysExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
             $holiday->holiday_date?->format('d M Y') ?? '-',
             $holiday->start_date?->format('d M Y') ?? '-',
             $holiday->end_date?->format('d M Y') ?? '-',
-            $holiday->applicable_branch ?? '-',
-            $holiday->applicable_classes ?? '-',
+            $holiday->applicable_for ?: '-',
             $holiday->is_active ? 'Active' : 'Inactive',
             $holiday->description ?? '-',
         ];

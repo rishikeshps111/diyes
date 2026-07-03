@@ -24,7 +24,7 @@ class HolidayController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('can:view.holiday', only: ['index', 'data', 'exportExcel', 'exportPdf']),
+            new Middleware('can:view.holiday', only: ['index', 'data', 'calendar', 'exportExcel', 'exportPdf']),
             new Middleware('can:create.holiday', only: ['create', 'store']),
             new Middleware('can:edit.holiday', only: ['edit', 'update', 'toggleStatus']),
             new Middleware('can:delete.holiday', only: ['destroy']),
@@ -43,12 +43,12 @@ class HolidayController extends Controller implements HasMiddleware
     public function data(Request $request): JsonResponse
     {
         $query = $this->holidayService->query($request->only([
-            'applicable_branch',
             'academic_year_id',
             'holiday_type',
             'month',
             'date_from',
             'date_to',
+            'applicable_for',
             'is_active',
         ]));
 
@@ -59,8 +59,7 @@ class HolidayController extends Controller implements HasMiddleware
                 $holiday->id
             ))
             ->editColumn('holiday_date', fn (Holiday $holiday): string => $holiday->holiday_date?->format('d M Y') ?? '-')
-            ->editColumn('applicable_branch', fn (Holiday $holiday): string => $holiday->applicable_branch ?? '-')
-            ->editColumn('applicable_classes', fn (Holiday $holiday): string => $holiday->applicable_classes ?? '-')
+            ->addColumn('applicable_for_text', fn (Holiday $holiday): string => $this->holidayService->applicableForText($holiday->applicable_for))
             ->editColumn('is_active', fn (Holiday $holiday): string => sprintf(
                 '<span class="%s">%s</span>',
                 $holiday->is_active ? 'status-green' : 'status-red',
@@ -80,7 +79,23 @@ class HolidayController extends Controller implements HasMiddleware
             ]),
             'academicYears' => $this->holidayService->academicYears(),
             'holidayTypes' => $this->holidayService->holidayTypes(),
-            'applicableClasses' => $this->holidayService->applicableClasses(),
+            'applicableForOptions' => $this->holidayService->applicableForOptions(),
+        ]);
+    }
+
+    public function calendar(Request $request): View
+    {
+        $calendar = $this->holidayService->calendar(
+            $request->integer('academic_year_id') ?: null
+        );
+
+        return view('holidays.calendar', [
+            'academicYears' => $this->holidayService->academicYears(),
+            'selectedAcademicYearId' => $calendar['academicYear']?->id,
+            'calendarAcademicYear' => $calendar['academicYear'],
+            'initialDate' => $calendar['initialDate'],
+            'validRange' => $calendar['validRange'],
+            'events' => $calendar['events'],
         ]);
     }
 
@@ -99,7 +114,7 @@ class HolidayController extends Controller implements HasMiddleware
             'holiday' => $holiday,
             'academicYears' => $this->holidayService->academicYears(),
             'holidayTypes' => $this->holidayService->holidayTypes(),
-            'applicableClasses' => $this->holidayService->applicableClasses(),
+            'applicableForOptions' => $this->holidayService->applicableForOptions(),
         ]);
     }
 

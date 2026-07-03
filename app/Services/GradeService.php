@@ -10,6 +10,8 @@ use Illuminate\Support\Arr;
 
 class GradeService
 {
+    public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
+
     public function query(array $filters = []): Builder
     {
         return Grade::query()
@@ -42,14 +44,7 @@ class GradeService
 
     public function nextCode(): string
     {
-        $lastCode = Grade::query()
-            ->where('code', 'like', 'GRD%')
-            ->orderByDesc('id')
-            ->value('code');
-
-        $nextNumber = $lastCode ? ((int) preg_replace('/\D/', '', $lastCode)) + 1 : 1;
-
-        return 'GRD'.str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+        return $this->prefixCodeService->next('grade', Grade::class);
     }
 
     public function create(array $data): Grade

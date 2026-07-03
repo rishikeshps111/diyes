@@ -4,19 +4,19 @@ namespace App\Services;
 
 use App\Models\AcademicYear;
 use App\Models\Holiday;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 class HolidayService
 {
+    public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
+
     public function query(array $filters = []): Builder
     {
         return Holiday::query()
             ->with('academicYear')
-            ->when($filters['applicable_branch'] ?? null, function (Builder $query, string $branch): void {
-                $query->where('applicable_branch', 'like', "%{$branch}%");
-            })
             ->when($filters['academic_year_id'] ?? null, function (Builder $query, string $academicYearId): void {
                 $query->where('academic_year_id', $academicYearId);
             })
@@ -31,6 +31,9 @@ class HolidayService
             })
             ->when($filters['date_to'] ?? null, function (Builder $query, string $dateTo): void {
                 $query->whereDate('holiday_date', '<=', $dateTo);
+            })
+            ->when($filters['applicable_for'] ?? null, function (Builder $query, string $applicableFor): void {
+                $query->where('applicable_for', $applicableFor);
             })
             ->when(isset($filters['is_active']) && $filters['is_active'] !== '', function (Builder $query) use ($filters): void {
                 $query->where('is_active', (bool) $filters['is_active']);
@@ -51,7 +54,7 @@ class HolidayService
         return AcademicYear::query()
             ->orderByDesc('is_active')
             ->orderByDesc('start_date')
-            ->get(['id', 'academic_year', 'is_active', 'start_date']);
+            ->get(['id', 'academic_year', 'is_active', 'start_date', 'end_date']);
     }
 
     public function holidayTypes(): array
@@ -59,9 +62,9 @@ class HolidayService
         return Holiday::HOLIDAY_TYPES;
     }
 
-    public function applicableClasses(): array
+    public function applicableForOptions(): array
     {
-        return Holiday::APPLICABLE_CLASSES;
+        return Holiday::APPLICABLE_FOR;
     }
 
     public function months(): array
@@ -84,14 +87,46 @@ class HolidayService
 
     public function nextCode(): string
     {
-        $lastCode = Holiday::query()
-            ->where('code', 'like', 'HOL%')
-            ->orderByDesc('id')
-            ->value('code');
+        return $this->prefixCodeService->next('holiday', Holiday::class);
+    }
 
-        $nextNumber = $lastCode ? ((int) preg_replace('/\D/', '', $lastCode)) + 1 : 1;
+    public function calendar(?int $academicYearId = null): array
+    {
+        $academicYear = AcademicYear::query()
+            ->when($academicYearId, fn (Builder $query) => $query->whereKey($academicYearId))
+            ->when(! $academicYearId, fn (Builder $query) => $query->where('is_active', true))
+            ->orderByDesc('start_date')
+            ->first()
+            ?? AcademicYear::query()->orderByDesc('start_date')->first();
 
-        return 'HOL'.str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+        $startDate = $academicYear?->start_date
+            ? Carbon::parse($academicYear->start_date)->startOfMonth()
+            : now()->copy()->startOfYear();
+        $endDate = $academicYear?->end_date
+            ? Carbon::parse($academicYear->end_date)->endOfMonth()
+            : now()->copy()->endOfYear();
+
+        $holidays = Holiday::query()
+            ->with('academicYear')
+            ->where('is_active', true)
+            ->when($academicYear, fn (Builder $query) => $query->where('academic_year_id', $academicYear->id))
+            ->whereDate('end_date', '>=', $startDate)
+            ->whereDate('start_date', '<=', $endDate)
+            ->orderBy('start_date')
+            ->get();
+
+        return [
+            'academicYear' => $academicYear,
+            'initialDate' => now()->betweenIncluded($startDate, $endDate) ? now()->toDateString() : $startDate->toDateString(),
+            'validRange' => [
+                'start' => $startDate->toDateString(),
+                'end' => $endDate->copy()->addDay()->toDateString(),
+            ],
+            'events' => [
+                ...$this->weeklyOffEvents($startDate, $endDate),
+                ...$this->holidayEvents($holidays),
+            ],
+        ];
     }
 
     public function create(array $data): Holiday
@@ -104,8 +139,7 @@ class HolidayService
                 'holiday_date',
                 'start_date',
                 'end_date',
-                'applicable_branch',
-                'applicable_classes',
+                'applicable_for',
                 'is_active',
                 'description',
             ]),
@@ -122,8 +156,7 @@ class HolidayService
             'holiday_date',
             'start_date',
             'end_date',
-            'applicable_branch',
-            'applicable_classes',
+            'applicable_for',
             'is_active',
             'description',
         ]));
@@ -141,5 +174,62 @@ class HolidayService
     public function delete(Holiday $holiday): void
     {
         $holiday->delete();
+    }
+
+    private function holidayEvents(Collection $holidays): array
+    {
+        return $holidays
+            ->map(fn (Holiday $holiday): array => [
+                'title' => $holiday->holiday_name,
+                'start' => $holiday->start_date?->toDateString(),
+                'end' => $holiday->end_date?->copy()->addDay()->toDateString(),
+                'allDay' => true,
+                'color' => '#c62828',
+                'borderColor' => '#c62828',
+                'extendedProps' => [
+                    'kind' => 'holiday',
+                    'type' => $holiday->holiday_type,
+                    'holidayDate' => $holiday->holiday_date?->format('d M Y') ?? '-',
+                    'range' => $holiday->start_date?->format('d M Y').' - '.$holiday->end_date?->format('d M Y'),
+                    'applicableFor' => $holiday->applicable_for ?: '-',
+                    'description' => $holiday->description ?: '-',
+                ],
+            ])
+            ->values()
+            ->all();
+    }
+
+    private function weeklyOffEvents(Carbon $startDate, Carbon $endDate): array
+    {
+        $events = [];
+        $date = $startDate->copy();
+
+        while ($date->lte($endDate)) {
+            $isSunday = $date->isSunday();
+            $isSecondSaturday = $date->isSaturday() && $date->day >= 8 && $date->day <= 14;
+
+            if ($isSunday || $isSecondSaturday) {
+                $events[] = [
+                    'title' => $isSunday ? 'Sunday' : 'Second Saturday',
+                    'start' => $date->toDateString(),
+                    'allDay' => true,
+                    'display' => 'background',
+                    'backgroundColor' => '#fff1f1',
+                    'extendedProps' => [
+                        'kind' => 'weekly_off',
+                        'description' => $isSunday ? 'Sunday holiday' : 'Second Saturday holiday',
+                    ],
+                ];
+            }
+
+            $date->addDay();
+        }
+
+        return $events;
+    }
+
+    public function applicableForText(?string $applicableFor): string
+    {
+        return $applicableFor ?: '-';
     }
 }

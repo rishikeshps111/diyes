@@ -52,15 +52,23 @@
           </li>
         @endcanany
 
-        @canany(['view.department', 'view.designation', 'view.classroom', 'view.venue', 'view.holiday'])
+        @canany(['view.department', 'view.designation', 'view.classroom', 'view.venue', 'view.holiday', 'view.module-prefix'])
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'module-prefixes.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarMasters" data-bs-toggle="collapse" href="#">
               <i class="fa-solid fa-database"></i><span>Masters</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarMasters"
-              class="nav-content collapse sub-menu {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'module-prefixes.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
+              @can('view.module-prefix')
+                <li>
+                  <a href="{{ route('module-prefixes.index') }}"
+                    class="{{ request()->routeIs('module-prefixes.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Module Prefixes</span>
+                  </a>
+                </li>
+              @endcan
               @can('view.department')
                 <li>
                   <a href="{{ route('departments.index') }}"

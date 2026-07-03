@@ -10,6 +10,8 @@ use Illuminate\Support\Arr;
 
 class DivisionService
 {
+    public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
+
     public function query(array $filters = []): Builder
     {
         return Division::query()
@@ -41,14 +43,7 @@ class DivisionService
 
     public function nextCode(): string
     {
-        $lastCode = Division::query()
-            ->where('code', 'like', 'DIV%')
-            ->orderByDesc('id')
-            ->value('code');
-
-        $nextNumber = $lastCode ? ((int) preg_replace('/\D/', '', $lastCode)) + 1 : 1;
-
-        return 'DIV'.str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+        return $this->prefixCodeService->next('division', Division::class);
     }
 
     public function create(array $data): Division

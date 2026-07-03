@@ -22,13 +22,6 @@
             <div class="row">
               <div class="col-lg-4 mb-3">
                 <div class="o-f-inp">
-                  <label for="branch_filter">Branch</label>
-                  <input type="text" id="branch_filter" class="form-control shadow-none"
-                    placeholder="Search by branch">
-                </div>
-              </div>
-              <div class="col-lg-4 mb-3">
-                <div class="o-f-inp">
                   <label for="academic_year_filter">Academic Year</label>
                   <select id="academic_year_filter" class="form-select shadow-none">
                     <option value="">--- Select ---</option>
@@ -74,6 +67,17 @@
               </div>
               <div class="col-lg-4 mb-3">
                 <div class="o-f-inp">
+                  <label for="applicable_for_filter">Applicable For</label>
+                  <select id="applicable_for_filter" class="form-select shadow-none">
+                    <option value="">--- Select ---</option>
+                    @foreach (\App\Models\Holiday::APPLICABLE_FOR as $applicableFor)
+                      <option value="{{ $applicableFor }}">{{ $applicableFor }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="col-lg-4 mb-3">
+                <div class="o-f-inp">
                   <label for="status_filter">Status</label>
                   <select id="status_filter" class="form-select shadow-none">
                     <option value="">--- Select ---</option>
@@ -104,6 +108,8 @@
               @can('create.holiday')
                 <a href="{{ route('holidays.create') }}" class="add-btn">Add New</a>
               @endcan
+              <a href="{{ route('holidays.calendar') }}" class="add-btn"
+                style="background-color: #aeb239; border-color: #aeb239;">Holiday Calender</a>
             </div>
           </div>
         </div>
@@ -152,8 +158,7 @@
                       <th>Holiday</th>
                       <th>Holiday Type</th>
                       <th>Date</th>
-                      <th>Branch</th>
-                      <th>Applicable Classes</th>
+                      <th>Applicable For</th>
                       <th>Status</th>
                       <th>Actions</th>
                       <th class="d-none">Created At</th>

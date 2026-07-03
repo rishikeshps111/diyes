@@ -11,17 +11,17 @@
             serverSide: true,
             searching: true,
             lengthChange: false,
-            order: [[10, 'desc']],
+            order: [[9, 'desc']],
             dom: 'rt<"table_bottom"ip>',
             ajax: {
                 url: '{{ route('holidays.data') }}',
                 data: function (data) {
-                    data.applicable_branch = document.getElementById('branch_filter').value;
                     data.academic_year_id = document.getElementById('academic_year_filter').value;
                     data.holiday_type = document.getElementById('holiday_type_filter').value;
                     data.month = document.getElementById('month_filter').value;
                     data.date_from = document.getElementById('date_from_filter').value;
                     data.date_to = document.getElementById('date_to_filter').value;
+                    data.applicable_for = document.getElementById('applicable_for_filter').value;
                     data.is_active = document.getElementById('status_filter').value;
                 }
             },
@@ -32,8 +32,7 @@
                 { data: 'holiday_name', name: 'holiday_name' },
                 { data: 'holiday_type', name: 'holiday_type' },
                 { data: 'holiday_date', name: 'holiday_date' },
-                { data: 'applicable_branch', name: 'applicable_branch' },
-                { data: 'applicable_classes', name: 'applicable_classes' },
+                { data: 'applicable_for_text', name: 'applicable_for_text', orderable: false, searchable: false },
                 { data: 'is_active', name: 'is_active', orderable: false },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false },
                 { data: 'created_at', name: 'created_at', visible: false, searchable: false }
@@ -61,12 +60,12 @@
 
         resetFiltersButton.addEventListener('click', function () {
             setButtonLoading(resetFiltersButton, true);
-            document.getElementById('branch_filter').value = '';
             document.getElementById('academic_year_filter').value = '';
             document.getElementById('holiday_type_filter').value = '';
             document.getElementById('month_filter').value = '';
             document.getElementById('date_from_filter').value = '';
             document.getElementById('date_to_filter').value = '';
+            document.getElementById('applicable_for_filter').value = '';
             document.getElementById('status_filter').value = '';
             table.search('').draw();
         });

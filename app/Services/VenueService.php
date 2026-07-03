@@ -9,6 +9,8 @@ use Illuminate\Support\Arr;
 
 class VenueService
 {
+    public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
+
     public function query(array $filters = []): Builder
     {
         return Venue::query()
@@ -57,14 +59,7 @@ class VenueService
 
     public function nextCode(): string
     {
-        $lastCode = Venue::query()
-            ->where('code', 'like', 'VEN%')
-            ->orderByDesc('id')
-            ->value('code');
-
-        $nextNumber = $lastCode ? ((int) preg_replace('/\D/', '', $lastCode)) + 1 : 1;
-
-        return 'VEN'.str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+        return $this->prefixCodeService->next('venue', Venue::class);
     }
 
     public function create(array $data): Venue

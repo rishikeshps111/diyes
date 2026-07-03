@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AcademicYear;
 use App\Models\Grade;
+use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
 
 class GradeSeeder extends Seeder
@@ -22,18 +23,24 @@ class GradeSeeder extends Seeder
             return;
         }
 
+        $codeService = app(PrefixCodeService::class);
+
         $grades = [
-            ['code' => 'GRD001', 'grade' => 'Grade 1', 'capacity' => 40, 'is_active' => true],
-            ['code' => 'GRD002', 'grade' => 'Grade 2', 'capacity' => 40, 'is_active' => true],
-            ['code' => 'GRD003', 'grade' => 'Grade 3', 'capacity' => 38, 'is_active' => true],
-            ['code' => 'GRD004', 'grade' => 'Grade 4', 'capacity' => 38, 'is_active' => true],
-            ['code' => 'GRD005', 'grade' => 'Grade 5', 'capacity' => 36, 'is_active' => true],
+            ['code' => $codeService->format('grade', 1), 'grade' => 'Grade 1', 'capacity' => 40, 'is_active' => true],
+            ['code' => $codeService->format('grade', 2), 'grade' => 'Grade 2', 'capacity' => 40, 'is_active' => true],
+            ['code' => $codeService->format('grade', 3), 'grade' => 'Grade 3', 'capacity' => 38, 'is_active' => true],
+            ['code' => $codeService->format('grade', 4), 'grade' => 'Grade 4', 'capacity' => 38, 'is_active' => true],
+            ['code' => $codeService->format('grade', 5), 'grade' => 'Grade 5', 'capacity' => 36, 'is_active' => true],
         ];
 
         foreach ($grades as $grade) {
             Grade::query()->updateOrCreate(
-                ['code' => $grade['code']],
                 [
+                    'grade' => $grade['grade'],
+                    'academic_year_id' => $academicYear->id,
+                ],
+                [
+                    'code' => $grade['code'],
                     'grade' => $grade['grade'],
                     'capacity' => $grade['capacity'],
                     'academic_year_id' => $academicYear->id,

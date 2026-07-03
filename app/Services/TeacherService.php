@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Storage;
 
 class TeacherService
 {
+    public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
+
     public function query(array $filters = []): Builder
     {
         return Teacher::query()
@@ -41,14 +43,7 @@ class TeacherService
 
     public function nextEmployeeId(): string
     {
-        $lastCode = Teacher::query()
-            ->where('employee_id', 'like', 'EMP%')
-            ->orderByDesc('id')
-            ->value('employee_id');
-
-        $nextNumber = $lastCode ? ((int) preg_replace('/\D/', '', $lastCode)) + 1 : 1;
-
-        return 'EMP'.str_pad((string) $nextNumber, 4, '0', STR_PAD_LEFT);
+        return $this->prefixCodeService->next('teacher', Teacher::class, 'employee_id');
     }
 
     public function create(array $data): Teacher

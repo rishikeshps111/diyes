@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Division;
 use App\Models\Grade;
+use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
 
 class DivisionSeeder extends Seeder
@@ -22,9 +23,11 @@ class DivisionSeeder extends Seeder
             return;
         }
 
+        $codeService = app(PrefixCodeService::class);
+
         $divisions = [
             [
-                'code' => 'DIV001',
+                'code' => $codeService->format('division', 1),
                 'division' => 'A',
                 'grade_id' => $grades->get(0)?->id,
                 'capacity' => 40,
@@ -33,7 +36,7 @@ class DivisionSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'code' => 'DIV002',
+                'code' => $codeService->format('division', 2),
                 'division' => 'B',
                 'grade_id' => $grades->get(0)?->id,
                 'capacity' => 40,
@@ -42,7 +45,7 @@ class DivisionSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'code' => 'DIV003',
+                'code' => $codeService->format('division', 3),
                 'division' => 'A',
                 'grade_id' => $grades->get(1)?->id ?? $grades->get(0)?->id,
                 'capacity' => 38,
@@ -51,7 +54,7 @@ class DivisionSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'code' => 'DIV004',
+                'code' => $codeService->format('division', 4),
                 'division' => 'A',
                 'grade_id' => $grades->get(2)?->id ?? $grades->get(0)?->id,
                 'capacity' => 36,
@@ -63,7 +66,10 @@ class DivisionSeeder extends Seeder
 
         foreach ($divisions as $division) {
             Division::query()->updateOrCreate(
-                ['code' => $division['code']],
+                [
+                    'division' => $division['division'],
+                    'grade_id' => $division['grade_id'],
+                ],
                 $division,
             );
         }

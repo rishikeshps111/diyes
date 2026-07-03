@@ -14,6 +14,8 @@ use Spatie\Permission\Models\Role;
 
 class UserService
 {
+    public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
+
     public function query(array $filters = []): Builder
     {
         return User::query()
@@ -43,14 +45,7 @@ class UserService
 
     public function nextEmployeeCode(): string
     {
-        $lastCode = User::query()
-            ->where('employee_code', 'like', 'EMP%')
-            ->orderByDesc('id')
-            ->value('employee_code');
-
-        $nextNumber = $lastCode ? ((int) preg_replace('/\D/', '', $lastCode)) + 1 : 1;
-
-        return 'EMP'.str_pad((string) $nextNumber, 4, '0', STR_PAD_LEFT);
+        return $this->prefixCodeService->next('user', User::class, 'employee_code');
     }
 
     public function create(array $data): User

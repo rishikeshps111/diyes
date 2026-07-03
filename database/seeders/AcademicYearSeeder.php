@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AcademicYear;
+use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
 
 class AcademicYearSeeder extends Seeder
@@ -12,9 +13,11 @@ class AcademicYearSeeder extends Seeder
      */
     public function run(): void
     {
+        $codeService = app(PrefixCodeService::class);
+
         $academicYears = [
             [
-                'code' => 'AY001',
+                'code' => $codeService->format('academic_year', 1),
                 'academic_year' => '2025-2026',
                 'start_date' => '2025-04-01',
                 'end_date' => '2026-03-31',
@@ -22,7 +25,7 @@ class AcademicYearSeeder extends Seeder
                 'description' => 'Previous academic year.',
             ],
             [
-                'code' => 'AY002',
+                'code' => $codeService->format('academic_year', 2),
                 'academic_year' => '2026-2027',
                 'start_date' => '2026-04-01',
                 'end_date' => '2027-03-31',
@@ -30,7 +33,7 @@ class AcademicYearSeeder extends Seeder
                 'description' => 'Current academic year.',
             ],
             [
-                'code' => 'AY003',
+                'code' => $codeService->format('academic_year', 3),
                 'academic_year' => '2027-2028',
                 'start_date' => '2027-04-01',
                 'end_date' => '2028-03-31',
@@ -41,7 +44,7 @@ class AcademicYearSeeder extends Seeder
 
         foreach ($academicYears as $academicYear) {
             AcademicYear::query()->updateOrCreate(
-                ['code' => $academicYear['code']],
+                ['academic_year' => $academicYear['academic_year']],
                 $academicYear,
             );
         }
@@ -50,7 +53,7 @@ class AcademicYearSeeder extends Seeder
 
         if ($activeAcademicYear) {
             AcademicYear::query()
-                ->where('code', '!=', $activeAcademicYear['code'])
+                ->where('academic_year', '!=', $activeAcademicYear['academic_year'])
                 ->update(['is_active' => false]);
         }
     }

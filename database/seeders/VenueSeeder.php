@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Venue;
+use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
 
 class VenueSeeder extends Seeder
@@ -12,9 +13,11 @@ class VenueSeeder extends Seeder
      */
     public function run(): void
     {
+        $codeService = app(PrefixCodeService::class);
+
         $venues = [
             [
-                'code' => 'VEN001',
+                'code' => $codeService->format('venue', 1),
                 'venue_name' => 'Main Auditorium',
                 'venue_type' => 'Auditorium',
                 'building' => 'Admin Block',
@@ -25,7 +28,7 @@ class VenueSeeder extends Seeder
                 'remarks' => 'Used for annual day and major events.',
             ],
             [
-                'code' => 'VEN002',
+                'code' => $codeService->format('venue', 2),
                 'venue_name' => 'Conference Hall',
                 'venue_type' => 'Conference Room',
                 'building' => 'Main Block',
@@ -36,7 +39,7 @@ class VenueSeeder extends Seeder
                 'remarks' => 'Parent meetings and staff conferences.',
             ],
             [
-                'code' => 'VEN003',
+                'code' => $codeService->format('venue', 3),
                 'venue_name' => 'Sports Ground',
                 'venue_type' => 'Sports Ground',
                 'building' => 'Outdoor Campus',
@@ -47,7 +50,7 @@ class VenueSeeder extends Seeder
                 'remarks' => 'Sports day and outdoor assemblies.',
             ],
             [
-                'code' => 'VEN004',
+                'code' => $codeService->format('venue', 4),
                 'venue_name' => 'Activity Hall',
                 'venue_type' => 'Hall',
                 'building' => 'Primary Block',
@@ -61,7 +64,7 @@ class VenueSeeder extends Seeder
 
         foreach ($venues as $venue) {
             Venue::query()->updateOrCreate(
-                ['code' => $venue['code']],
+                ['venue_name' => $venue['venue_name']],
                 $venue,
             );
         }

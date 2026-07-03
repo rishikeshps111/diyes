@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Grade;
+use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
 
 class DesignationSeeder extends Seeder
@@ -28,10 +29,11 @@ class DesignationSeeder extends Seeder
 
         $departmentId = fn (string $name): int => $departments->firstWhere('department_name', $name)?->id
             ?? $departments->first()->id;
+        $codeService = app(PrefixCodeService::class);
 
         $designations = [
             [
-                'code' => 'DSG001',
+                'code' => $codeService->format('designation', 1),
                 'designation_name' => 'Head of Department',
                 'department_id' => $departmentId('Mathematics'),
                 'grade_id' => $grades->get(0)?->id,
@@ -39,7 +41,7 @@ class DesignationSeeder extends Seeder
                 'description' => 'Department leadership and academic planning.',
             ],
             [
-                'code' => 'DSG002',
+                'code' => $codeService->format('designation', 2),
                 'designation_name' => 'Senior Teacher',
                 'department_id' => $departmentId('Science'),
                 'grade_id' => $grades->get(1)?->id ?? $grades->first()->id,
@@ -47,7 +49,7 @@ class DesignationSeeder extends Seeder
                 'description' => 'Senior teaching role with mentoring responsibilities.',
             ],
             [
-                'code' => 'DSG003',
+                'code' => $codeService->format('designation', 3),
                 'designation_name' => 'Class Teacher',
                 'department_id' => $departmentId('English'),
                 'grade_id' => $grades->get(2)?->id ?? $grades->first()->id,
@@ -55,7 +57,7 @@ class DesignationSeeder extends Seeder
                 'description' => 'Class supervision and parent communication.',
             ],
             [
-                'code' => 'DSG004',
+                'code' => $codeService->format('designation', 4),
                 'designation_name' => 'Assistant Teacher',
                 'department_id' => $departmentId('Computer Science'),
                 'grade_id' => $grades->get(3)?->id ?? $grades->first()->id,
@@ -66,7 +68,7 @@ class DesignationSeeder extends Seeder
 
         foreach ($designations as $designation) {
             Designation::query()->updateOrCreate(
-                ['code' => $designation['code']],
+                ['designation_name' => $designation['designation_name']],
                 $designation,
             );
         }
