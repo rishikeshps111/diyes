@@ -29,7 +29,16 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
+        if (! $request->user()->is_active) {
+            Auth::guard('web')->logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account is inactive. Please contact the administrator.',
+            ]);
+        }
+
         $request->session()->regenerate();
+        $request->user()->forceFill(['last_login_at' => now()])->save();
 
         return redirect()->intended(route('dashboard'));
     }

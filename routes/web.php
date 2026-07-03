@@ -8,6 +8,10 @@ use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TeacherDocumentController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VenueController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +28,20 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', fn() => view('dashboard'))->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::get('roles/data', [RoleController::class, 'data'])->name('roles.data');
+    Route::resource('roles', RoleController::class)
+        ->except('show');
+
+    Route::get('users/data', [UserController::class, 'data'])->name('users.data');
+    Route::post('users/export/excel', [UserController::class, 'exportExcel'])->name('users.export.excel');
+    Route::post('users/export/pdf', [UserController::class, 'exportPdf'])->name('users.export.pdf');
+    Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])
+        ->name('users.toggle-status');
+    Route::patch('users/{user}/reset-password', [UserController::class, 'resetPassword'])
+        ->name('users.reset-password');
+
+    Route::resource('users', UserController::class);
 
     Route::get('academic-years/data', [AcademicYearController::class, 'data'])->name('academic-years.data');
     Route::post('academic-years/export/excel', [AcademicYearController::class, 'exportExcel'])->name('academic-years.export.excel');
@@ -96,6 +114,20 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('holidays', HolidayController::class)
         ->except('show');
+
+    Route::get('teachers/data', [TeacherController::class, 'data'])->name('teachers.data');
+    Route::post('teachers/export/excel', [TeacherController::class, 'exportExcel'])->name('teachers.export.excel');
+    Route::post('teachers/export/pdf', [TeacherController::class, 'exportPdf'])->name('teachers.export.pdf');
+    Route::patch('teachers/{teacher}/verify', [TeacherController::class, 'verify'])->name('teachers.verify');
+    Route::get('teachers/{teacher}/documents', [TeacherDocumentController::class, 'index'])->name('teachers.documents.index');
+    Route::get('teachers/{teacher}/documents/data', [TeacherDocumentController::class, 'data'])->name('teachers.documents.data');
+    Route::post('teachers/{teacher}/documents', [TeacherDocumentController::class, 'store'])->name('teachers.documents.store');
+    Route::get('teachers/{teacher}/documents/{document}', [TeacherDocumentController::class, 'show'])->name('teachers.documents.show');
+    Route::post('teachers/{teacher}/documents/{document}', [TeacherDocumentController::class, 'update'])->name('teachers.documents.update');
+    Route::delete('teachers/{teacher}/documents/{document}', [TeacherDocumentController::class, 'destroy'])->name('teachers.documents.destroy');
+    Route::patch('teachers/{teacher}/documents/{document}/verify', [TeacherDocumentController::class, 'verify'])->name('teachers.documents.verify');
+
+    Route::resource('teachers', TeacherController::class);
 });
 
 

@@ -19,7 +19,8 @@
           <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('academic-years.*', 'grades.*', 'divisions.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarAcademicManagement" data-bs-toggle="collapse" href="#">
-              <i class="fa-solid fa-graduation-cap"></i><span>Academic Management</span><i class="bi bi-chevron-down ms-auto"></i>
+              <i class="fa-solid fa-graduation-cap"></i><span>Academic Management</span><i
+                class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarAcademicManagement"
               class="nav-content collapse sub-menu {{ request()->routeIs('academic-years.*', 'grades.*', 'divisions.*') ? 'show' : '' }}"
@@ -86,8 +87,7 @@
               @endcan
               @can('view.venue')
                 <li>
-                  <a href="{{ route('venues.index') }}"
-                    class="{{ request()->routeIs('venues.*') ? 'sub-active' : '' }}">
+                  <a href="{{ route('venues.index') }}" class="{{ request()->routeIs('venues.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Venues</span>
                   </a>
                 </li>
@@ -97,6 +97,55 @@
                   <a href="{{ route('holidays.index') }}"
                     class="{{ request()->routeIs('holidays.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Holidays</span>
+                  </a>
+                </li>
+              @endcan
+            </ul>
+          </li>
+        @endcanany
+
+        @canany(['view.teacher'])
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('teachers.*') ? '' : 'collapsed' }}"
+              data-bs-target="#sidebarTeacherManagement" data-bs-toggle="collapse" href="#">
+              <i class="fa-solid fa-chalkboard-user"></i><span>Teacher Management</span><i
+                class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="sidebarTeacherManagement"
+              class="nav-content collapse sub-menu {{ request()->routeIs('teachers.*') ? 'show' : '' }}"
+              data-bs-parent="#sidebar-nav">
+              @can('view.teacher')
+                <li>
+                  <a href="{{ route('teachers.index') }}"
+                    class="{{ request()->routeIs('teachers.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Teachers</span>
+                  </a>
+                </li>
+              @endcan
+            </ul>
+          </li>
+        @endcanany
+
+        @canany(['view.user', 'view.role'])
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('users.*', 'roles.*') ? '' : 'collapsed' }}"
+              data-bs-target="#sidebarUserManagement" data-bs-toggle="collapse" href="#">
+              <i class="fa-solid fa-users-gear"></i><span>User Management</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="sidebarUserManagement"
+              class="nav-content collapse sub-menu {{ request()->routeIs('users.*', 'roles.*') ? 'show' : '' }}"
+              data-bs-parent="#sidebar-nav">
+              @can('view.user')
+                <li>
+                  <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Users</span>
+                  </a>
+                </li>
+              @endcan
+              @can('view.role')
+                <li>
+                  <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Roles & Permissions</span>
                   </a>
                 </li>
               @endcan

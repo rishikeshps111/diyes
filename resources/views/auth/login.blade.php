@@ -21,7 +21,7 @@
           <div class="col-12">
             <div class="input-group has-validation form-login">
               <input type="email" name="email" class="form-control shadow-none @error('email') is-invalid @enderror"
-                id="yourEmail" placeholder="User Email" value="{{ old('email', 'admin@gmail.com') }}" required autofocus>
+                id="yourEmail" placeholder="User Email" value="{{ old('email', '') }}" required autofocus>
               @error('email')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
               @else
@@ -32,7 +32,7 @@
 
           <div class="col-12 form-login">
             <input type="password" name="password" class="form-control shadow-none @error('password') is-invalid @enderror"
-              id="yourPassword" placeholder=" Password" value="admin@123" required>
+              id="yourPassword" placeholder=" Password" value="" required>
             @error('password')
               <div class="invalid-feedback d-block">{{ $message }}</div>
             @else

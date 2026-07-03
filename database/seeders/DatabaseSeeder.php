@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,15 +22,32 @@ class DatabaseSeeder extends Seeder
         $this->call(DivisionSeeder::class);
         $this->call(DepartmentSeeder::class);
         $this->call(DesignationSeeder::class);
+        $this->call(CountrySeeder::class);
+        $this->call(StateSeeder::class);
+        $this->call(DistrictSeeder::class);
+        $this->call(TeacherSeeder::class);
         $this->call(ClassroomSeeder::class);
         $this->call(VenueSeeder::class);
         $this->call(HolidaySeeder::class);
 
+        $adminRole = Role::query()->where('name', 'admin')->where('guard_name', 'web')->first();
+        $adminDepartmentId = \App\Models\Department::query()->orderBy('id')->value('id');
+        $adminDesignationId = \App\Models\Designation::query()->orderBy('id')->value('id');
+
         $user = User::query()->updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
+                'employee_code' => 'EMP0001',
+                'username' => 'admin',
                 'name' => 'Admin',
+                'phone_country_code' => '+91',
+                'phone' => '9999999999',
+                'department_id' => $adminDepartmentId,
+                'designation_id' => $adminDesignationId,
+                'role_id' => $adminRole?->id,
                 'password' => 'admin@123',
+                'is_active' => true,
+                'is_two_factor_enabled' => false,
             ],
         );
 
