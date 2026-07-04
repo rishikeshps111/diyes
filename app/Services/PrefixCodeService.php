@@ -19,6 +19,7 @@ class PrefixCodeService
         'venue' => 'VEN',
         'holiday' => 'HOL',
         'time_table_type' => 'TTT',
+        'timetable' => 'TT',
         'teacher' => 'EMP',
         'user' => 'EMP',
     ];

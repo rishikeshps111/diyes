@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
         $this->call(HolidaySeeder::class);
         $this->call(TimeTableTypeSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(TimetableSeeder::class);
 
         $adminRole = Role::query()->where('name', 'admin')->where('guard_name', 'web')->first();
         $adminDepartmentId = \App\Models\Department::query()->orderBy('id')->value('id');

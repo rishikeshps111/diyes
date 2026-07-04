@@ -152,6 +152,12 @@ class RoleService
                 'edit.teacher',
                 'delete.teacher',
             ],
+            'Regular Timetable' => [
+                'view.timetable',
+                'create.timetable',
+                'edit.timetable',
+                'delete.timetable',
+            ],
             'User' => [
                 'view.user',
                 'create.user',

@@ -13,6 +13,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
+use App\Http\Controllers\TimetableController;
 use App\Http\Controllers\TimeTableTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VenueController;
@@ -155,6 +156,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('teachers/{teacher}/documents/{document}/verify', [TeacherDocumentController::class, 'verify'])->name('teachers.documents.verify');
 
     Route::resource('teachers', TeacherController::class);
+
+    Route::get('timetables/data', [TimetableController::class, 'data'])->name('timetables.data');
+    Route::post('timetables/export/excel', [TimetableController::class, 'exportExcel'])->name('timetables.export.excel');
+    Route::post('timetables/export/pdf', [TimetableController::class, 'exportPdf'])->name('timetables.export.pdf');
+    Route::resource('timetables', TimetableController::class)
+        ->except('show');
 });
 
 

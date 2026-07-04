@@ -128,6 +128,28 @@
           </li>
         @endcanany
 
+        @canany(['view.timetable'])
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('timetables.*') ? '' : 'collapsed' }}"
+              data-bs-target="#sidebarTimetableManagement" data-bs-toggle="collapse" href="#">
+              <i class="fa-solid fa-calendar-week"></i><span>Timetable Management</span><i
+                class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="sidebarTimetableManagement"
+              class="nav-content collapse sub-menu {{ request()->routeIs('timetables.*') ? 'show' : '' }}"
+              data-bs-parent="#sidebar-nav">
+              @can('view.timetable')
+                <li>
+                  <a href="{{ route('timetables.index') }}"
+                    class="{{ request()->routeIs('timetables.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Regular Timetable</span>
+                  </a>
+                </li>
+              @endcan
+            </ul>
+          </li>
+        @endcanany
+
         @canany(['view.teacher'])
           <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('teachers.*') ? '' : 'collapsed' }}"

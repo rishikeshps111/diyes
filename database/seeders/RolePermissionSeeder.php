@@ -68,6 +68,10 @@ class RolePermissionSeeder extends Seeder
             'view.time-table-type',
             'create.time-table-type',
             'edit.time-table-type',
+            'view.timetable',
+            'create.timetable',
+            'edit.timetable',
+            'delete.timetable',
         ]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
