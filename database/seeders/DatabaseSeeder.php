@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RolePermissionSeeder::class);
         $this->call(AcademicYearSeeder::class);
         $this->call(GradeSeeder::class);
+        $this->call(SubjectSeeder::class);
         $this->call(DivisionSeeder::class);
         $this->call(DepartmentSeeder::class);
         $this->call(DesignationSeeder::class);

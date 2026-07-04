@@ -1,54 +1,48 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const selectedClassrooms = new Set();
-        const selectAll = document.getElementById('selectAllClassrooms');
+        const selectedSubjects = new Set();
+        const selectAll = document.getElementById('selectAllSubjects');
         const applyFiltersButton = document.getElementById('applyFilters');
         const resetFiltersButton = document.getElementById('resetFilters');
         const csrfToken = '{{ csrf_token() }}';
 
-        const table = new DataTable('#classroomsTable', {
+        const table = new DataTable('#subjectsTable', {
             processing: true,
             serverSide: true,
             searching: true,
             lengthChange: false,
-            order: [[10, 'desc']],
+            order: [[7, 'desc']],
             dom: 'rt<"table_bottom"ip>',
             ajax: {
-                url: '{{ route('classrooms.data') }}',
+                url: '{{ route('subjects.data') }}',
                 data: function (data) {
-                    data.building = document.getElementById('building_filter').value;
-                    data.floor = document.getElementById('floor_filter').value;
-                    data.room_type = document.getElementById('room_type_filter').value;
-                    data.seating_capacity = document.getElementById('capacity_filter').value;
+                    data.grade_id = document.getElementById('grade_filter').value;
                     data.is_active = document.getElementById('status_filter').value;
                 }
             },
             columns: [
                 { data: 'select', name: 'select', orderable: false, searchable: false },
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'code', name: 'code' },
-                { data: 'room_name', name: 'room_name' },
-                { data: 'building', name: 'building' },
-                { data: 'room_type', name: 'room_type' },
-                { data: 'seating_capacity', name: 'seating_capacity' },
-                { data: 'facilities_text', name: 'facilities_text', orderable: false, searchable: false },
+                { data: 'subject_code', name: 'subject_code' },
+                { data: 'subject_name', name: 'subject_name' },
+                { data: 'grade', name: 'grade', orderable: false },
                 { data: 'is_active', name: 'is_active', orderable: false },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false },
                 { data: 'created_at', name: 'created_at', visible: false, searchable: false }
             ],
             drawCallback: function () {
-                document.querySelectorAll('.classroom-row-check').forEach(function (checkbox) {
-                    checkbox.checked = selectedClassrooms.has(checkbox.value);
+                document.querySelectorAll('.subject-row-check').forEach(function (checkbox) {
+                    checkbox.checked = selectedSubjects.has(checkbox.value);
                 });
                 syncSelectAll();
             }
         });
 
-        document.getElementById('classroomTableSearch').addEventListener('keyup', function () {
+        document.getElementById('subjectTableSearch').addEventListener('keyup', function () {
             table.search(this.value).draw();
         });
 
-        document.getElementById('classroomPerPage').addEventListener('change', function () {
+        document.getElementById('subjectPerPage').addEventListener('change', function () {
             table.page.len(Number(this.value)).draw();
         });
 
@@ -59,10 +53,7 @@
 
         resetFiltersButton.addEventListener('click', function () {
             setButtonLoading(resetFiltersButton, true);
-            document.getElementById('building_filter').value = '';
-            document.getElementById('floor_filter').value = '';
-            document.getElementById('room_type_filter').value = '';
-            document.getElementById('capacity_filter').value = '';
+            document.getElementById('grade_filter').value = '';
             document.getElementById('status_filter').value = '';
             table.search('').draw();
         });
@@ -72,8 +63,8 @@
             setButtonLoading(resetFiltersButton, false);
         });
 
-        document.getElementById('classroomsTable').addEventListener('change', function (event) {
-            if (event.target.classList.contains('classroom-status-toggle')) {
+        document.getElementById('subjectsTable').addEventListener('change', function (event) {
+            if (event.target.classList.contains('subject-status-toggle')) {
                 const toggle = event.target;
                 toggle.disabled = true;
 
@@ -97,7 +88,7 @@
                             toast: true,
                             position: 'top-end',
                             icon: 'success',
-                            title: data.message || 'Classroom status updated successfully.',
+                            title: data.message || 'Subject status updated successfully.',
                             showConfirmButton: false,
                             timer: 1800
                         });
@@ -105,32 +96,32 @@
                     .catch(function () {
                         toggle.checked = !toggle.checked;
                         toggle.disabled = false;
-                        Swal.fire('Error', 'Unable to update classroom status. Please try again.', 'error');
+                        Swal.fire('Error', 'Unable to update subject status. Please try again.', 'error');
                     });
 
                 return;
             }
 
-            if (!event.target.classList.contains('classroom-row-check')) {
+            if (!event.target.classList.contains('subject-row-check')) {
                 return;
             }
 
             event.target.checked
-                ? selectedClassrooms.add(event.target.value)
-                : selectedClassrooms.delete(event.target.value);
+                ? selectedSubjects.add(event.target.value)
+                : selectedSubjects.delete(event.target.value);
 
             syncSelectAll();
         });
 
-        document.getElementById('classroomsTable').addEventListener('click', function (event) {
-            const deleteButton = event.target.closest('.classroom-delete-btn');
+        document.getElementById('subjectsTable').addEventListener('click', function (event) {
+            const deleteButton = event.target.closest('.subject-delete-btn');
 
             if (!deleteButton) {
                 return;
             }
 
             Swal.fire({
-                title: 'Delete Classroom?',
+                title: 'Delete Subject?',
                 text: 'This action cannot be undone.',
                 icon: 'warning',
                 showCancelButton: true,
@@ -157,36 +148,36 @@
                         return response.json();
                     })
                     .then(function (data) {
-                        selectedClassrooms.delete(deleteButton.closest('tr')?.querySelector('.classroom-row-check')?.value);
+                        selectedSubjects.delete(deleteButton.closest('tr')?.querySelector('.subject-row-check')?.value);
                         table.draw(false);
-                        Swal.fire('Deleted', data.message || 'Classroom deleted successfully.', 'success');
+                        Swal.fire('Deleted', data.message || 'Subject deleted successfully.', 'success');
                     })
                     .catch(function () {
-                        Swal.fire('Error', 'Unable to delete classroom. Please try again.', 'error');
+                        Swal.fire('Error', 'Unable to delete subject. Please try again.', 'error');
                     });
             });
         });
 
         selectAll.addEventListener('change', function () {
-            document.querySelectorAll('.classroom-row-check').forEach(function (checkbox) {
+            document.querySelectorAll('.subject-row-check').forEach(function (checkbox) {
                 checkbox.checked = selectAll.checked;
                 selectAll.checked
-                    ? selectedClassrooms.add(checkbox.value)
-                    : selectedClassrooms.delete(checkbox.value);
+                    ? selectedSubjects.add(checkbox.value)
+                    : selectedSubjects.delete(checkbox.value);
             });
         });
 
         document.querySelectorAll('[data-export-url]').forEach(function (button) {
             button.addEventListener('click', function () {
-                if (!selectedClassrooms.size) {
-                    Swal.fire('No Rows Selected', 'Select at least one classroom to export.', 'warning');
+                if (!selectedSubjects.size) {
+                    Swal.fire('No Rows Selected', 'Select at least one subject to export.', 'warning');
                     return;
                 }
 
                 const formData = new FormData();
                 formData.append('_token', csrfToken);
 
-                selectedClassrooms.forEach(function (id) {
+                selectedSubjects.forEach(function (id) {
                     formData.append('selected_ids[]', id);
                 });
 
@@ -223,7 +214,7 @@
                         link.remove();
                         window.URL.revokeObjectURL(downloadUrl);
 
-                        clearSelectedClassrooms();
+                        clearSelectedSubjects();
 
                         Swal.fire({
                             toast: true,
@@ -235,7 +226,7 @@
                         });
                     })
                     .catch(function () {
-                        Swal.fire('Error', 'Unable to export selected classrooms. Please try again.', 'error');
+                        Swal.fire('Error', 'Unable to export selected subjects. Please try again.', 'error');
                     })
                     .finally(function () {
                         setButtonLoading(button, false);
@@ -263,9 +254,9 @@
             }
         }
 
-        function clearSelectedClassrooms() {
-            selectedClassrooms.clear();
-            document.querySelectorAll('.classroom-row-check').forEach(function (checkbox) {
+        function clearSelectedSubjects() {
+            selectedSubjects.clear();
+            document.querySelectorAll('.subject-row-check').forEach(function (checkbox) {
                 checkbox.checked = false;
             });
             selectAll.checked = false;
@@ -279,11 +270,11 @@
                 return match[1];
             }
 
-            return exportUrl.includes('/pdf') ? 'classrooms.pdf' : 'classrooms.xlsx';
+            return exportUrl.includes('/pdf') ? 'subjects.pdf' : 'subjects.xlsx';
         }
 
         function syncSelectAll() {
-            const visibleChecks = Array.from(document.querySelectorAll('.classroom-row-check'));
+            const visibleChecks = Array.from(document.querySelectorAll('.subject-row-check'));
             selectAll.checked = visibleChecks.length > 0 && visibleChecks.every(function (checkbox) {
                 return checkbox.checked;
             });

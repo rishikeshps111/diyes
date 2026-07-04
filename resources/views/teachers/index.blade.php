@@ -99,6 +99,11 @@
               @can('create.teacher')
                 <a href="{{ route('teachers.create') }}" class="add-btn">Add New</a>
               @endcan
+              @can('delete.teacher')
+                <button type="button" id="bulkDeleteTeachers" class="add-btn border-0"
+                  data-delete-url="{{ route('teachers.bulk-delete') }}" data-loading-text="Deleting..."
+                  style="background-color: #dc3545; border-color: #dc3545;">Bulk Delete</button>
+              @endcan
             </div>
           </div>
         </div>

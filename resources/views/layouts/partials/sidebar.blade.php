@@ -15,15 +15,15 @@
           </a>
         </li>
 
-        @canany(['view.academic-year', 'view.grade', 'view.division'])
+        @canany(['view.academic-year', 'view.grade', 'view.subject', 'view.division'])
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('academic-years.*', 'grades.*', 'divisions.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('academic-years.*', 'grades.*', 'subjects.*', 'divisions.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarAcademicManagement" data-bs-toggle="collapse" href="#">
               <i class="fa-solid fa-graduation-cap"></i><span>Academic Management</span><i
                 class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarAcademicManagement"
-              class="nav-content collapse sub-menu {{ request()->routeIs('academic-years.*', 'grades.*', 'divisions.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('academic-years.*', 'grades.*', 'subjects.*', 'divisions.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
               @can('view.academic-year')
                 <li>
@@ -45,6 +45,14 @@
                   <a href="{{ route('divisions.index') }}"
                     class="{{ request()->routeIs('divisions.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Divisions</span>
+                  </a>
+                </li>
+              @endcan
+              @can('view.subject')
+                <li>
+                  <a href="{{ route('subjects.index') }}"
+                    class="{{ request()->routeIs('subjects.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Subjects</span>
                   </a>
                 </li>
               @endcan

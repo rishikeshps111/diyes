@@ -7,30 +7,24 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
-    'code',
-    'room_name',
-    'building',
-    'floor',
-    'room_type',
-    'seating_capacity',
-    'facilities',
+    'subject_code',
+    'subject_name',
+    'grade_id',
     'is_active',
-    'remarks',
+    'priority',
+    'is_praticals',
 ])]
-class Classroom extends Model
+class Subject extends Model
 {
     use HasFactory;
 
-    public const ROOM_TYPES = [
-        'Smart Classroom',
-        'Laboratory',
-        'Lecture Hall',
-        'Computer Lab',
-        'Library Room',
-        'Activity Room',
-        'Seminar Hall',
+    public const PRIORITIES = [
+        'low' => 'Low',
+        'medium' => 'Medium',
+        'high' => 'High',
     ];
 
     /**
@@ -41,10 +35,14 @@ class Classroom extends Model
     protected function casts(): array
     {
         return [
-            'facilities' => 'array',
             'is_active' => 'boolean',
-            'seating_capacity' => 'integer',
+            'is_praticals' => 'boolean',
         ];
+    }
+
+    public function grade(): BelongsTo
+    {
+        return $this->belongsTo(Grade::class);
     }
 
     #[Scope]

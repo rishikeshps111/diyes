@@ -86,6 +86,21 @@ class TeacherService
         $teacher->delete();
     }
 
+    public function bulkDelete(array $ids): int
+    {
+        $deleted = 0;
+
+        Teacher::query()
+            ->whereKey($ids)
+            ->get()
+            ->each(function (Teacher $teacher) use (&$deleted): void {
+                $this->delete($teacher);
+                $deleted++;
+            });
+
+        return $deleted;
+    }
+
     public function createDocument(Teacher $teacher, array $data, UploadedFile $file): TeacherDocument
     {
         return $teacher->documents()->create([

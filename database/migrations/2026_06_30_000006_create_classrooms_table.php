@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
+
             $table->string('code')->unique();
             $table->string('room_name');
             $table->string('building');
             $table->string('floor');
+
             $table->enum('room_type', [
                 'Smart Classroom',
                 'Laboratory',
@@ -26,11 +28,15 @@ return new class extends Migration
                 'Activity Room',
                 'Seminar Hall',
             ]);
+
             $table->unsignedInteger('seating_capacity');
-            $table->foreignId('department_id')->constrained()->cascadeOnDelete();
-            $table->json('equipment')->nullable();
+
+            // Final latest field
+            $table->json('facilities')->nullable();
+
             $table->boolean('is_active')->default(true);
             $table->text('remarks')->nullable();
+
             $table->timestamps();
         });
     }

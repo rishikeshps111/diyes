@@ -34,7 +34,6 @@ class ClassroomController extends Controller implements HasMiddleware
     public function index(): View
     {
         return view('classrooms.index', [
-            'departments' => $this->classroomService->departments(),
             'roomTypes' => $this->classroomService->roomTypes(),
         ]);
     }
@@ -45,7 +44,6 @@ class ClassroomController extends Controller implements HasMiddleware
             'building',
             'floor',
             'room_type',
-            'department_id',
             'seating_capacity',
             'is_active',
         ]));
@@ -61,6 +59,7 @@ class ClassroomController extends Controller implements HasMiddleware
                 $classroom->is_active ? 'status-green' : 'status-red',
                 $classroom->is_active ? 'Active' : 'Inactive'
             ))
+            ->addColumn('facilities_text', fn (Classroom $classroom): string => collect($classroom->facilities)->filter()->implode(', ') ?: '-')
             ->addColumn('actions', fn (Classroom $classroom): string => $this->actionButtons($classroom))
             ->rawColumns(['select', 'is_active', 'actions'])
             ->toJson();
@@ -73,9 +72,8 @@ class ClassroomController extends Controller implements HasMiddleware
                 'code' => $this->classroomService->nextCode(),
                 'is_active' => true,
             ]),
-            'departments' => $this->classroomService->departments(),
             'roomTypes' => $this->classroomService->roomTypes(),
-            'equipmentOptions' => $this->classroomService->equipmentOptions(),
+            'facilityOptions' => $this->classroomService->facilityOptions(),
         ]);
     }
 
@@ -92,9 +90,8 @@ class ClassroomController extends Controller implements HasMiddleware
     {
         return view('classrooms.form', [
             'classroom' => $classroom,
-            'departments' => $this->classroomService->departments(),
             'roomTypes' => $this->classroomService->roomTypes(),
-            'equipmentOptions' => $this->classroomService->equipmentOptions(),
+            'facilityOptions' => $this->classroomService->facilityOptions(),
         ]);
     }
 

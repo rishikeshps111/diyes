@@ -14,6 +14,7 @@ class ModulePrefix extends Model
     public const MODULES = [
         'academic_year' => 'Academic Year',
         'grade' => 'Grade',
+        'subject' => 'Subject',
         'division' => 'Division',
         'department' => 'Department',
         'designation' => 'Designation',

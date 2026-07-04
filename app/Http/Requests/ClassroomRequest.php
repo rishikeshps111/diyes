@@ -29,9 +29,8 @@ class ClassroomRequest extends FormRequest
             'floor' => ['required', 'string', 'max:255'],
             'room_type' => ['required', 'string', Rule::in(Classroom::ROOM_TYPES)],
             'seating_capacity' => ['required', 'integer', 'min:1'],
-            'department_id' => ['required', 'integer', Rule::exists('departments', 'id')],
-            'equipment' => ['nullable', 'array'],
-            'equipment.*' => ['nullable', 'string', 'max:255'],
+            'facilities' => ['nullable', 'array'],
+            'facilities.*' => ['nullable', 'string', 'max:255'],
             'is_active' => ['required', 'boolean'],
             'remarks' => ['nullable', 'string'],
         ];

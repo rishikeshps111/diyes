@@ -13,21 +13,31 @@ return new class extends Migration
     {
         Schema::create('holidays', function (Blueprint $table) {
             $table->id();
+
             $table->string('code')->unique();
             $table->string('holiday_name');
+
             $table->enum('holiday_type', [
                 'Public',
                 'festival',
                 'Optional',
                 'Others',
             ]);
-            $table->foreignId('academic_year_id')->constrained()->cascadeOnDelete();
+
+            $table->foreignId('academic_year_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->date('holiday_date');
             $table->date('start_date');
             $table->date('end_date');
+
+            // Final latest field
             $table->string('applicable_for')->nullable();
+
             $table->boolean('is_active')->default(true);
             $table->text('description')->nullable();
+
             $table->timestamps();
         });
     }

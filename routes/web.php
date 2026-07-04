@@ -10,6 +10,7 @@ use App\Http\Controllers\GradeController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\ModulePrefixController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
 use App\Http\Controllers\UserController;
@@ -60,6 +61,15 @@ Route::middleware('auth')->group(function () {
         ->name('grades.toggle-status');
 
     Route::resource('grades', GradeController::class)
+        ->except('show');
+
+    Route::get('subjects/data', [SubjectController::class, 'data'])->name('subjects.data');
+    Route::post('subjects/export/excel', [SubjectController::class, 'exportExcel'])->name('subjects.export.excel');
+    Route::post('subjects/export/pdf', [SubjectController::class, 'exportPdf'])->name('subjects.export.pdf');
+    Route::patch('subjects/{subject}/toggle-status', [SubjectController::class, 'toggleStatus'])
+        ->name('subjects.toggle-status');
+
+    Route::resource('subjects', SubjectController::class)
         ->except('show');
 
     Route::get('divisions/data', [DivisionController::class, 'data'])->name('divisions.data');
@@ -122,6 +132,7 @@ Route::middleware('auth')->group(function () {
         ->except(['create', 'store', 'show', 'destroy']);
 
     Route::get('teachers/data', [TeacherController::class, 'data'])->name('teachers.data');
+    Route::delete('teachers/bulk-delete', [TeacherController::class, 'bulkDelete'])->name('teachers.bulk-delete');
     Route::post('teachers/export/excel', [TeacherController::class, 'exportExcel'])->name('teachers.export.excel');
     Route::post('teachers/export/pdf', [TeacherController::class, 'exportPdf'])->name('teachers.export.pdf');
     Route::patch('teachers/{teacher}/verify', [TeacherController::class, 'verify'])->name('teachers.verify');

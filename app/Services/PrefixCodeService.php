@@ -11,6 +11,7 @@ class PrefixCodeService
     private const DEFAULT_PREFIXES = [
         'academic_year' => 'AT',
         'grade' => 'GRD',
+        'subject' => 'SUB',
         'division' => 'DIV',
         'department' => 'DEP',
         'designation' => 'DSG',

@@ -15,6 +15,7 @@ class ModulePrefixSeeder extends Seeder
         $prefixes = [
             'academic_year' => 'AT',
             'grade' => 'GRD',
+            'subject' => 'SUB',
             'division' => 'DIV',
             'department' => 'DEP',
             'designation' => 'DSG',

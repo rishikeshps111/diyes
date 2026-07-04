@@ -28,7 +28,7 @@ class TeacherController extends Controller implements HasMiddleware
             new Middleware('can:view.teacher', only: ['index', 'data', 'show', 'exportExcel', 'exportPdf']),
             new Middleware('can:create.teacher', only: ['create', 'store']),
             new Middleware('can:edit.teacher', only: ['edit', 'update', 'verify']),
-            new Middleware('can:delete.teacher', only: ['destroy']),
+            new Middleware('can:delete.teacher', only: ['destroy', 'bulkDelete']),
         ];
     }
 
@@ -183,6 +183,38 @@ class TeacherController extends Controller implements HasMiddleware
         return redirect()
             ->route('teachers.index')
             ->with('success', 'Teacher deleted successfully.');
+    }
+
+    public function bulkDelete(Request $request): JsonResponse|RedirectResponse
+    {
+        $ids = collect($request->input('selected_ids', []))
+            ->filter()
+            ->map(fn($id): int => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        if (empty($ids)) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Select at least one teacher to delete.',
+                ], 422);
+            }
+
+            return back()->with('error', 'Select at least one teacher to delete.');
+        }
+
+        $deleted = $this->teacherService->bulkDelete($ids);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => "{$deleted} teacher(s) deleted successfully.",
+            ]);
+        }
+
+        return redirect()
+            ->route('teachers.index')
+            ->with('success', "{$deleted} teacher(s) deleted successfully.");
     }
 
     public function verify(Request $request, Teacher $teacher): JsonResponse|RedirectResponse

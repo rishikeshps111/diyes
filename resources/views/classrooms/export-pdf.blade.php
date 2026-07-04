@@ -22,8 +22,7 @@
         <th>Floor</th>
         <th>Room Type</th>
         <th>Capacity</th>
-        <th>Department</th>
-        <th>Equipment</th>
+        <th>Facilities</th>
         <th>Status</th>
         <th>Remarks</th>
       </tr>
@@ -37,8 +36,7 @@
           <td>{{ $classroom->floor }}</td>
           <td>{{ $classroom->room_type }}</td>
           <td>{{ $classroom->seating_capacity }}</td>
-          <td>{{ $classroom->department?->department_name ?? '-' }}</td>
-          <td>{{ collect($classroom->equipment)->filter()->implode(', ') ?: '-' }}</td>
+          <td>{{ collect($classroom->facilities)->filter()->implode(', ') ?: '-' }}</td>
           <td>{{ $classroom->is_active ? 'Active' : 'Inactive' }}</td>
           <td>{{ $classroom->remarks ?? '-' }}</td>
         </tr>

@@ -4,6 +4,7 @@
         const selectAll = document.getElementById('selectAllTeachers');
         const applyFiltersButton = document.getElementById('applyFilters');
         const resetFiltersButton = document.getElementById('resetFilters');
+        const bulkDeleteButton = document.getElementById('bulkDeleteTeachers');
         const csrfToken = '{{ csrf_token() }}';
 
         if (window.jQuery && jQuery.fn.select2) {
@@ -147,6 +148,49 @@
             }
 
         });
+
+        if (bulkDeleteButton) {
+            bulkDeleteButton.addEventListener('click', function () {
+                if (!selectedTeachers.size) {
+                    Swal.fire('No Rows Selected', 'Select at least one teacher to delete.', 'warning');
+                    return;
+                }
+
+                confirmAction('Delete Selected Teachers?', 'This action cannot be undone.', function () {
+                    const formData = new FormData();
+                    formData.append('_method', 'DELETE');
+                    formData.append('_token', csrfToken);
+
+                    selectedTeachers.forEach(function (id) {
+                        formData.append('selected_ids[]', id);
+                    });
+
+                    setButtonLoading(bulkDeleteButton, true);
+
+                    fetch(bulkDeleteButton.dataset.deleteUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    })
+                        .then(assertOk)
+                        .then(function (response) { return response.json(); })
+                        .then(function (data) {
+                            clearSelectedTeachers();
+                            table.draw(false);
+                            Swal.fire('Deleted', data.message || 'Selected teachers deleted successfully.', 'success');
+                        })
+                        .catch(function () {
+                            Swal.fire('Error', 'Unable to delete selected teachers. Please try again.', 'error');
+                        })
+                        .finally(function () {
+                            setButtonLoading(bulkDeleteButton, false);
+                        });
+                });
+            });
+        }
 
         selectAll.addEventListener('change', function () {
             document.querySelectorAll('.teacher-row-check').forEach(function (checkbox) {

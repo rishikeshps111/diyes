@@ -81,34 +81,19 @@
                   <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
               </div>
-              <div class="col-lg-4 o-f-inp mb-3">
-                <label for="department_id">Department <span class="text-danger">*</span></label>
-                <select name="department_id" id="department_id"
-                  class="form-select shadow-none @error('department_id') is-invalid @enderror">
-                  <option value="">--- Select ---</option>
-                  @foreach ($departments as $department)
-                    <option value="{{ $department->id }}" @selected(old('department_id', $classroom->department_id) == $department->id)>
-                      {{ $department->department_name }}
-                    </option>
-                  @endforeach
-                </select>
-                @error('department_id')
-                  <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-              </div>
-              <div class="col-lg-4 o-f-inp mb-3">
-                <label for="equipment">Equipment</label>
+              <div class="col-lg-12 o-f-inp mb-3">
+                <label for="facilities">Facilities</label>
                 @php
-                  $selectedEquipment = old('equipment', $classroom->equipment ?? []);
-                  $mergedEquipmentOptions = collect($equipmentOptions)->merge($selectedEquipment)->filter()->unique();
+                  $selectedFacilities = old('facilities', $classroom->facilities ?? []);
+                  $mergedFacilityOptions = collect($facilityOptions)->merge($selectedFacilities)->filter()->unique();
                 @endphp
-                <select name="equipment[]" id="equipment"
-                  class="form-select shadow-none @error('equipment') is-invalid @enderror" multiple>
-                  @foreach ($mergedEquipmentOptions as $equipment)
-                    <option value="{{ $equipment }}" @selected(in_array($equipment, $selectedEquipment, true))>{{ $equipment }}</option>
+                <select name="facilities[]" id="facilities"
+                  class="form-select shadow-none @error('facilities') is-invalid @enderror" multiple>
+                  @foreach ($mergedFacilityOptions as $facility)
+                    <option value="{{ $facility }}" @selected(in_array($facility, $selectedFacilities, true))>{{ $facility }}</option>
                   @endforeach
                 </select>
-                @error('equipment')
+                @error('facilities')
                   <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
               </div>
@@ -154,10 +139,10 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (window.jQuery && jQuery.fn.select2) {
-        jQuery('#equipment').select2({
+        jQuery('#facilities').select2({
           tags: true,
           width: '100%',
-          placeholder: 'Select or type equipment'
+          placeholder: 'Select or type facilities'
         });
       }
 

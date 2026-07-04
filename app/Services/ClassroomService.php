@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Classroom;
-use App\Models\Department;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
@@ -15,7 +14,6 @@ class ClassroomService
     public function query(array $filters = []): Builder
     {
         return Classroom::query()
-            ->with('department')
             ->when($filters['building'] ?? null, function (Builder $query, string $building): void {
                 $query->where('building', 'like', "%{$building}%");
             })
@@ -24,9 +22,6 @@ class ClassroomService
             })
             ->when($filters['room_type'] ?? null, function (Builder $query, string $roomType): void {
                 $query->where('room_type', $roomType);
-            })
-            ->when($filters['department_id'] ?? null, function (Builder $query, string $departmentId): void {
-                $query->where('department_id', $departmentId);
             })
             ->when($filters['seating_capacity'] ?? null, function (Builder $query, string $capacity): void {
                 $query->where('seating_capacity', $capacity);
@@ -39,17 +34,9 @@ class ClassroomService
     public function selectedForExport(array $ids): Collection
     {
         return Classroom::query()
-            ->with('department')
             ->whereKey($ids)
             ->orderByDesc('created_at')
             ->get();
-    }
-
-    public function departments(): Collection
-    {
-        return Department::query()
-            ->orderBy('department_name')
-            ->get(['id', 'department_name']);
     }
 
     public function roomTypes(): array
@@ -57,7 +44,7 @@ class ClassroomService
         return Classroom::ROOM_TYPES;
     }
 
-    public function equipmentOptions(): array
+    public function facilityOptions(): array
     {
         return [
             'Projector',
@@ -87,8 +74,7 @@ class ClassroomService
                 'floor',
                 'room_type',
                 'seating_capacity',
-                'department_id',
-                'equipment',
+                'facilities',
                 'is_active',
                 'remarks',
             ]),
@@ -104,8 +90,7 @@ class ClassroomService
             'floor',
             'room_type',
             'seating_capacity',
-            'department_id',
-            'equipment',
+            'facilities',
             'is_active',
             'remarks',
         ]));

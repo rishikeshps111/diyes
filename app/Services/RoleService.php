@@ -94,6 +94,12 @@ class RoleService
                 'edit.grade',
                 'delete.grade',
             ],
+            'Subject' => [
+                'view.subject',
+                'create.subject',
+                'edit.subject',
+                'delete.subject',
+            ],
             'Division' => [
                 'view.division',
                 'create.division',
