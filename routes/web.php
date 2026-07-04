@@ -13,6 +13,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
+use App\Http\Controllers\TimeTableTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VenueController;
 use Illuminate\Support\Facades\Artisan;
@@ -125,6 +126,15 @@ Route::middleware('auth')->group(function () {
     Route::get('holidays/calendar', [HolidayController::class, 'calendar'])->name('holidays.calendar');
 
     Route::resource('holidays', HolidayController::class)
+        ->except('show');
+
+    Route::get('time-table-types/data', [TimeTableTypeController::class, 'data'])->name('time-table-types.data');
+    Route::post('time-table-types/export/excel', [TimeTableTypeController::class, 'exportExcel'])->name('time-table-types.export.excel');
+    Route::post('time-table-types/export/pdf', [TimeTableTypeController::class, 'exportPdf'])->name('time-table-types.export.pdf');
+    Route::patch('time-table-types/{time_table_type}/toggle-status', [TimeTableTypeController::class, 'toggleStatus'])
+        ->name('time-table-types.toggle-status');
+
+    Route::resource('time-table-types', TimeTableTypeController::class)
         ->except('show');
 
     Route::get('module-prefixes/data', [ModulePrefixController::class, 'data'])->name('module-prefixes.data');

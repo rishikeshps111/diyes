@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('teachers', function (Blueprint $table) {
-            $table->string('teacher_image')->nullable()->after('employee_id');
+        Schema::create('time_table_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('code')->unique();
+            $table->string('title');
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('teachers', function (Blueprint $table) {
-            $table->dropColumn('teacher_image');
-        });
+        Schema::dropIfExists('time_table_types');
     }
 };

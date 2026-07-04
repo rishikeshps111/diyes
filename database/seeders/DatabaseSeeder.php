@@ -31,6 +31,8 @@ class DatabaseSeeder extends Seeder
         $this->call(ClassroomSeeder::class);
         $this->call(VenueSeeder::class);
         $this->call(HolidaySeeder::class);
+        $this->call(TimeTableTypeSeeder::class);
+        $this->call(UserSeeder::class);
 
         $adminRole = Role::query()->where('name', 'admin')->where('guard_name', 'web')->first();
         $adminDepartmentId = \App\Models\Department::query()->orderBy('id')->value('id');

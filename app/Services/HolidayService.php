@@ -62,6 +62,16 @@ class HolidayService
         return Holiday::HOLIDAY_TYPES;
     }
 
+    public function holidayTypeColors(): array
+    {
+        return [
+            'Public' => '#d32f2f',
+            'festival' => '#f57c00',
+            'Optional' => '#1976d2',
+            'Others' => '#6a1b9a',
+        ];
+    }
+
     public function applicableForOptions(): array
     {
         return Holiday::APPLICABLE_FOR;
@@ -178,23 +188,30 @@ class HolidayService
 
     private function holidayEvents(Collection $holidays): array
     {
+        $colors = $this->holidayTypeColors();
+
         return $holidays
-            ->map(fn (Holiday $holiday): array => [
-                'title' => $holiday->holiday_name,
-                'start' => $holiday->start_date?->toDateString(),
-                'end' => $holiday->end_date?->copy()->addDay()->toDateString(),
-                'allDay' => true,
-                'color' => '#c62828',
-                'borderColor' => '#c62828',
-                'extendedProps' => [
-                    'kind' => 'holiday',
-                    'type' => $holiday->holiday_type,
-                    'holidayDate' => $holiday->holiday_date?->format('d M Y') ?? '-',
-                    'range' => $holiday->start_date?->format('d M Y').' - '.$holiday->end_date?->format('d M Y'),
-                    'applicableFor' => $holiday->applicable_for ?: '-',
-                    'description' => $holiday->description ?: '-',
-                ],
-            ])
+            ->map(function (Holiday $holiday) use ($colors): array {
+                $color = $colors[$holiday->holiday_type] ?? '#c62828';
+
+                return [
+                    'title' => $holiday->holiday_name,
+                    'start' => $holiday->start_date?->toDateString(),
+                    'end' => $holiday->end_date?->copy()->addDay()->toDateString(),
+                    'allDay' => true,
+                    'color' => $color,
+                    'borderColor' => $color,
+                    'extendedProps' => [
+                        'kind' => 'holiday',
+                        'type' => $holiday->holiday_type,
+                        'typeColor' => $color,
+                        'holidayDate' => $holiday->holiday_date?->format('d M Y') ?? '-',
+                        'range' => $holiday->start_date?->format('d M Y').' - '.$holiday->end_date?->format('d M Y'),
+                        'applicableFor' => $holiday->applicable_for ?: '-',
+                        'description' => $holiday->description ?: '-',
+                    ],
+                ];
+            })
             ->values()
             ->all();
     }

@@ -136,6 +136,12 @@ class RoleService
                 'edit.holiday',
                 'delete.holiday',
             ],
+            'Time Table Type' => [
+                'view.time-table-type',
+                'create.time-table-type',
+                'edit.time-table-type',
+                'delete.time-table-type',
+            ],
             'Module Prefix' => [
                 'view.module-prefix',
                 'edit.module-prefix',

@@ -47,6 +47,29 @@ class RolePermissionSeeder extends Seeder
         $staff = Role::findOrCreate('staff', $guard);
         $staff->syncPermissions(['dashboard.view']);
 
+        $academicSupervisor = Role::findOrCreate('Academic Supervisor', $guard);
+        $academicSupervisor->syncPermissions([
+            'dashboard.view',
+            'view.academic-year',
+            'create.academic-year',
+            'edit.academic-year',
+            'view.grade',
+            'create.grade',
+            'edit.grade',
+            'view.subject',
+            'create.subject',
+            'edit.subject',
+            'view.division',
+            'create.division',
+            'edit.division',
+            'view.holiday',
+            'create.holiday',
+            'edit.holiday',
+            'view.time-table-type',
+            'create.time-table-type',
+            'edit.time-table-type',
+        ]);
+
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

@@ -96,6 +96,7 @@ class HolidayController extends Controller implements HasMiddleware
             'initialDate' => $calendar['initialDate'],
             'validRange' => $calendar['validRange'],
             'events' => $calendar['events'],
+            'holidayTypeColors' => $this->holidayService->holidayTypeColors(),
         ]);
     }
 
