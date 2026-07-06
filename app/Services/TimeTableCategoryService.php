@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\TimeTableType;
+use App\Models\TimeTableCategory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
-class TimeTableTypeService
+class TimeTableCategoryService
 {
     public function __construct(private readonly PrefixCodeService $prefixCodeService) {}
 
     public function query(array $filters = []): Builder
     {
-        return TimeTableType::query()
+        return TimeTableCategory::query()
             ->when(isset($filters['is_active']) && $filters['is_active'] !== '', function (Builder $query) use ($filters): void {
                 $query->where('is_active', (bool) $filters['is_active']);
             });
@@ -21,7 +21,7 @@ class TimeTableTypeService
 
     public function selectedForExport(array $ids): Collection
     {
-        return TimeTableType::query()
+        return TimeTableCategory::query()
             ->whereKey($ids)
             ->orderByDesc('created_at')
             ->get();
@@ -29,12 +29,12 @@ class TimeTableTypeService
 
     public function nextCode(): string
     {
-        return $this->prefixCodeService->next('time_table_type', TimeTableType::class);
+        return $this->prefixCodeService->next('time_table_category', TimeTableCategory::class);
     }
 
-    public function create(array $data): TimeTableType
+    public function create(array $data): TimeTableCategory
     {
-        return TimeTableType::create([
+        return TimeTableCategory::create([
             ...Arr::only($data, [
                 'title',
                 'is_active',
@@ -43,25 +43,25 @@ class TimeTableTypeService
         ]);
     }
 
-    public function update(TimeTableType $timeTableType, array $data): TimeTableType
+    public function update(TimeTableCategory $timeTableCategory, array $data): TimeTableCategory
     {
-        $timeTableType->update(Arr::only($data, [
+        $timeTableCategory->update(Arr::only($data, [
             'title',
             'is_active',
         ]));
 
-        return $timeTableType;
+        return $timeTableCategory;
     }
 
-    public function toggleStatus(TimeTableType $timeTableType): TimeTableType
+    public function toggleStatus(TimeTableCategory $timeTableCategory): TimeTableCategory
     {
-        $timeTableType->forceFill(['is_active' => ! $timeTableType->is_active])->save();
+        $timeTableCategory->forceFill(['is_active' => ! $timeTableCategory->is_active])->save();
 
-        return $timeTableType;
+        return $timeTableCategory;
     }
 
-    public function delete(TimeTableType $timeTableType): void
+    public function delete(TimeTableCategory $timeTableCategory): void
     {
-        $timeTableType->delete();
+        $timeTableCategory->delete();
     }
 }

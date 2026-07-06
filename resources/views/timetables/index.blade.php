@@ -55,11 +55,11 @@
               </div>
               <div class="col-lg-3 mb-3">
                 <div class="o-f-inp">
-                  <label for="timetable_type_filter">Timetable Type</label>
-                  <select id="timetable_type_filter" class="form-select shadow-none">
+                  <label for="timetable_category_filter">Timetable Category</label>
+                  <select id="timetable_category_filter" class="form-select shadow-none">
                     <option value="">--- Select ---</option>
-                    @foreach ($timetableTypes as $timetableType)
-                      <option value="{{ $timetableType->id }}">{{ $timetableType->title }}</option>
+                    @foreach ($timetableCategories as $timetableCategory)
+                      <option value="{{ $timetableCategory->id }}">{{ $timetableCategory->title }}</option>
                     @endforeach
                   </select>
                 </div>

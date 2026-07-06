@@ -22,7 +22,7 @@ class ModulePrefixSeeder extends Seeder
             'classroom' => 'CLS',
             'venue' => 'VEN',
             'holiday' => 'HOL',
-            'time_table_type' => 'TTT',
+            'time_table_category' => 'TTC',
             'timetable' => 'TT',
             'teacher' => 'EMP',
             'user' => 'EMP',

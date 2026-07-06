@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
     'title',
     'is_active',
 ])]
-class TimeTableType extends Model
+class TimeTableCategory extends Model
 {
     use HasFactory;
 

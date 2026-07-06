@@ -6,7 +6,7 @@ use App\Models\AcademicYear;
 use App\Models\Division;
 use App\Models\Grade;
 use App\Models\Timetable;
-use App\Models\TimeTableType;
+use App\Models\TimeTableCategory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,20 +20,20 @@ class TimetableService
     public function query(array $filters = []): Builder
     {
         return Timetable::query()
-            ->with(['academicYear', 'grade', 'divisions', 'timetableType', 'incharge', 'preparedBy'])
+            ->with(['academicYear', 'grade', 'divisions', 'timetableCategory', 'incharge', 'preparedBy'])
             ->when($filters['academic_year_id'] ?? null, fn (Builder $query, string $id) => $query->where('academic_year_id', $id))
             ->when($filters['grade_id'] ?? null, fn (Builder $query, string $id) => $query->where('grade_id', $id))
             ->when($filters['division_id'] ?? null, function (Builder $query, string $id): void {
                 $query->whereHas('divisions', fn (Builder $query) => $query->whereKey($id));
             })
-            ->when($filters['timetable_type_id'] ?? null, fn (Builder $query, string $id) => $query->where('timetable_type_id', $id))
+            ->when($filters['timetable_category_id'] ?? null, fn (Builder $query, string $id) => $query->where('timetable_category_id', $id))
             ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status));
     }
 
     public function selectedForExport(array $ids): Collection
     {
         return Timetable::query()
-            ->with(['academicYear', 'grade', 'divisions', 'timetableType', 'incharge', 'preparedBy'])
+            ->with(['academicYear', 'grade', 'divisions', 'timetableCategory', 'incharge', 'preparedBy'])
             ->whereKey($ids)
             ->orderByDesc('created_at')
             ->get();
@@ -86,9 +86,9 @@ class TimetableService
         return Division::query()->with('grade.academicYear')->orderBy('division')->get(['id', 'division', 'grade_id']);
     }
 
-    public function timetableTypes(): Collection
+    public function timetableCategories(): Collection
     {
-        return TimeTableType::query()->active()->orderBy('title')->get(['id', 'title']);
+        return TimeTableCategory::query()->active()->orderBy('title')->get(['id', 'title']);
     }
 
     public function incharges(): Collection
@@ -106,7 +106,7 @@ class TimetableService
     {
         return [
             'timetable_name',
-            'timetable_type_id',
+            'timetable_category_id',
             'applicable_from',
             'applicable_to',
             'academic_year_id',

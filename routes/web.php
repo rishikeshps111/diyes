@@ -14,7 +14,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
 use App\Http\Controllers\TimetableController;
-use App\Http\Controllers\TimeTableTypeController;
+use App\Http\Controllers\TimeTableCategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VenueController;
 use Illuminate\Support\Facades\Artisan;
@@ -129,13 +129,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('holidays', HolidayController::class)
         ->except('show');
 
-    Route::get('time-table-types/data', [TimeTableTypeController::class, 'data'])->name('time-table-types.data');
-    Route::post('time-table-types/export/excel', [TimeTableTypeController::class, 'exportExcel'])->name('time-table-types.export.excel');
-    Route::post('time-table-types/export/pdf', [TimeTableTypeController::class, 'exportPdf'])->name('time-table-types.export.pdf');
-    Route::patch('time-table-types/{time_table_type}/toggle-status', [TimeTableTypeController::class, 'toggleStatus'])
-        ->name('time-table-types.toggle-status');
+    Route::get('time-table-categories/data', [TimeTableCategoryController::class, 'data'])->name('time-table-categories.data');
+    Route::post('time-table-categories/export/excel', [TimeTableCategoryController::class, 'exportExcel'])->name('time-table-categories.export.excel');
+    Route::post('time-table-categories/export/pdf', [TimeTableCategoryController::class, 'exportPdf'])->name('time-table-categories.export.pdf');
+    Route::patch('time-table-categories/{time_table_category}/toggle-status', [TimeTableCategoryController::class, 'toggleStatus'])
+        ->name('time-table-categories.toggle-status');
 
-    Route::resource('time-table-types', TimeTableTypeController::class)
+    Route::resource('time-table-categories', TimeTableCategoryController::class)
         ->except('show');
 
     Route::get('module-prefixes/data', [ModulePrefixController::class, 'data'])->name('module-prefixes.data');
@@ -158,6 +158,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('teachers', TeacherController::class);
 
     Route::get('timetables/data', [TimetableController::class, 'data'])->name('timetables.data');
+    Route::get('timetables/{timetable}/generate', [TimetableController::class, 'generate'])->name('timetables.generate');
+    Route::post('timetables/{timetable}/generate', [TimetableController::class, 'storeGenerated'])->name('timetables.generate.store');
     Route::post('timetables/export/excel', [TimetableController::class, 'exportExcel'])->name('timetables.export.excel');
     Route::post('timetables/export/pdf', [TimetableController::class, 'exportPdf'])->name('timetables.export.pdf');
     Route::resource('timetables', TimetableController::class)

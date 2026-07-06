@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Time Table Types')
+@section('title', 'Time Table Categories')
 
 @section('content')
   <div class="page-title">
-    <h3>Time Table Types</h3>
+    <h3>Time Table Categories</h3>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
         <li class="breadcrumb-item">Masters</li>
-        <li class="breadcrumb-item active">Time Table Types</li>
+        <li class="breadcrumb-item active">Time Table Categories</li>
       </ol>
     </nav>
   </div>
@@ -49,8 +49,8 @@
             <div class="btn-flex">
               <a class="add-btn bg-filter" data-bs-toggle="collapse" href="#filterCollapse" role="button"
                 aria-expanded="false" aria-controls="filterCollapse">Filters</a>
-              @can('create.time-table-type')
-                <a href="{{ route('time-table-types.create') }}" class="add-btn">Add New</a>
+              @can('create.time-table-category')
+                <a href="{{ route('time-table-categories.create') }}" class="add-btn">Add New</a>
               @endcan
             </div>
           </div>
@@ -63,7 +63,7 @@
                 <div class="col-lg-5">
                   <div class="entry-select">
                     <p>Showing</p>
-                    <select id="timeTableTypePerPage" class="form-select shadow-none">
+                    <select id="timeTableCategoryPerPage" class="form-select shadow-none">
                       <option value="10">10</option>
                       <option value="25">25</option>
                       <option value="50">50</option>
@@ -74,26 +74,26 @@
                 </div>
                 <div class="col-lg-7">
                   <div class="table-search">
-                    <label for="timeTableTypeTableSearch" class="nowrap">Search</label>
-                    <input type="text" id="timeTableTypeTableSearch" class="form-control shadow-none"
+                    <label for="timeTableCategoryTableSearch" class="nowrap">Search</label>
+                    <input type="text" id="timeTableCategoryTableSearch" class="form-control shadow-none"
                       placeholder="Search...">
-                    <form id="timeTableTypeExportForm" method="POST" class="d-inline-flex flex-shrink-0">
+                    <form id="timeTableCategoryExportForm" method="POST" class="d-inline-flex flex-shrink-0">
                       @csrf
                       <button type="button" class="exp-btn" data-loading-text="Exporting..."
-                        data-export-url="{{ route('time-table-types.export.excel') }}">Export Excel</button>
+                        data-export-url="{{ route('time-table-categories.export.excel') }}">Export Excel</button>
                       <button type="button" class="exp-btn" data-loading-text="Exporting..."
-                        data-export-url="{{ route('time-table-types.export.pdf') }}">Export PDF</button>
+                        data-export-url="{{ route('time-table-categories.export.pdf') }}">Export PDF</button>
                     </form>
                   </div>
                 </div>
               </div>
 
               <div class="table-over">
-                <table id="timeTableTypesTable" class="align-middle mb-0 table table-custom mt-3 w-100">
+                <table id="timeTableCategoriesTable" class="align-middle mb-0 table table-custom mt-3 w-100">
                   <thead>
                     <tr>
                       <th>
-                        <input type="checkbox" id="selectAllTimeTableTypes">
+                        <input type="checkbox" id="selectAllTimeTableCategories">
                       </th>
                       <th>SL No</th>
                       <th>Code</th>
@@ -114,5 +114,5 @@
 @endsection
 
 @push('scripts')
-  @include('time-table-types.partials.js')
+  @include('time-table-categories.partials.js')
 @endpush

@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ClassroomSeeder::class);
         $this->call(VenueSeeder::class);
         $this->call(HolidaySeeder::class);
-        $this->call(TimeTableTypeSeeder::class);
+        $this->call(TimeTableCategorySeeder::class);
         $this->call(UserSeeder::class);
         $this->call(TimetableSeeder::class);
 

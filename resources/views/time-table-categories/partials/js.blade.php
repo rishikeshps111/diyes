@@ -1,12 +1,12 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const selectedTimeTableTypes = new Set();
-        const selectAll = document.getElementById('selectAllTimeTableTypes');
+        const selectedTimeTableCategories = new Set();
+        const selectAll = document.getElementById('selectAllTimeTableCategories');
         const applyFiltersButton = document.getElementById('applyFilters');
         const resetFiltersButton = document.getElementById('resetFilters');
         const csrfToken = '{{ csrf_token() }}';
 
-        const table = new DataTable('#timeTableTypesTable', {
+        const table = new DataTable('#timeTableCategoriesTable', {
             processing: true,
             serverSide: true,
             searching: true,
@@ -14,7 +14,7 @@
             order: [[6, 'desc']],
             dom: 'rt<"table_bottom"ip>',
             ajax: {
-                url: '{{ route('time-table-types.data') }}',
+                url: '{{ route('time-table-categories.data') }}',
                 data: function (data) {
                     data.is_active = document.getElementById('status_filter').value;
                 }
@@ -29,18 +29,18 @@
                 { data: 'created_at', name: 'created_at', visible: false, searchable: false }
             ],
             drawCallback: function () {
-                document.querySelectorAll('.time-table-type-row-check').forEach(function (checkbox) {
-                    checkbox.checked = selectedTimeTableTypes.has(checkbox.value);
+                document.querySelectorAll('.time-table-category-row-check').forEach(function (checkbox) {
+                    checkbox.checked = selectedTimeTableCategories.has(checkbox.value);
                 });
                 syncSelectAll();
             }
         });
 
-        document.getElementById('timeTableTypeTableSearch').addEventListener('keyup', function () {
+        document.getElementById('timeTableCategoryTableSearch').addEventListener('keyup', function () {
             table.search(this.value).draw();
         });
 
-        document.getElementById('timeTableTypePerPage').addEventListener('change', function () {
+        document.getElementById('timeTableCategoryPerPage').addEventListener('change', function () {
             table.page.len(Number(this.value)).draw();
         });
 
@@ -60,8 +60,8 @@
             setButtonLoading(resetFiltersButton, false);
         });
 
-        document.getElementById('timeTableTypesTable').addEventListener('change', function (event) {
-            if (event.target.classList.contains('time-table-type-status-toggle')) {
+        document.getElementById('timeTableCategoriesTable').addEventListener('change', function (event) {
+            if (event.target.classList.contains('time-table-category-status-toggle')) {
                 const toggle = event.target;
                 toggle.disabled = true;
 
@@ -85,7 +85,7 @@
                             toast: true,
                             position: 'top-end',
                             icon: 'success',
-                            title: data.message || 'Time table type status updated successfully.',
+                            title: data.message || 'Time table category status updated successfully.',
                             showConfirmButton: false,
                             timer: 1800
                         });
@@ -93,32 +93,32 @@
                     .catch(function () {
                         toggle.checked = !toggle.checked;
                         toggle.disabled = false;
-                        Swal.fire('Error', 'Unable to update time table type status. Please try again.', 'error');
+                        Swal.fire('Error', 'Unable to update time table category status. Please try again.', 'error');
                     });
 
                 return;
             }
 
-            if (!event.target.classList.contains('time-table-type-row-check')) {
+            if (!event.target.classList.contains('time-table-category-row-check')) {
                 return;
             }
 
             event.target.checked
-                ? selectedTimeTableTypes.add(event.target.value)
-                : selectedTimeTableTypes.delete(event.target.value);
+                ? selectedTimeTableCategories.add(event.target.value)
+                : selectedTimeTableCategories.delete(event.target.value);
 
             syncSelectAll();
         });
 
-        document.getElementById('timeTableTypesTable').addEventListener('click', function (event) {
-            const deleteButton = event.target.closest('.time-table-type-delete-btn');
+        document.getElementById('timeTableCategoriesTable').addEventListener('click', function (event) {
+            const deleteButton = event.target.closest('.time-table-category-delete-btn');
 
             if (!deleteButton) {
                 return;
             }
 
             Swal.fire({
-                title: 'Delete Time Table Type?',
+                title: 'Delete Time Table Category?',
                 text: 'This action cannot be undone.',
                 icon: 'warning',
                 showCancelButton: true,
@@ -145,36 +145,36 @@
                         return response.json();
                     })
                     .then(function (data) {
-                        selectedTimeTableTypes.delete(deleteButton.closest('tr')?.querySelector('.time-table-type-row-check')?.value);
+                        selectedTimeTableCategories.delete(deleteButton.closest('tr')?.querySelector('.time-table-category-row-check')?.value);
                         table.draw(false);
-                        Swal.fire('Deleted', data.message || 'Time table type deleted successfully.', 'success');
+                        Swal.fire('Deleted', data.message || 'Time table category deleted successfully.', 'success');
                     })
                     .catch(function () {
-                        Swal.fire('Error', 'Unable to delete time table type. Please try again.', 'error');
+                        Swal.fire('Error', 'Unable to delete time table category. Please try again.', 'error');
                     });
             });
         });
 
         selectAll.addEventListener('change', function () {
-            document.querySelectorAll('.time-table-type-row-check').forEach(function (checkbox) {
+            document.querySelectorAll('.time-table-category-row-check').forEach(function (checkbox) {
                 checkbox.checked = selectAll.checked;
                 selectAll.checked
-                    ? selectedTimeTableTypes.add(checkbox.value)
-                    : selectedTimeTableTypes.delete(checkbox.value);
+                    ? selectedTimeTableCategories.add(checkbox.value)
+                    : selectedTimeTableCategories.delete(checkbox.value);
             });
         });
 
         document.querySelectorAll('[data-export-url]').forEach(function (button) {
             button.addEventListener('click', function () {
-                if (!selectedTimeTableTypes.size) {
-                    Swal.fire('No Rows Selected', 'Select at least one time table type to export.', 'warning');
+                if (!selectedTimeTableCategories.size) {
+                    Swal.fire('No Rows Selected', 'Select at least one time table category to export.', 'warning');
                     return;
                 }
 
                 const formData = new FormData();
                 formData.append('_token', csrfToken);
 
-                selectedTimeTableTypes.forEach(function (id) {
+                selectedTimeTableCategories.forEach(function (id) {
                     formData.append('selected_ids[]', id);
                 });
 
@@ -211,7 +211,7 @@
                         link.remove();
                         window.URL.revokeObjectURL(downloadUrl);
 
-                        clearSelectedTimeTableTypes();
+                        clearSelectedTimeTableCategories();
 
                         Swal.fire({
                             toast: true,
@@ -223,7 +223,7 @@
                         });
                     })
                     .catch(function () {
-                        Swal.fire('Error', 'Unable to export selected time table types. Please try again.', 'error');
+                        Swal.fire('Error', 'Unable to export selected time table categories. Please try again.', 'error');
                     })
                     .finally(function () {
                         setButtonLoading(button, false);
@@ -251,9 +251,9 @@
             }
         }
 
-        function clearSelectedTimeTableTypes() {
-            selectedTimeTableTypes.clear();
-            document.querySelectorAll('.time-table-type-row-check').forEach(function (checkbox) {
+        function clearSelectedTimeTableCategories() {
+            selectedTimeTableCategories.clear();
+            document.querySelectorAll('.time-table-category-row-check').forEach(function (checkbox) {
                 checkbox.checked = false;
             });
             selectAll.checked = false;
@@ -267,11 +267,11 @@
                 return match[1];
             }
 
-            return exportUrl.includes('/pdf') ? 'time-table-types.pdf' : 'time-table-types.xlsx';
+            return exportUrl.includes('/pdf') ? 'time-table-categories.pdf' : 'time-table-categories.xlsx';
         }
 
         function syncSelectAll() {
-            const visibleChecks = Array.from(document.querySelectorAll('.time-table-type-row-check'));
+            const visibleChecks = Array.from(document.querySelectorAll('.time-table-category-row-check'));
             selectAll.checked = visibleChecks.length > 0 && visibleChecks.every(function (checkbox) {
                 return checkbox.checked;
             });

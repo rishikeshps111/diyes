@@ -7,7 +7,7 @@
         const csrfToken = '{{ csrf_token() }}';
 
         if (window.jQuery && jQuery.fn.select2) {
-            jQuery('#academic_year_filter, #grade_filter, #division_filter, #timetable_type_filter, #status_filter').select2({
+            jQuery('#academic_year_filter, #grade_filter, #division_filter, #timetable_category_filter, #status_filter').select2({
                 width: '100%',
                 placeholder: '--- Select ---',
                 allowClear: true
@@ -27,7 +27,7 @@
                     data.academic_year_id = document.getElementById('academic_year_filter').value;
                     data.grade_id = document.getElementById('grade_filter').value;
                     data.division_id = document.getElementById('division_filter').value;
-                    data.timetable_type_id = document.getElementById('timetable_type_filter').value;
+                    data.timetable_category_id = document.getElementById('timetable_category_filter').value;
                     data.status = document.getElementById('status_filter').value;
                 }
             },
@@ -68,12 +68,12 @@
 
         resetFiltersButton.addEventListener('click', function () {
             setButtonLoading(resetFiltersButton, true);
-            ['academic_year_filter', 'grade_filter', 'division_filter', 'timetable_type_filter', 'status_filter'].forEach(function (id) {
+            ['academic_year_filter', 'grade_filter', 'division_filter', 'timetable_category_filter', 'status_filter'].forEach(function (id) {
                 document.getElementById(id).value = '';
             });
 
             if (window.jQuery && jQuery.fn.select2) {
-                jQuery('#academic_year_filter, #grade_filter, #division_filter, #timetable_type_filter, #status_filter').val(null).trigger('change');
+                jQuery('#academic_year_filter, #grade_filter, #division_filter, #timetable_category_filter, #status_filter').val(null).trigger('change');
             }
 
             table.search('').draw();

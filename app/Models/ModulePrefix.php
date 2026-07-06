@@ -21,7 +21,7 @@ class ModulePrefix extends Model
         'classroom' => 'Classroom',
         'venue' => 'Venue',
         'holiday' => 'Holiday',
-        'time_table_type' => 'Time Table Type',
+        'time_table_category' => 'Time Table Category',
         'timetable' => 'Timetable',
         'teacher' => 'Teacher',
         'user' => 'User',

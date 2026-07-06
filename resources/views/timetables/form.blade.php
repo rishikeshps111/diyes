@@ -122,17 +122,17 @@
                 @error('timetable_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
-                <label for="timetable_type_id">Timetable Type <span class="text-danger">*</span></label>
-                <select name="timetable_type_id" id="timetable_type_id"
-                  class="form-select shadow-none @error('timetable_type_id') is-invalid @enderror">
+                <label for="timetable_category_id">Timetable Category <span class="text-danger">*</span></label>
+                <select name="timetable_category_id" id="timetable_category_id"
+                  class="form-select shadow-none @error('timetable_category_id') is-invalid @enderror">
                   <option value="">--- Select ---</option>
-                  @foreach ($timetableTypes as $timetableType)
-                    <option value="{{ $timetableType->id }}" @selected(old('timetable_type_id', $timetable->timetable_type_id) == $timetableType->id)>
-                      {{ $timetableType->title }}
+                  @foreach ($timetableCategories as $timetableCategory)
+                    <option value="{{ $timetableCategory->id }}" @selected(old('timetable_category_id', $timetable->timetable_category_id) == $timetableCategory->id)>
+                      {{ $timetableCategory->title }}
                     </option>
                   @endforeach
                 </select>
-                @error('timetable_type_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('timetable_category_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
                 <label for="academic_year_id">Academic Year <span class="text-danger">*</span></label>
@@ -283,8 +283,8 @@
               <div class="publish-summary-value" id="confirm_timetable_name">-</div>
             </div>
             <div class="publish-summary-item">
-              <span class="publish-summary-label">Timetable Type</span>
-              <div class="publish-summary-value" id="confirm_timetable_type">-</div>
+              <span class="publish-summary-label">Timetable Category</span>
+              <div class="publish-summary-value" id="confirm_timetable_category">-</div>
             </div>
             <div class="publish-summary-item">
               <span class="publish-summary-label">Academic Year</span>
@@ -366,7 +366,7 @@
       let pendingSubmitButton = null;
 
       if (window.jQuery && jQuery.fn.select2) {
-        jQuery('#timetable_type_id, #academic_year_id, #grade_id, #division_ids, #timetable_incharge_id').select2({
+        jQuery('#timetable_category_id, #academic_year_id, #grade_id, #division_ids, #timetable_incharge_id').select2({
           width: '100%',
           placeholder: '--- Select ---',
           allowClear: true
@@ -467,7 +467,7 @@
       function fillPublishConfirmation() {
         setConfirmText('confirm_code', document.getElementById('code').value);
         setConfirmText('confirm_timetable_name', document.getElementById('timetable_name').value);
-        setConfirmText('confirm_timetable_type', selectedText(document.getElementById('timetable_type_id')));
+        setConfirmText('confirm_timetable_category', selectedText(document.getElementById('timetable_category_id')));
         setConfirmText('confirm_academic_year', selectedText(document.getElementById('academic_year_id')));
         setConfirmText('confirm_applicable_from', fromInput.value);
         setConfirmText('confirm_applicable_to', toInput.value);

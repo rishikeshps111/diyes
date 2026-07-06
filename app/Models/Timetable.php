@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'code',
     'timetable_name',
-    'timetable_type_id',
+    'timetable_category_id',
     'applicable_from',
     'applicable_to',
     'academic_year_id',
@@ -48,9 +49,9 @@ class Timetable extends Model
         ];
     }
 
-    public function timetableType(): BelongsTo
+    public function timetableCategory(): BelongsTo
     {
-        return $this->belongsTo(TimeTableType::class);
+        return $this->belongsTo(TimeTableCategory::class);
     }
 
     public function academicYear(): BelongsTo
@@ -76,5 +77,10 @@ class Timetable extends Model
     public function preparedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'prepared_by_id');
+    }
+
+    public function entries(): HasMany
+    {
+        return $this->hasMany(TimetableEntry::class);
     }
 }

@@ -18,7 +18,7 @@
       <tr>
         <th>Code</th>
         <th>Timetable Name</th>
-        <th>Timetable Type</th>
+        <th>Timetable Category</th>
         <th>Academic Year</th>
         <th>Grade</th>
         <th>Division</th>
@@ -33,7 +33,7 @@
         <tr>
           <td>{{ $timetable->code }}</td>
           <td>{{ $timetable->timetable_name }}</td>
-          <td>{{ $timetable->timetableType?->title ?? '-' }}</td>
+          <td>{{ $timetable->timetableCategory?->title ?? '-' }}</td>
           <td>{{ $timetable->academicYear?->academic_year ?? '-' }}</td>
           <td>{{ $timetable->grade?->grade ?? '-' }}</td>
           <td>{{ $timetable->divisions->pluck('division')->implode(', ') ?: '-' }}</td>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Time Table Types</title>
+  <title>Time Table Categories</title>
   <style>
     body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #222; }
     h2 { margin: 0 0 16px; }
@@ -12,7 +12,7 @@
   </style>
 </head>
 <body>
-  <h2>Time Table Types</h2>
+  <h2>Time Table Categories</h2>
   <table>
     <thead>
       <tr>
@@ -22,11 +22,11 @@
       </tr>
     </thead>
     <tbody>
-      @foreach ($timeTableTypes as $timeTableType)
+      @foreach ($timeTableCategories as $timeTableCategory)
         <tr>
-          <td>{{ $timeTableType->code }}</td>
-          <td>{{ $timeTableType->title }}</td>
-          <td>{{ $timeTableType->is_active ? 'Active' : 'Inactive' }}</td>
+          <td>{{ $timeTableCategory->code }}</td>
+          <td>{{ $timeTableCategory->title }}</td>
+          <td>{{ $timeTableCategory->is_active ? 'Active' : 'Inactive' }}</td>
         </tr>
       @endforeach
     </tbody>

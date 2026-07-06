@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->string('timetable_name')->nullable()->default('Regular Timetable');
-            $table->foreignId('timetable_type_id')->constrained('time_table_types')->cascadeOnDelete();
+            $table->foreignId('timetable_category_id')->constrained('time_table_categories')->cascadeOnDelete();
             $table->date('applicable_from');
             $table->date('applicable_to');
             $table->foreignId('academic_year_id')->constrained()->cascadeOnDelete();

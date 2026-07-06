@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', $timeTableType->exists ? 'Edit Time Table Type' : 'Add Time Table Type')
+@section('title', $timeTableCategory->exists ? 'Edit Time Table Category' : 'Add Time Table Category')
 
 @section('content')
   <div class="page-title">
-    <h3>Time Table Types</h3>
+    <h3>Time Table Categories</h3>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
         <li class="breadcrumb-item">Masters</li>
-        <li class="breadcrumb-item"><a href="{{ route('time-table-types.index') }}">Time Table Types</a></li>
-        <li class="breadcrumb-item active">{{ $timeTableType->exists ? 'Edit' : 'Add' }}</li>
+        <li class="breadcrumb-item"><a href="{{ route('time-table-categories.index') }}">Time Table Categories</a></li>
+        <li class="breadcrumb-item active">{{ $timeTableCategory->exists ? 'Edit' : 'Add' }}</li>
       </ol>
     </nav>
   </div>
@@ -18,10 +18,10 @@
   <section class="section dashboard ">
     <div class="row">
       <div class="col-xl-12 mb-3">
-        <form method="POST" id="timeTableTypeForm"
-          action="{{ $timeTableType->exists ? route('time-table-types.update', $timeTableType) : route('time-table-types.store') }}">
+        <form method="POST" id="timeTableCategoryForm"
+          action="{{ $timeTableCategory->exists ? route('time-table-categories.update', $timeTableCategory) : route('time-table-categories.store') }}">
           @csrf
-          @if ($timeTableType->exists)
+          @if ($timeTableCategory->exists)
             @method('PUT')
           @endif
 
@@ -29,13 +29,13 @@
             <div class="row">
               <div class="col-lg-4 o-f-inp mb-3">
                 <label for="code">Code</label>
-                <input type="text" id="code" class="form-control shadow-none" value="{{ $timeTableType->code }}" disabled>
+                <input type="text" id="code" class="form-control shadow-none" value="{{ $timeTableCategory->code }}" disabled>
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
                 <label for="title">Title <span class="text-danger">*</span></label>
                 <input type="text" name="title" id="title"
                   class="form-control shadow-none @error('title') is-invalid @enderror"
-                  value="{{ old('title', $timeTableType->title) }}">
+                  value="{{ old('title', $timeTableCategory->title) }}">
                 @error('title')
                   <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -45,8 +45,8 @@
                 <select name="is_active" id="is_active"
                   class="form-select shadow-none @error('is_active') is-invalid @enderror">
                   <option value="">--- Select ---</option>
-                  <option value="1" @selected((string) old('is_active', (int) $timeTableType->is_active) === '1')>Active</option>
-                  <option value="0" @selected((string) old('is_active', (int) $timeTableType->is_active) === '0')>Inactive</option>
+                  <option value="1" @selected((string) old('is_active', (int) $timeTableCategory->is_active) === '1')>Active</option>
+                  <option value="0" @selected((string) old('is_active', (int) $timeTableCategory->is_active) === '0')>Inactive</option>
                 </select>
                 @error('is_active')
                   <div class="invalid-feedback">{{ $message }}</div>
@@ -57,10 +57,10 @@
 
           <div class="col-lg-12 d-flex justify-content-center align-items-center">
             <div class="btn-flex">
-              <a href="{{ route('time-table-types.index') }}" class="btn btn-danger">Cancel</a>
-              <button type="submit" id="timeTableTypeSubmitBtn" class="submit-btn"
-                data-loading-text="{{ $timeTableType->exists ? 'Updating...' : 'Submitting...' }}">
-                {{ $timeTableType->exists ? 'Update' : 'Submit' }}
+              <a href="{{ route('time-table-categories.index') }}" class="btn btn-danger">Cancel</a>
+              <button type="submit" id="timeTableCategorySubmitBtn" class="submit-btn"
+                data-loading-text="{{ $timeTableCategory->exists ? 'Updating...' : 'Submitting...' }}">
+                {{ $timeTableCategory->exists ? 'Update' : 'Submit' }}
               </button>
             </div>
           </div>
@@ -73,14 +73,14 @@
 @push('scripts')
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const timeTableTypeForm = document.getElementById('timeTableTypeForm');
-      const submitButton = document.getElementById('timeTableTypeSubmitBtn');
+      const timeTableCategoryForm = document.getElementById('timeTableCategoryForm');
+      const submitButton = document.getElementById('timeTableCategorySubmitBtn');
 
-      if (!timeTableTypeForm || !submitButton) {
+      if (!timeTableCategoryForm || !submitButton) {
         return;
       }
 
-      timeTableTypeForm.addEventListener('submit', function () {
+      timeTableCategoryForm.addEventListener('submit', function () {
         submitButton.disabled = true;
         submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>' +
           submitButton.dataset.loadingText;

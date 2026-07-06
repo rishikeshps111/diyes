@@ -8,15 +8,15 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class TimeTableTypesExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
+class TimeTableCategoriesExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
 {
-    public function __construct(private readonly Collection $timeTableTypes)
+    public function __construct(private readonly Collection $timeTableCategories)
     {
     }
 
     public function collection(): Collection
     {
-        return $this->timeTableTypes;
+        return $this->timeTableCategories;
     }
 
     public function headings(): array
@@ -28,12 +28,12 @@ class TimeTableTypesExport implements FromCollection, ShouldAutoSize, WithHeadin
         ];
     }
 
-    public function map($timeTableType): array
+    public function map($timeTableCategory): array
     {
         return [
-            $timeTableType->code,
-            $timeTableType->title,
-            $timeTableType->is_active ? 'Active' : 'Inactive',
+            $timeTableCategory->code,
+            $timeTableCategory->title,
+            $timeTableCategory->is_active ? 'Active' : 'Inactive',
         ];
     }
 }

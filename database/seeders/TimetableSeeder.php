@@ -6,7 +6,7 @@ use App\Models\AcademicYear;
 use App\Models\Division;
 use App\Models\Grade;
 use App\Models\Timetable;
-use App\Models\TimeTableType;
+use App\Models\TimeTableCategory;
 use App\Models\User;
 use App\Services\PrefixCodeService;
 use Illuminate\Database\Seeder;
@@ -21,11 +21,11 @@ class TimetableSeeder extends Seeder
         $academicYear = AcademicYear::query()->active()->first() ?? AcademicYear::query()->orderByDesc('start_date')->first();
         $grade = Grade::query()->where('academic_year_id', $academicYear?->id)->orderBy('grade')->first();
         $divisions = Division::query()->where('grade_id', $grade?->id)->limit(2)->pluck('id');
-        $timetableType = TimeTableType::query()->where('title', 'Regular')->first();
+        $timetableCategory = TimeTableCategory::query()->where('title', 'Regular')->first();
         $incharge = User::query()->role('Academic Supervisor')->where('is_active', true)->first();
         $preparedBy = User::query()->where('email', 'admin@gmail.com')->first() ?? $incharge;
 
-        if (! $academicYear || ! $grade || $divisions->isEmpty() || ! $timetableType || ! $incharge || ! $preparedBy) {
+        if (! $academicYear || ! $grade || $divisions->isEmpty() || ! $timetableCategory || ! $incharge || ! $preparedBy) {
             return;
         }
 
@@ -33,7 +33,7 @@ class TimetableSeeder extends Seeder
             ['code' => app(PrefixCodeService::class)->format('timetable', 1)],
             [
                 'timetable_name' => 'Grade 1 Regular Timetable',
-                'timetable_type_id' => $timetableType->id,
+                'timetable_category_id' => $timetableCategory->id,
                 'applicable_from' => now()->toDateString(),
                 'applicable_to' => now()->addMonths(6)->toDateString(),
                 'academic_year_id' => $academicYear->id,

@@ -136,11 +136,11 @@ class RoleService
                 'edit.holiday',
                 'delete.holiday',
             ],
-            'Time Table Type' => [
-                'view.time-table-type',
-                'create.time-table-type',
-                'edit.time-table-type',
-                'delete.time-table-type',
+            'Time Table Category' => [
+                'view.time-table-category',
+                'create.time-table-category',
+                'edit.time-table-category',
+                'delete.time-table-category',
             ],
             'Module Prefix' => [
                 'view.module-prefix',
