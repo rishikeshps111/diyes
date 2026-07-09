@@ -32,7 +32,10 @@ class DatabaseSeeder extends Seeder
         $this->call(VenueSeeder::class);
         $this->call(HolidaySeeder::class);
         $this->call(TimeTableCategorySeeder::class);
+        $this->call(ProjectCategorySeeder::class);
+        $this->call(EventTypeSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(SpecialEventSeeder::class);
         $this->call(TimetableSeeder::class);
 
         $adminRole = Role::query()->where('name', 'admin')->where('guard_name', 'web')->first();

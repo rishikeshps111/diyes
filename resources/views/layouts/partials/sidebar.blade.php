@@ -60,14 +60,14 @@
           </li>
         @endcanany
 
-        @canany(['view.department', 'view.designation', 'view.classroom', 'view.venue', 'view.holiday', 'view.time-table-category', 'view.module-prefix'])
+        @canany(['view.department', 'view.designation', 'view.classroom', 'view.venue', 'view.holiday', 'view.time-table-category', 'view.project-category', 'view.event-type', 'view.module-prefix'])
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'time-table-categories.*', 'module-prefixes.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'time-table-categories.*', 'project-categories.*', 'event-types.*', 'module-prefixes.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarMasters" data-bs-toggle="collapse" href="#">
               <i class="fa-solid fa-database"></i><span>Masters</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarMasters"
-              class="nav-content collapse sub-menu {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'time-table-categories.*', 'module-prefixes.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'time-table-categories.*', 'project-categories.*', 'event-types.*', 'module-prefixes.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
               @can('view.module-prefix')
                 <li>
@@ -124,25 +124,57 @@
                   </a>
                 </li>
               @endcan
+              @can('view.project-category')
+                <li>
+                  <a href="{{ route('project-categories.index') }}"
+                    class="{{ request()->routeIs('project-categories.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Project Categories</span>
+                  </a>
+                </li>
+              @endcan
+              @can('view.event-type')
+                <li>
+                  <a href="{{ route('event-types.index') }}"
+                    class="{{ request()->routeIs('event-types.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Event Types</span>
+                  </a>
+                </li>
+              @endcan
             </ul>
           </li>
         @endcanany
 
-        @canany(['view.timetable'])
+        @canany(['view.timetable', 'view.project-week', 'view.special-event'])
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('timetables.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('timetables.*', 'project-weeks.*', 'special-events.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarTimetableManagement" data-bs-toggle="collapse" href="#">
               <i class="fa-solid fa-calendar-week"></i><span>Timetable Management</span><i
                 class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarTimetableManagement"
-              class="nav-content collapse sub-menu {{ request()->routeIs('timetables.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('timetables.*', 'project-weeks.*', 'special-events.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
               @can('view.timetable')
                 <li>
                   <a href="{{ route('timetables.index') }}"
                     class="{{ request()->routeIs('timetables.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Regular Timetable</span>
+                  </a>
+                </li>
+              @endcan
+              @can('view.project-week')
+                <li>
+                  <a href="{{ route('project-weeks.index') }}"
+                    class="{{ request()->routeIs('project-weeks.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Project Week</span>
+                  </a>
+                </li>
+              @endcan
+              @can('view.special-event')
+                <li>
+                  <a href="{{ route('special-events.index') }}"
+                    class="{{ request()->routeIs('special-events.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Special Events</span>
                   </a>
                 </li>
               @endcan
@@ -165,6 +197,28 @@
                   <a href="{{ route('teachers.index') }}"
                     class="{{ request()->routeIs('teachers.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Teachers</span>
+                  </a>
+                </li>
+              @endcan
+            </ul>
+          </li>
+        @endcanany
+
+        @canany(['view.project'])
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('projects.*') ? '' : 'collapsed' }}"
+              data-bs-target="#sidebarProjectManagement" data-bs-toggle="collapse" href="#">
+              <i class="fa-solid fa-diagram-project"></i><span>Project Management</span><i
+                class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="sidebarProjectManagement"
+              class="nav-content collapse sub-menu {{ request()->routeIs('projects.*') ? 'show' : '' }}"
+              data-bs-parent="#sidebar-nav">
+              @can('view.project')
+                <li>
+                  <a href="{{ route('projects.index') }}"
+                    class="{{ request()->routeIs('projects.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Projects</span>
                   </a>
                 </li>
               @endcan

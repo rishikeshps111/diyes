@@ -26,6 +26,7 @@ class SubjectRequest extends FormRequest
         return [
             'subject_name' => ['required', 'string', 'max:255'],
             'grade_id' => ['required', 'integer', Rule::exists('grades', 'id')],
+            'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'is_active' => ['required', 'boolean'],
             'priority' => ['required', 'string', Rule::in(array_keys(Subject::PRIORITIES))],
             'is_praticals' => ['nullable', 'boolean'],

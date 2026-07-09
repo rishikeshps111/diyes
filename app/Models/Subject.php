@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'subject_code',
     'subject_name',
     'grade_id',
+    'color',
     'is_active',
     'priority',
     'is_praticals',

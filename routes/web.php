@@ -6,10 +6,16 @@ use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\DivisionController;
+use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\ModulePrefixController;
+use App\Http\Controllers\ProjectCategoryController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectScheduleController;
+use App\Http\Controllers\ProjectWeekController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SpecialEventController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
@@ -138,6 +144,24 @@ Route::middleware('auth')->group(function () {
     Route::resource('time-table-categories', TimeTableCategoryController::class)
         ->except('show');
 
+    Route::get('project-categories/data', [ProjectCategoryController::class, 'data'])->name('project-categories.data');
+    Route::post('project-categories/export/excel', [ProjectCategoryController::class, 'exportExcel'])->name('project-categories.export.excel');
+    Route::post('project-categories/export/pdf', [ProjectCategoryController::class, 'exportPdf'])->name('project-categories.export.pdf');
+    Route::patch('project-categories/{project_category}/toggle-status', [ProjectCategoryController::class, 'toggleStatus'])
+        ->name('project-categories.toggle-status');
+
+    Route::resource('project-categories', ProjectCategoryController::class)
+        ->except('show');
+
+    Route::get('event-types/data', [EventTypeController::class, 'data'])->name('event-types.data');
+    Route::post('event-types/export/excel', [EventTypeController::class, 'exportExcel'])->name('event-types.export.excel');
+    Route::post('event-types/export/pdf', [EventTypeController::class, 'exportPdf'])->name('event-types.export.pdf');
+    Route::patch('event-types/{event_type}/toggle-status', [EventTypeController::class, 'toggleStatus'])
+        ->name('event-types.toggle-status');
+
+    Route::resource('event-types', EventTypeController::class)
+        ->except('show');
+
     Route::get('module-prefixes/data', [ModulePrefixController::class, 'data'])->name('module-prefixes.data');
     Route::resource('module-prefixes', ModulePrefixController::class)
         ->except(['create', 'store', 'show', 'destroy']);
@@ -157,9 +181,40 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('teachers', TeacherController::class);
 
+    Route::get('projects/data', [ProjectController::class, 'data'])->name('projects.data');
+    Route::post('projects/export/excel', [ProjectController::class, 'exportExcel'])->name('projects.export.excel');
+    Route::post('projects/export/pdf', [ProjectController::class, 'exportPdf'])->name('projects.export.pdf');
+    Route::patch('projects/{project}/status', [ProjectController::class, 'updateStatus'])->name('projects.update-status');
+    Route::get('projects/{project}/schedules', [ProjectScheduleController::class, 'index'])->name('projects.schedules.index');
+    Route::get('projects/{project}/schedules/data', [ProjectScheduleController::class, 'data'])->name('projects.schedules.data');
+    Route::post('projects/{project}/schedules', [ProjectScheduleController::class, 'store'])->name('projects.schedules.store');
+    Route::get('projects/{project}/schedules/{schedule}', [ProjectScheduleController::class, 'show'])->name('projects.schedules.show');
+    Route::post('projects/{project}/schedules/{schedule}', [ProjectScheduleController::class, 'update'])->name('projects.schedules.update');
+    Route::delete('projects/{project}/schedules/{schedule}', [ProjectScheduleController::class, 'destroy'])->name('projects.schedules.destroy');
+    Route::resource('projects', ProjectController::class);
+
+    Route::get('project-weeks/data', [ProjectWeekController::class, 'data'])->name('project-weeks.data');
+    Route::get('project-weeks/{project_week}/generate', [ProjectWeekController::class, 'generate'])->name('project-weeks.generate');
+    Route::post('project-weeks/{project_week}/generate', [ProjectWeekController::class, 'storeGenerated'])->name('project-weeks.generate.store');
+    Route::get('project-weeks/{project_week}/preview', [ProjectWeekController::class, 'preview'])->name('project-weeks.preview');
+    Route::get('project-weeks/{project_week}/generated-pdf', [ProjectWeekController::class, 'downloadGeneratedPdf'])->name('project-weeks.generated.pdf');
+    Route::post('project-weeks/export/excel', [ProjectWeekController::class, 'exportExcel'])->name('project-weeks.export.excel');
+    Route::post('project-weeks/export/pdf', [ProjectWeekController::class, 'exportPdf'])->name('project-weeks.export.pdf');
+    Route::resource('project-weeks', ProjectWeekController::class)
+        ->except('show');
+
+    Route::get('special-events/data', [SpecialEventController::class, 'data'])->name('special-events.data');
+    Route::get('special-events/divisions', [SpecialEventController::class, 'divisionsByGrades'])->name('special-events.divisions');
+    Route::post('special-events/{special_event}/send-mail', [SpecialEventController::class, 'sendMail'])->name('special-events.send-mail');
+    Route::post('special-events/export/excel', [SpecialEventController::class, 'exportExcel'])->name('special-events.export.excel');
+    Route::post('special-events/export/pdf', [SpecialEventController::class, 'exportPdf'])->name('special-events.export.pdf');
+    Route::resource('special-events', SpecialEventController::class);
+
     Route::get('timetables/data', [TimetableController::class, 'data'])->name('timetables.data');
     Route::get('timetables/{timetable}/generate', [TimetableController::class, 'generate'])->name('timetables.generate');
     Route::post('timetables/{timetable}/generate', [TimetableController::class, 'storeGenerated'])->name('timetables.generate.store');
+    Route::get('timetables/{timetable}/preview', [TimetableController::class, 'preview'])->name('timetables.preview');
+    Route::get('timetables/{timetable}/generated-pdf', [TimetableController::class, 'downloadGeneratedPdf'])->name('timetables.generated.pdf');
     Route::post('timetables/export/excel', [TimetableController::class, 'exportExcel'])->name('timetables.export.excel');
     Route::post('timetables/export/pdf', [TimetableController::class, 'exportPdf'])->name('timetables.export.pdf');
     Route::resource('timetables', TimetableController::class)

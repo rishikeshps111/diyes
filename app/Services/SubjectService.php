@@ -52,6 +52,7 @@ class SubjectService
             ...Arr::only($data, [
                 'subject_name',
                 'grade_id',
+                'color',
                 'is_active',
                 'priority',
                 'is_praticals',
@@ -65,6 +66,7 @@ class SubjectService
         $subject->update(Arr::only($data, [
             'subject_name',
             'grade_id',
+            'color',
             'is_active',
             'priority',
             'is_praticals',

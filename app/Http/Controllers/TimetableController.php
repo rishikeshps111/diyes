@@ -30,7 +30,7 @@ class TimetableController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('can:view.timetable', only: ['index', 'data', 'exportExcel', 'exportPdf']),
+            new Middleware('can:view.timetable', only: ['index', 'data', 'preview', 'downloadGeneratedPdf', 'exportExcel', 'exportPdf']),
             new Middleware('can:create.timetable', only: ['create', 'store']),
             new Middleware('can:edit.timetable', only: ['edit', 'update', 'generate', 'storeGenerated']),
             new Middleware('can:delete.timetable', only: ['destroy']),
@@ -97,6 +97,8 @@ class TimetableController extends Controller implements HasMiddleware
             'timetable' => new Timetable([
                 'code' => $this->timetableService->nextCode(),
                 'status' => 'draft',
+                'prepared_by_id' => auth()->id(),
+                'prepared_at' => now(),
             ]),
             'selectedDivisionIds' => collect(),
         ]);
@@ -113,7 +115,7 @@ class TimetableController extends Controller implements HasMiddleware
 
     public function edit(Timetable $timetable): View
     {
-        $timetable->load('divisions');
+        $timetable->load(['divisions', 'preparedBy']);
 
         return view('timetables.form', [
             ...$this->formOptions(),
@@ -148,7 +150,7 @@ class TimetableController extends Controller implements HasMiddleware
 
     public function generate(Timetable $timetable): View
     {
-        $timetable->load(['academicYear', 'grade', 'divisions', 'timetableCategory', 'incharge', 'entries.subject', 'entries.teacherOne', 'entries.teacherTwo']);
+        $timetable->load(['academicYear', 'grade', 'divisions', 'timetableCategory', 'incharge', 'preparedBy', 'entries.subject', 'entries.teacherOne', 'entries.teacherTwo']);
 
         return view('timetables.generate', [
             'timetable' => $timetable,
@@ -159,30 +161,85 @@ class TimetableController extends Controller implements HasMiddleware
                 ->values(),
             'days' => TimetableEntry::DAYS,
             'entryTypes' => TimetableEntry::TYPES,
-            'subjects' => Subject::query()->active()->where('grade_id', $timetable->grade_id)->orderBy('subject_name')->get(['id', 'subject_name']),
+            'subjects' => Subject::query()->active()->where('grade_id', $timetable->grade_id)->orderBy('subject_name')->get(['id', 'subject_name', 'color']),
             'teachers' => Teacher::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
     public function storeGenerated(TimetableGenerateRequest $request, Timetable $timetable): RedirectResponse
     {
-        $entries = collect($request->validated('entries'))
+        $validated = $request->validated();
+
+        $periodEntries = collect($validated['entries'])
             ->map(function (array $entry) use ($timetable): array {
+                $teacherIds = array_values($entry['teacher_ids'] ?? []);
+
                 return [
                     'timetable_id' => $timetable->id,
                     'day' => $entry['day'],
                     'period_no' => $entry['period_no'],
-                    'entry_type' => $entry['entry_type'],
-                    'subject_id' => $entry['entry_type'] === 'period' ? ($entry['subject_id'] ?? null) : null,
-                    'teacher_1_id' => $entry['entry_type'] === 'period' ? ($entry['teacher_1_id'] ?? null) : null,
-                    'teacher_2_id' => $entry['entry_type'] === 'period' ? ($entry['teacher_2_id'] ?? null) : null,
+                    'entry_type' => 'period',
+                    'subject_id' => $entry['subject_id'],
+                    'teacher_1_id' => $teacherIds[0] ?? null,
+                    'teacher_2_id' => $teacherIds[1] ?? null,
                     'start_time' => $entry['start_time'],
                     'end_time' => $entry['end_time'],
                     'duration_minutes' => Carbon::createFromFormat('H:i', $entry['start_time'])
                         ->diffInMinutes(Carbon::createFromFormat('H:i', $entry['end_time'])),
                 ];
             })
-            ->all();
+            ->values();
+
+        $entriesByDayAndPeriod = $periodEntries->keyBy(fn (array $entry): string => $entry['day'].'|'.$entry['period_no']);
+        $breakEntries = $periodEntries->pluck('day')->unique()->values()
+            ->flatMap(function (string $day) use ($timetable, $validated, $entriesByDayAndPeriod): array {
+                return collect([
+                    [
+                        'period_no' => (int) $validated['short_break_after_period'],
+                        'entry_type' => 'short_break',
+                        'duration_minutes' => (int) $timetable->short_break_minutes,
+                    ],
+                    [
+                        'period_no' => (int) $validated['lunch_break_after_period'],
+                        'entry_type' => 'lunch_break',
+                        'duration_minutes' => (int) $timetable->lunch_break_minutes,
+                    ],
+                    [
+                        'period_no' => (int) $validated['short_break_after_lunch_period'],
+                        'entry_type' => 'short_break',
+                        'duration_minutes' => (int) $timetable->short_break_after_lunch_minutes,
+                    ],
+                ])
+                    ->map(function (array $break) use ($timetable, $day, $entriesByDayAndPeriod): ?array {
+                        $periodEntry = $entriesByDayAndPeriod->get($day.'|'.$break['period_no']);
+
+                        if (! $periodEntry) {
+                            return null;
+                        }
+
+                        $startTime = $periodEntry['end_time'];
+                        $endTime = Carbon::createFromFormat('H:i', $startTime)
+                            ->addMinutes($break['duration_minutes'])
+                            ->format('H:i');
+
+                        return [
+                            'timetable_id' => $timetable->id,
+                            'day' => $day,
+                            'period_no' => $break['period_no'],
+                            'entry_type' => $break['entry_type'],
+                            'subject_id' => null,
+                            'teacher_1_id' => null,
+                            'teacher_2_id' => null,
+                            'start_time' => $startTime,
+                            'end_time' => $endTime,
+                            'duration_minutes' => $break['duration_minutes'],
+                        ];
+                    })
+                    ->filter()
+                    ->all();
+            });
+
+        $entries = $periodEntries->merge($breakEntries)->all();
 
         DB::transaction(function () use ($timetable, $entries): void {
             $timetable->entries()->delete();
@@ -190,8 +247,75 @@ class TimetableController extends Controller implements HasMiddleware
         });
 
         return redirect()
-            ->route('timetables.generate', $timetable)
+            ->route('timetables.index')
             ->with('success', 'Generated timetable saved successfully.');
+    }
+
+    public function preview(Timetable $timetable): JsonResponse
+    {
+        return response()->json($this->previewData($timetable));
+    }
+
+    public function downloadGeneratedPdf(Timetable $timetable)
+    {
+        $data = $this->previewData($timetable);
+
+        if ($data['periods']->isEmpty()) {
+            return back()->with('error', 'No generated timetable entries found.');
+        }
+
+        $filename = str($timetable->timetable_name ?: 'generated-timetable')->slug().'-timetable.pdf';
+
+        return Pdf::loadView('timetables.generated-pdf', $data)
+            ->setPaper('a4', 'landscape')
+            ->download($filename);
+    }
+
+    private function previewData(Timetable $timetable): array
+    {
+        $timetable->loadMissing(['grade', 'divisions']);
+
+        $entries = $timetable->entries()
+            ->with(['subject', 'teacherOne', 'teacherTwo'])
+            ->orderBy('period_no')
+            ->get();
+
+        return [
+            'timetable' => [
+                'name' => $timetable->timetable_name,
+                'grade' => $timetable->grade?->grade ?? '-',
+                'divisions' => $timetable->divisions->pluck('division')->implode(', ') ?: '-',
+                'total_periods' => $timetable->total_periods_per_day,
+                'short_break_minutes' => $timetable->short_break_minutes,
+                'lunch_break_minutes' => $timetable->lunch_break_minutes,
+                'short_break_after_lunch_minutes' => $timetable->short_break_after_lunch_minutes,
+            ],
+            'days' => $entries->pluck('day')->filter()->unique()->values(),
+            'periods' => $entries
+                ->where('entry_type', 'period')
+                ->map(fn (TimetableEntry $entry): array => [
+                    'day' => $entry->day,
+                    'period_no' => $entry->period_no,
+                    'subject' => $entry->subject?->subject_name ?? '-',
+                    'color' => $entry->subject?->color ?? '#ffffff',
+                    'teachers' => collect([$entry->teacherOne?->name, $entry->teacherTwo?->name])->filter()->values(),
+                    'start_time' => substr((string) $entry->start_time, 0, 5),
+                    'end_time' => substr((string) $entry->end_time, 0, 5),
+                ])
+                ->values(),
+            'breaks' => $entries
+                ->whereIn('entry_type', ['short_break', 'lunch_break'])
+                ->map(fn (TimetableEntry $entry): array => [
+                    'day' => $entry->day,
+                    'period_no' => $entry->period_no,
+                    'type' => $entry->entry_type,
+                    'label' => $entry->entry_type === 'lunch_break' ? 'Lunch Break' : 'Break',
+                    'duration_minutes' => $entry->duration_minutes,
+                    'start_time' => substr((string) $entry->start_time, 0, 5),
+                    'end_time' => substr((string) $entry->end_time, 0, 5),
+                ])
+                ->values(),
+        ];
     }
 
     public function exportExcel(Request $request): BinaryFileResponse|RedirectResponse
@@ -256,17 +380,37 @@ class TimetableController extends Controller implements HasMiddleware
             $buttons .= view('timetables.partials.delete-button', compact('timetable'))->render();
         }
 
-        $menu = request()->user()?->can('edit.timetable')
+        $isGenerated = (int) ($timetable->entries_count ?? 0) > 0;
+
+        $menuItems = '';
+
+        if ($isGenerated && request()->user()?->can('view.timetable')) {
+            $menuItems .= sprintf(
+                '<li><button type="button" class="dropdown-item timetable-preview-btn" data-preview-url="%s" data-pdf-url="%s">View TimeTable</button></li>',
+                route('timetables.preview', $timetable),
+                route('timetables.generated.pdf', $timetable)
+            );
+        }
+
+        if (request()->user()?->can('edit.timetable')) {
+            $menuItems .= sprintf(
+                '<li><a class="dropdown-item" href="%s">%s</a></li>',
+                route('timetables.generate', $timetable),
+                $isGenerated ? 'Regenerate TimeTable' : 'Generate TimeTable'
+            );
+        }
+
+        $menu = $menuItems
             ? sprintf(
                 '<div class="dropdown">
                     <button class="dropdown-toggle tgle-cs-btns" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-ellipsis-vertical"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="%s">Generate TimeTable</a></li>
+                        %s
                     </ul>
                 </div>',
-                route('timetables.generate', $timetable)
+                $menuItems
             )
             : '';
 

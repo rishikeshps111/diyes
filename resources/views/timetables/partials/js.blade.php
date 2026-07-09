@@ -4,6 +4,13 @@
         const selectAll = document.getElementById('selectAllTimetables');
         const applyFiltersButton = document.getElementById('applyFilters');
         const resetFiltersButton = document.getElementById('resetFilters');
+        const previewModalElement = document.getElementById('timetablePreviewModal');
+        const previewModal = previewModalElement ? new bootstrap.Modal(previewModalElement) : null;
+        const previewTitle = document.getElementById('timetablePreviewTitle');
+        const previewSubtitle = document.getElementById('timetablePreviewSubtitle');
+        const previewPdf = document.getElementById('timetablePreviewPdf');
+        const previewHead = document.getElementById('timetablePreviewHead');
+        const previewBody = document.getElementById('timetablePreviewBody');
         const csrfToken = '{{ csrf_token() }}';
 
         if (window.jQuery && jQuery.fn.select2) {
@@ -97,6 +104,13 @@
         });
 
         document.getElementById('timetablesTable').addEventListener('click', function (event) {
+            const previewButton = event.target.closest('.timetable-preview-btn');
+
+            if (previewButton) {
+                openTimetablePreview(previewButton.dataset.previewUrl, previewButton.dataset.pdfUrl);
+                return;
+            }
+
             const deleteButton = event.target.closest('.timetable-delete-btn');
 
             if (!deleteButton) {
@@ -261,6 +275,112 @@
             selectAll.checked = visibleChecks.length > 0 && visibleChecks.every(function (checkbox) {
                 return checkbox.checked;
             });
+        }
+
+        function openTimetablePreview(url, pdfUrl) {
+            if (!previewModal) {
+                return;
+            }
+
+            previewTitle.textContent = 'View TimeTable';
+            previewSubtitle.textContent = '';
+            previewPdf.href = pdfUrl || '#';
+            previewPdf.classList.toggle('d-none', !pdfUrl);
+            previewHead.innerHTML = '';
+            previewBody.innerHTML = '<tr><td class="text-center text-muted">Loading timetable...</td></tr>';
+            previewModal.show();
+
+            fetch(url, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Preview failed');
+                    }
+
+                    return response.json();
+                })
+                .then(renderTimetablePreview)
+                .catch(function () {
+                    previewBody.innerHTML = '<tr><td class="text-center text-danger">Unable to load generated timetable.</td></tr>';
+                });
+        }
+
+        function renderTimetablePreview(data) {
+            const days = data.days || [];
+            const periods = data.periods || [];
+            const breaks = data.breaks || [];
+            const totalPeriods = Number(data.timetable?.total_periods || 0);
+            const colspan = days.length + 2;
+
+            previewTitle.textContent = data.timetable?.name || 'View TimeTable';
+            previewSubtitle.textContent = 'Grade: ' + (data.timetable?.grade || '-') + ' | Divisions: ' + (data.timetable?.divisions || '-');
+            previewHead.innerHTML = '<tr><th>Period</th><th>Time</th>' + days.map(escapeTh).join('') + '</tr>';
+
+            if (!days.length || !periods.length) {
+                previewBody.innerHTML = '<tr><td colspan="' + Math.max(colspan, 1) + '" class="text-center text-muted">No generated timetable entries found.</td></tr>';
+                return;
+            }
+
+            let html = '';
+
+            for (let period = 1; period <= totalPeriods; period++) {
+                const periodEntries = periods.filter(function (entry) {
+                    return Number(entry.period_no) === period;
+                });
+                const timeEntry = periodEntries.find(function (entry) {
+                    return entry.start_time && entry.end_time;
+                });
+
+                html += '<tr><th>Period ' + period + '</th><td>' + (timeEntry ? escapeHtml(timeEntry.start_time + ' - ' + timeEntry.end_time) : '-') + '</td>' +
+                    days.map(function (day) {
+                        const entry = periodEntries.find(function (item) {
+                            return item.day === day;
+                        });
+
+                        if (!entry) {
+                            return '<td>-</td>';
+                        }
+
+                        const teachers = (entry.teachers || []).map(function (teacher, index) {
+                            return 'T' + (index + 1) + ': ' + escapeHtml(teacher);
+                        }).join('<br>');
+
+                        return '<td style="background-color: ' + escapeHtml(entry.color || '#ffffff') + ';"><span class="preview-cell-title">' + escapeHtml(entry.subject || '-') + '</span><span class="preview-cell-meta">' + (teachers || '-') + '</span></td>';
+                    }).join('') + '</tr>';
+
+                ['short_break', 'lunch_break'].forEach(function (type) {
+                    const breakEntry = breaks.find(function (entry) {
+                        return Number(entry.period_no) === period && entry.type === type;
+                    });
+
+                    if (!breakEntry) {
+                        return;
+                    }
+
+                    const rowClass = type === 'lunch_break' ? 'lunch' : 'break';
+                    html += '<tr class="' + rowClass + '"><td colspan="' + colspan + '">' +
+                        escapeHtml(breakEntry.label + ' (' + breakEntry.duration_minutes + ' mins) - ' + breakEntry.start_time + ' - ' + breakEntry.end_time) +
+                        '</td></tr>';
+                });
+            }
+
+            previewBody.innerHTML = html;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escapeTh(value) {
+            return '<th>' + escapeHtml(value) + '</th>';
         }
     });
 </script>

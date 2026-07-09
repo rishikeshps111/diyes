@@ -2,6 +2,45 @@
 
 @section('title', 'Regular Timetable')
 
+@push('styles')
+  <style>
+    .preview-table tr.break td {
+      background: #fff7ed;
+      color: #9a3412;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .preview-table tr.lunch td {
+      background: #ecfdf5;
+      color: #047857;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .preview-cell-title {
+      color: #111827;
+      display: block;
+      font-weight: 700;
+    }
+
+    .preview-cell-meta {
+      color: #64748b;
+      display: block;
+      font-size: 12px;
+      line-height: 1.45;
+      margin-top: 2px;
+    }
+
+    .timetable-preview-subtitle {
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+  </style>
+@endpush
+
 @section('content')
   <div class="page-title">
     <h3>Regular Timetable</h3>
@@ -77,8 +116,10 @@
               </div>
               <div class="col-lg-12">
                 <div class="filter-btns-top ">
-                  <button type="button" id="resetFilters" class="reset-btn border-0" data-loading-text="Resetting...">Reset</button>
-                  <button type="button" id="applyFilters" class="search-btn" data-loading-text="Searching...">Search</button>
+                  <button type="button" id="resetFilters" class="reset-btn border-0"
+                    data-loading-text="Resetting...">Reset</button>
+                  <button type="button" id="applyFilters" class="search-btn"
+                    data-loading-text="Searching...">Search</button>
                 </div>
               </div>
             </div>
@@ -158,6 +199,32 @@
       </div>
     </div>
   </section>
+
+  <div class="modal fade" id="timetablePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between">
+          <div>
+            <h5 class="modal-title" id="timetablePreviewTitle">View TimeTable</h5>
+            <div class="timetable-preview-subtitle" id="timetablePreviewSubtitle"></div>
+          </div>
+          <div class="d-flex align-items-end gap-2">
+            <a href="#" class="btn btn-primary text-decoration-none d-none" id="timetablePreviewPdf"
+              target="_blank">Download PDF</a>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="table-over">
+            <table class="align-middle mb-0 table table-bordered preview-table w-100">
+              <thead id="timetablePreviewHead"></thead>
+              <tbody id="timetablePreviewBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @push('scripts')

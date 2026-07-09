@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'period_duration_minutes',
     'short_break_minutes',
     'lunch_break_minutes',
+    'short_break_after_lunch_minutes',
     'timetable_incharge_id',
     'description',
     'prepared_by_id',
@@ -45,6 +46,7 @@ class Timetable extends Model
             'period_duration_minutes' => 'integer',
             'short_break_minutes' => 'integer',
             'lunch_break_minutes' => 'integer',
+            'short_break_after_lunch_minutes' => 'integer',
             'prepared_at' => 'datetime',
         ];
     }

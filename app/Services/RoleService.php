@@ -142,6 +142,18 @@ class RoleService
                 'edit.time-table-category',
                 'delete.time-table-category',
             ],
+            'Project Category' => [
+                'view.project-category',
+                'create.project-category',
+                'edit.project-category',
+                'delete.project-category',
+            ],
+            'Event Type' => [
+                'view.event-type',
+                'create.event-type',
+                'edit.event-type',
+                'delete.event-type',
+            ],
             'Module Prefix' => [
                 'view.module-prefix',
                 'edit.module-prefix',
@@ -151,6 +163,24 @@ class RoleService
                 'create.teacher',
                 'edit.teacher',
                 'delete.teacher',
+            ],
+            'Project' => [
+                'view.project',
+                'create.project',
+                'edit.project',
+                'delete.project',
+            ],
+            'Project Week' => [
+                'view.project-week',
+                'create.project-week',
+                'edit.project-week',
+                'delete.project-week',
+            ],
+            'Special Event' => [
+                'view.special-event',
+                'create.special-event',
+                'edit.special-event',
+                'delete.special-event',
             ],
             'Regular Timetable' => [
                 'view.timetable',

@@ -20,7 +20,7 @@
         <li><a href="{{ asset('timetable-management/generate-table.html') }}">Generate Timetable</a></li>
         <li><a href="{{ asset('timetable-management/add-substitute.html') }}">Assign Substitute</a></li>
         <li><a href="{{ asset('timetable-management/regular-timetable.html') }}">Publish Timetable</a></li>
-        <li><a href="{{ asset('timetable-management/add-special-events.html') }}">Create Event</a></li>
+        <li><a href="{{ route('special-events.create') }}">Create Event</a></li>
         <li><a href="{{ asset('teacher-management/add-teacher.html') }}">Add Teacher</a></li>
       </ul>
     </div>

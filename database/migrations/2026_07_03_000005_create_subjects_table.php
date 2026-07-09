@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('subject_code')->unique();
             $table->string('subject_name');
             $table->foreignId('grade_id')->constrained()->cascadeOnDelete();
+            $table->string('color', 7)->default('#e8f2ff');
             $table->boolean('is_active')->default(true);
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->boolean('is_praticals')->default(false);

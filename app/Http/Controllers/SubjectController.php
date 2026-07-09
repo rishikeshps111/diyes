@@ -93,6 +93,7 @@ class SubjectController extends Controller implements HasMiddleware
         return view('subjects.form', [
             'subject' => new Subject([
                 'subject_code' => $this->subjectService->nextCode(),
+                'color' => '#e8f2ff',
                 'is_active' => true,
                 'priority' => 'medium',
                 'is_praticals' => false,

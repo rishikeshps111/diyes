@@ -42,6 +42,7 @@ class TimetableSeeder extends Seeder
                 'period_duration_minutes' => 40,
                 'short_break_minutes' => 10,
                 'lunch_break_minutes' => 45,
+                'short_break_after_lunch_minutes' => 10,
                 'timetable_incharge_id' => $incharge->id,
                 'description' => 'Sample regular timetable.',
                 'prepared_by_id' => $preparedBy->id,

@@ -21,6 +21,7 @@ class TimetableService
     {
         return Timetable::query()
             ->with(['academicYear', 'grade', 'divisions', 'timetableCategory', 'incharge', 'preparedBy'])
+            ->withCount('entries')
             ->when($filters['academic_year_id'] ?? null, fn (Builder $query, string $id) => $query->where('academic_year_id', $id))
             ->when($filters['grade_id'] ?? null, fn (Builder $query, string $id) => $query->where('grade_id', $id))
             ->when($filters['division_id'] ?? null, function (Builder $query, string $id): void {
@@ -53,7 +54,7 @@ class TimetableService
             'prepared_at' => now(),
         ]);
 
-        $timetable->divisions()->sync($data['division_ids']);
+        $timetable->divisions()->sync([$data['division_id']]);
 
         return $timetable;
     }
@@ -61,7 +62,7 @@ class TimetableService
     public function update(Timetable $timetable, array $data): Timetable
     {
         $timetable->update(Arr::only($data, $this->fillableFields()));
-        $timetable->divisions()->sync($data['division_ids']);
+        $timetable->divisions()->sync([$data['division_id']]);
 
         return $timetable;
     }
@@ -115,6 +116,7 @@ class TimetableService
             'period_duration_minutes',
             'short_break_minutes',
             'lunch_break_minutes',
+            'short_break_after_lunch_minutes',
             'timetable_incharge_id',
             'description',
             'status',

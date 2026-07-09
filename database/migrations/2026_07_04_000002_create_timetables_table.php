@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedInteger('period_duration_minutes');
             $table->unsignedInteger('short_break_minutes');
             $table->unsignedInteger('lunch_break_minutes');
+            $table->unsignedInteger('short_break_after_lunch_minutes')->default(0);
             $table->foreignId('timetable_incharge_id')->constrained('users')->cascadeOnDelete();
             $table->text('description')->nullable();
             $table->foreignId('prepared_by_id')->constrained('users')->cascadeOnDelete();

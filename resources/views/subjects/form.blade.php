@@ -57,6 +57,15 @@
                 @enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
+                <label for="color">Color <span class="text-danger">*</span></label>
+                <input type="color" name="color" id="color"
+                  class="form-control form-control-color shadow-none @error('color') is-invalid @enderror"
+                  value="{{ old('color', $subject->color ?? '#e8f2ff') }}">
+                @error('color')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+              </div>
+              <div class="col-lg-4 o-f-inp mb-3">
                 <label for="is_active">Status <span class="text-danger">*</span></label>
                 <select name="is_active" id="is_active"
                   class="form-select shadow-none @error('is_active') is-invalid @enderror">

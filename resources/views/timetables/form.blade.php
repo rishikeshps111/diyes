@@ -83,6 +83,13 @@
 @endpush
 
 @section('content')
+  @php
+    $createdByName = $timetable->exists ? ($timetable->preparedBy?->name ?? '-') : (auth()->user()?->name ?? '-');
+    $createdTime = $timetable->exists
+      ? ($timetable->prepared_at?->format('d M Y h:i A') ?? '-')
+      : now()->format('d M Y h:i A');
+  @endphp
+
   <div class="page-title">
     <h3>Regular Timetable</h3>
     <nav>
@@ -176,21 +183,21 @@
                 @error('grade_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
-                <label for="division_ids">Division <span class="text-danger">*</span></label>
+                <label for="division_id">Division <span class="text-danger">*</span></label>
                 @php
-                  $selectedDivisions = collect(old('division_ids', $selectedDivisionIds ?? []))->map(fn($id) => (int) $id);
+                  $selectedDivisionId = (int) old('division_id', collect($selectedDivisionIds ?? [])->first());
                 @endphp
-                <select name="division_ids[]" id="division_ids"
-                  class="form-select shadow-none @error('division_ids') is-invalid @enderror" multiple>
+                <select name="division_id" id="division_id"
+                  class="form-select shadow-none @error('division_id') is-invalid @enderror">
+                  <option value="">--- Select ---</option>
                   @foreach ($divisions as $division)
                     <option value="{{ $division->id }}" data-grade-id="{{ $division->grade_id }}"
-                      @selected($selectedDivisions->contains((int) $division->id))>
+                      @selected($selectedDivisionId === (int) $division->id)>
                       {{ $division->grade?->grade ? $division->grade->grade . ' - ' : '' }}{{ $division->division }}
                     </option>
                   @endforeach
                 </select>
-                @error('division_ids')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                @error('division_ids.*')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                @error('division_id')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
                 <label for="total_periods_per_day">Total Periods / Day <span class="text-danger">*</span></label>
@@ -222,6 +229,14 @@
                 @error('lunch_break_minutes')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
+                <label for="short_break_after_lunch_minutes">Short Break After Lunch (In Minutes) <span
+                    class="text-danger">*</span></label>
+                <input type="number" name="short_break_after_lunch_minutes" id="short_break_after_lunch_minutes" min="0"
+                  class="form-control shadow-none @error('short_break_after_lunch_minutes') is-invalid @enderror"
+                  value="{{ old('short_break_after_lunch_minutes', $timetable->short_break_after_lunch_minutes) }}">
+                @error('short_break_after_lunch_minutes')<div class="invalid-feedback">{{ $message }}</div>@enderror
+              </div>
+              <div class="col-lg-4 o-f-inp mb-3">
                 <label for="timetable_incharge_id">Time Table Incharge <span class="text-danger">*</span></label>
                 <select name="timetable_incharge_id" id="timetable_incharge_id"
                   class="form-select shadow-none @error('timetable_incharge_id') is-invalid @enderror">
@@ -233,6 +248,14 @@
                   @endforeach
                 </select>
                 @error('timetable_incharge_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+              </div>
+              <div class="col-lg-4 o-f-inp mb-3">
+                <label for="created_by">Created By</label>
+                <input type="text" id="created_by" class="form-control shadow-none" value="{{ $createdByName }}" disabled>
+              </div>
+              <div class="col-lg-4 o-f-inp mb-3">
+                <label for="created_time">Created Time</label>
+                <input type="text" id="created_time" class="form-control shadow-none" value="{{ $createdTime }}" disabled>
               </div>
               <div class="col-lg-12 o-f-inp mb-3">
                 <label for="description">Description</label>
@@ -322,6 +345,10 @@
               <span class="publish-summary-label">Lunch Break</span>
               <div class="publish-summary-value" id="confirm_lunch_break">-</div>
             </div>
+            <div class="publish-summary-item">
+              <span class="publish-summary-label">Short Break After Lunch</span>
+              <div class="publish-summary-value" id="confirm_short_break_after_lunch">-</div>
+            </div>
             <div class="publish-summary-item full-width">
               <span class="publish-summary-label">Time Table Incharge</span>
               <div class="publish-summary-value" id="confirm_incharge">-</div>
@@ -350,7 +377,7 @@
       const fromInput = document.getElementById('applicable_from');
       const toInput = document.getElementById('applicable_to');
       const gradeSelect = document.getElementById('grade_id');
-      const divisionSelect = document.getElementById('division_ids');
+      const divisionSelect = document.getElementById('division_id');
       const publishConfirmModalElement = document.getElementById('publishConfirmModal');
       const publishConfirmModal = publishConfirmModalElement ? new bootstrap.Modal(publishConfirmModalElement) : null;
       const confirmPublishButton = document.getElementById('confirmPublishBtn');
@@ -366,7 +393,7 @@
       let pendingSubmitButton = null;
 
       if (window.jQuery && jQuery.fn.select2) {
-        jQuery('#timetable_category_id, #academic_year_id, #grade_id, #division_ids, #timetable_incharge_id').select2({
+        jQuery('#timetable_category_id, #academic_year_id, #grade_id, #division_id, #timetable_incharge_id').select2({
           width: '100%',
           placeholder: '--- Select ---',
           allowClear: true
@@ -443,18 +470,17 @@
 
       function filterDivisions() {
         const gradeId = gradeSelect.value;
-        const selectedValues = Array.from(divisionSelect.selectedOptions).map(function (option) {
-          return option.value;
-        });
+        const selectedValue = divisionSelect.value;
 
         divisionSelect.innerHTML = '';
+        divisionSelect.appendChild(new Option('--- Select ---', '', false, !selectedValue));
 
         divisionOptions
           .filter(function (option) {
-            return !gradeId || option.gradeId === gradeId;
+            return option.value && (!gradeId || option.gradeId === gradeId);
           })
           .forEach(function (option) {
-            const element = new Option(option.text, option.value, false, selectedValues.includes(option.value));
+            const element = new Option(option.text, option.value, false, selectedValue === option.value);
             element.dataset.gradeId = option.gradeId;
             divisionSelect.appendChild(element);
           });
@@ -472,11 +498,12 @@
         setConfirmText('confirm_applicable_from', fromInput.value);
         setConfirmText('confirm_applicable_to', toInput.value);
         setConfirmText('confirm_grade', selectedText(gradeSelect));
-        setConfirmText('confirm_divisions', selectedTexts(divisionSelect).join(', '));
+        setConfirmText('confirm_divisions', selectedText(divisionSelect));
         setConfirmText('confirm_total_periods', document.getElementById('total_periods_per_day').value);
         setConfirmText('confirm_period_duration', document.getElementById('period_duration_minutes').value + ' Minutes');
         setConfirmText('confirm_short_break', document.getElementById('short_break_minutes').value + ' Minutes');
         setConfirmText('confirm_lunch_break', document.getElementById('lunch_break_minutes').value + ' Minutes');
+        setConfirmText('confirm_short_break_after_lunch', document.getElementById('short_break_after_lunch_minutes').value + ' Minutes');
         setConfirmText('confirm_incharge', selectedText(document.getElementById('timetable_incharge_id')));
         setConfirmText('confirm_description', document.getElementById('description').value);
       }
@@ -491,15 +518,6 @@
         return option && option.value ? option.textContent.trim() : '-';
       }
 
-      function selectedTexts(select) {
-        return Array.from(select.selectedOptions)
-          .filter(function (option) {
-            return option.value;
-          })
-          .map(function (option) {
-            return option.textContent.trim();
-          });
-      }
     });
   </script>
 @endpush
