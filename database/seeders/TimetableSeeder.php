@@ -20,7 +20,7 @@ class TimetableSeeder extends Seeder
     {
         $academicYear = AcademicYear::query()->active()->first() ?? AcademicYear::query()->orderByDesc('start_date')->first();
         $grade = Grade::query()->where('academic_year_id', $academicYear?->id)->orderBy('grade')->first();
-        $divisions = Division::query()->where('grade_id', $grade?->id)->limit(2)->pluck('id');
+        $divisions = Division::query()->where('grade_id', $grade?->id)->limit(1)->pluck('id');
         $timetableCategory = TimeTableCategory::query()->where('title', 'Regular')->first();
         $incharge = User::query()->role('Academic Supervisor')->where('is_active', true)->first();
         $preparedBy = User::query()->where('email', 'admin@gmail.com')->first() ?? $incharge;
