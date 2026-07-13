@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProjectSeeder::class);
         $this->call(ProjectWeekSeeder::class);
         $this->call(ProjectWeekEntrySeeder::class);
+        $this->call(SpecialEventTimetableEntrySeeder::class);
 
         $adminRole = Role::query()->where('name', 'admin')->where('guard_name', 'web')->first();
         $adminDepartmentId = \App\Models\Department::query()->orderBy('id')->value('id');

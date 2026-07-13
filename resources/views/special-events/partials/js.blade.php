@@ -10,6 +10,8 @@
         const mailSubmitButton = document.getElementById('specialEventMailSubmit');
         const mailSubject = document.getElementById('mail_subject');
         const mailDescription = document.getElementById('mail_description');
+        const timetableModal = new bootstrap.Modal(document.getElementById('specialEventTimetableModal'));
+        const timetableContent = document.getElementById('specialEventTimetableContent');
         const csrfToken = '{{ csrf_token() }}';
         let mailUrl = '';
 
@@ -98,8 +100,19 @@
         });
 
         document.getElementById('specialEventsTable').addEventListener('click', function (event) {
+            const previewButton = event.target.closest('.special-event-preview-btn');
             const mailButton = event.target.closest('.special-event-mail-btn');
             const deleteButton = event.target.closest('.special-event-delete-btn');
+
+            if (previewButton) {
+                document.getElementById('specialEventTimetablePdf').href = previewButton.dataset.pdfUrl;
+                timetableContent.innerHTML = 'Loading timetable...';
+                timetableModal.show();
+                fetch(previewButton.dataset.previewUrl, { headers: { Accept: 'application/json' } })
+                    .then(assertOk).then(function (response) { return response.json(); }).then(renderTimetables)
+                    .catch(function () { timetableContent.innerHTML = '<div class="text-danger">Unable to load generated timetable.</div>'; });
+                return;
+            }
 
             if (mailButton && mailModal) {
                 event.preventDefault();
@@ -247,6 +260,14 @@
             }
             return Promise.resolve(response);
         }
+
+        function renderTimetables(data) {
+            document.getElementById('specialEventTimetableTitle').textContent=data.specialEvent?.title||'View TimeTable';
+            document.getElementById('specialEventTimetableSubtitle').textContent='Applicable: '+(data.specialEvent?.from||'-')+' to '+(data.specialEvent?.to||'-');
+            timetableContent.innerHTML=(data.timetables||[]).map(function(tt){let rows='';for(let p=1;p<=tt.total_periods;p++){const pe=tt.periods.filter(e=>Number(e.period_no)===p);const time=pe[0];rows+='<tr><th>Period '+p+'</th><td>'+(time?escapeText(time.start_time+' - '+time.end_time):'-')+'</td>'+tt.days.map(function(day){const e=pe.find(x=>x.day===day);return e?'<td style="background-color:'+escapeText(e.color||'#ffffff')+'"><strong>'+escapeText(e.subject||'-')+'</strong><br><small>'+escapeText((e.teachers||[]).join(', ')||'-')+'</small>'+(e.is_event_period?'<br><span class="badge bg-primary">Special Event</span>':(e.is_project_period?'<br><span class="badge bg-success">Project Period</span>':''))+'</td>':'<td>-</td>'}).join('')+'</tr>'}return '<h6 class="fw-bold">Grade '+escapeText(tt.grade)+' - '+escapeText(tt.division)+'</h6><table class="table table-bordered mb-4"><thead><tr><th>Period</th><th>Time</th>'+tt.days.map(d=>'<th>'+escapeText(d)+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table>'}).join('')||'<div class="text-muted">No generated timetable found.</div>';
+        }
+
+        function escapeText(value) { const div=document.createElement('div'); div.textContent=String(value??''); return div.innerHTML; }
 
         function jsonResponse(response) {
             return response.text().then(function (text) {

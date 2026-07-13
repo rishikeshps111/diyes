@@ -158,6 +158,7 @@
       </form>
     </div>
   </div>
+  <div class="modal fade" id="specialEventTimetableModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><div><h5 class="modal-title" id="specialEventTimetableTitle">View TimeTable</h5><small id="specialEventTimetableSubtitle" class="text-muted"></small></div><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="specialEventTimetableContent" class="table-over">Loading...</div></div><div class="modal-footer"><a href="#" id="specialEventTimetablePdf" class="btn btn-success">Download PDF</a><button class="btn btn-danger" data-bs-dismiss="modal">Close</button></div></div></div></div>
 @endsection
 
 @push('scripts')

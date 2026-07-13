@@ -26,6 +26,7 @@ class SpecialEventService
     {
         return SpecialEvent::query()
             ->with(['eventType', 'academicYear', 'grades', 'divisions', 'staffCoordinators', 'teacherCoordinators'])
+            ->withCount('timetableEntries')
             ->when($filters['event_type_id'] ?? null, fn (Builder $query, string $id) => $query->where('event_type_id', $id))
             ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status));
     }

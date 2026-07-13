@@ -110,6 +110,11 @@ class SpecialEvent extends Model
         return $this->hasMany(SpecialEventAttachment::class);
     }
 
+    public function timetableEntries(): HasMany
+    {
+        return $this->hasMany(SpecialEventTimetableEntry::class);
+    }
+
     public function bannerUrl(): ?string
     {
         return $this->banner_image ? Storage::url($this->banner_image) : null;

@@ -205,6 +205,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('special-events/data', [SpecialEventController::class, 'data'])->name('special-events.data');
     Route::get('special-events/divisions', [SpecialEventController::class, 'divisionsByGrades'])->name('special-events.divisions');
+    Route::get('special-events/{special_event}/generate', [SpecialEventController::class, 'generate'])->name('special-events.generate');
+    Route::post('special-events/{special_event}/generate', [SpecialEventController::class, 'storeGenerated'])->name('special-events.generate.store');
+    Route::get('special-events/{special_event}/preview', [SpecialEventController::class, 'preview'])->name('special-events.preview');
+    Route::get('special-events/{special_event}/generated-pdf', [SpecialEventController::class, 'downloadGeneratedPdf'])->name('special-events.generated.pdf');
     Route::post('special-events/{special_event}/send-mail', [SpecialEventController::class, 'sendMail'])->name('special-events.send-mail');
     Route::post('special-events/export/excel', [SpecialEventController::class, 'exportExcel'])->name('special-events.export.excel');
     Route::post('special-events/export/pdf', [SpecialEventController::class, 'exportPdf'])->name('special-events.export.pdf');
