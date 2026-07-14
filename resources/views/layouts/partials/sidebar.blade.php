@@ -60,14 +60,14 @@
           </li>
         @endcanany
 
-        @canany(['view.department', 'view.designation', 'view.classroom', 'view.venue', 'view.holiday', 'view.time-table-category', 'view.project-category', 'view.event-type', 'view.module-prefix'])
+        @canany(['view.department', 'view.designation', 'view.classroom', 'view.venue', 'view.holiday', 'view.time-table-category', 'view.project-category', 'view.event-type', 'view.trainer-type', 'view.trainer-category', 'view.module-prefix'])
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'time-table-categories.*', 'project-categories.*', 'event-types.*', 'module-prefixes.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'time-table-categories.*', 'project-categories.*', 'event-types.*', 'trainer-types.*', 'trainer-categories.*', 'module-prefixes.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarMasters" data-bs-toggle="collapse" href="#">
               <i class="fa-solid fa-database"></i><span>Masters</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarMasters"
-              class="nav-content collapse sub-menu {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'time-table-categories.*', 'project-categories.*', 'event-types.*', 'module-prefixes.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('departments.*', 'designations.*', 'classrooms.*', 'venues.*', 'holidays.*', 'time-table-categories.*', 'project-categories.*', 'event-types.*', 'trainer-types.*', 'trainer-categories.*', 'module-prefixes.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
               @can('view.module-prefix')
                 <li>
@@ -140,19 +140,35 @@
                   </a>
                 </li>
               @endcan
+              @can('view.trainer-type')
+                <li>
+                  <a href="{{ route('trainer-types.index') }}"
+                    class="{{ request()->routeIs('trainer-types.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Trainer Types</span>
+                  </a>
+                </li>
+              @endcan
+              @can('view.trainer-category')
+                <li>
+                  <a href="{{ route('trainer-categories.index') }}"
+                    class="{{ request()->routeIs('trainer-categories.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Trainer Categories</span>
+                  </a>
+                </li>
+              @endcan
             </ul>
           </li>
         @endcanany
 
-        @canany(['view.timetable', 'view.project-week', 'view.special-event'])
+        @canany(['view.timetable', 'view.project-week', 'view.training-schedule', 'view.special-event'])
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('timetables.*', 'project-weeks.*', 'special-events.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('timetables.*', 'project-weeks.*', 'training-schedules.*', 'special-events.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarTimetableManagement" data-bs-toggle="collapse" href="#">
               <i class="fa-solid fa-calendar-week"></i><span>Timetable Management</span><i
                 class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarTimetableManagement"
-              class="nav-content collapse sub-menu {{ request()->routeIs('timetables.*', 'project-weeks.*', 'special-events.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('timetables.*', 'project-weeks.*', 'training-schedules.*', 'special-events.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
               @can('view.timetable')
                 <li>
@@ -167,6 +183,14 @@
                   <a href="{{ route('project-weeks.index') }}"
                     class="{{ request()->routeIs('project-weeks.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Project Week</span>
+                  </a>
+                </li>
+              @endcan
+              @can('view.training-schedule')
+                <li>
+                  <a href="{{ route('training-schedules.index') }}"
+                    class="{{ request()->routeIs('training-schedules.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Training Schedule</span>
                   </a>
                 </li>
               @endcan

@@ -21,6 +21,10 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
 use App\Http\Controllers\TimetableController;
 use App\Http\Controllers\TimeTableCategoryController;
+use App\Http\Controllers\TrainerCategoryController;
+use App\Http\Controllers\TrainerTypeController;
+use App\Http\Controllers\TrainingScheduleController;
+use App\Http\Controllers\TrainingScheduleTrainerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VenueController;
 use Illuminate\Support\Facades\Artisan;
@@ -162,6 +166,24 @@ Route::middleware('auth')->group(function () {
     Route::resource('event-types', EventTypeController::class)
         ->except('show');
 
+    Route::get('trainer-types/data', [TrainerTypeController::class, 'data'])->name('trainer-types.data');
+    Route::post('trainer-types/export/excel', [TrainerTypeController::class, 'exportExcel'])->name('trainer-types.export.excel');
+    Route::post('trainer-types/export/pdf', [TrainerTypeController::class, 'exportPdf'])->name('trainer-types.export.pdf');
+    Route::patch('trainer-types/{recordId}/toggle-status', [TrainerTypeController::class, 'toggleStatus'])
+        ->name('trainer-types.toggle-status');
+    Route::resource('trainer-types', TrainerTypeController::class)
+        ->parameters(['trainer-types' => 'recordId'])
+        ->except('show');
+
+    Route::get('trainer-categories/data', [TrainerCategoryController::class, 'data'])->name('trainer-categories.data');
+    Route::post('trainer-categories/export/excel', [TrainerCategoryController::class, 'exportExcel'])->name('trainer-categories.export.excel');
+    Route::post('trainer-categories/export/pdf', [TrainerCategoryController::class, 'exportPdf'])->name('trainer-categories.export.pdf');
+    Route::patch('trainer-categories/{recordId}/toggle-status', [TrainerCategoryController::class, 'toggleStatus'])
+        ->name('trainer-categories.toggle-status');
+    Route::resource('trainer-categories', TrainerCategoryController::class)
+        ->parameters(['trainer-categories' => 'recordId'])
+        ->except('show');
+
     Route::get('module-prefixes/data', [ModulePrefixController::class, 'data'])->name('module-prefixes.data');
     Route::resource('module-prefixes', ModulePrefixController::class)
         ->except(['create', 'store', 'show', 'destroy']);
@@ -202,6 +224,23 @@ Route::middleware('auth')->group(function () {
     Route::post('project-weeks/export/pdf', [ProjectWeekController::class, 'exportPdf'])->name('project-weeks.export.pdf');
     Route::resource('project-weeks', ProjectWeekController::class)
         ->except('show');
+
+    Route::get('training-schedules/data', [TrainingScheduleController::class, 'data'])->name('training-schedules.data');
+    Route::post('training-schedules/export/excel', [TrainingScheduleController::class, 'exportExcel'])->name('training-schedules.export.excel');
+    Route::post('training-schedules/export/pdf', [TrainingScheduleController::class, 'exportPdf'])->name('training-schedules.export.pdf');
+    Route::get('training-schedules/{training_schedule}/trainers', [TrainingScheduleTrainerController::class, 'index'])
+        ->name('training-schedules.trainers.index');
+    Route::get('training-schedules/{training_schedule}/trainers/data', [TrainingScheduleTrainerController::class, 'data'])
+        ->name('training-schedules.trainers.data');
+    Route::post('training-schedules/{training_schedule}/trainers', [TrainingScheduleTrainerController::class, 'store'])
+        ->name('training-schedules.trainers.store');
+    Route::get('training-schedules/{training_schedule}/trainers/{trainer}', [TrainingScheduleTrainerController::class, 'show'])
+        ->name('training-schedules.trainers.show');
+    Route::put('training-schedules/{training_schedule}/trainers/{trainer}', [TrainingScheduleTrainerController::class, 'update'])
+        ->name('training-schedules.trainers.update');
+    Route::delete('training-schedules/{training_schedule}/trainers/{trainer}', [TrainingScheduleTrainerController::class, 'destroy'])
+        ->name('training-schedules.trainers.destroy');
+    Route::resource('training-schedules', TrainingScheduleController::class);
 
     Route::get('special-events/data', [SpecialEventController::class, 'data'])->name('special-events.data');
     Route::get('special-events/divisions', [SpecialEventController::class, 'divisionsByGrades'])->name('special-events.divisions');

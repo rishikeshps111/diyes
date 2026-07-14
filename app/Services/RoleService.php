@@ -154,6 +154,18 @@ class RoleService
                 'edit.event-type',
                 'delete.event-type',
             ],
+            'Trainer Type' => [
+                'view.trainer-type',
+                'create.trainer-type',
+                'edit.trainer-type',
+                'delete.trainer-type',
+            ],
+            'Trainer Category' => [
+                'view.trainer-category',
+                'create.trainer-category',
+                'edit.trainer-category',
+                'delete.trainer-category',
+            ],
             'Module Prefix' => [
                 'view.module-prefix',
                 'edit.module-prefix',
@@ -175,6 +187,12 @@ class RoleService
                 'create.project-week',
                 'edit.project-week',
                 'delete.project-week',
+            ],
+            'Training Schedule' => [
+                'view.training-schedule',
+                'create.training-schedule',
+                'edit.training-schedule',
+                'delete.training-schedule',
             ],
             'Special Event' => [
                 'view.special-event',

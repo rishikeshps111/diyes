@@ -34,6 +34,9 @@ class DatabaseSeeder extends Seeder
         $this->call(TimeTableCategorySeeder::class);
         $this->call(ProjectCategorySeeder::class);
         $this->call(EventTypeSeeder::class);
+        $this->call(TrainerTypeSeeder::class);
+        $this->call(TrainerCategorySeeder::class);
+        $this->call(TrainingScheduleSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(SpecialEventSeeder::class);
         $this->call(TimetableSeeder::class);
