@@ -17,6 +17,7 @@ use App\Http\Controllers\ProjectWeekController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SpecialEventController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SubstituteAllocationController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
 use App\Http\Controllers\TimetableController;
@@ -240,6 +241,24 @@ Route::middleware('auth')->group(function () {
         ->name('training-schedules.trainers.update');
     Route::delete('training-schedules/{training_schedule}/trainers/{trainer}', [TrainingScheduleTrainerController::class, 'destroy'])
         ->name('training-schedules.trainers.destroy');
+    Route::get('training-schedules/{training_schedule}/substitute-allocations', [SubstituteAllocationController::class, 'index'])
+        ->name('training-schedules.substitute-allocations.index');
+    Route::get('training-schedules/{training_schedule}/substitute-allocations/data', [SubstituteAllocationController::class, 'data'])
+        ->name('training-schedules.substitute-allocations.data');
+    Route::get('training-schedules/{training_schedule}/substitute-allocations/create', [SubstituteAllocationController::class, 'create'])
+        ->name('training-schedules.substitute-allocations.create');
+    Route::get('training-schedules/{training_schedule}/substitute-allocations/periods/{teacher}', [SubstituteAllocationController::class, 'periods'])
+        ->name('training-schedules.substitute-allocations.periods');
+    Route::post('training-schedules/{training_schedule}/substitute-allocations', [SubstituteAllocationController::class, 'store'])
+        ->name('training-schedules.substitute-allocations.store');
+    Route::get('training-schedules/{training_schedule}/substitute-allocations/{allocation}', [SubstituteAllocationController::class, 'show'])
+        ->name('training-schedules.substitute-allocations.show');
+    Route::get('training-schedules/{training_schedule}/substitute-allocations/{allocation}/edit', [SubstituteAllocationController::class, 'edit'])
+        ->name('training-schedules.substitute-allocations.edit');
+    Route::put('training-schedules/{training_schedule}/substitute-allocations/{allocation}', [SubstituteAllocationController::class, 'update'])
+        ->name('training-schedules.substitute-allocations.update');
+    Route::delete('training-schedules/{training_schedule}/substitute-allocations/{allocation}', [SubstituteAllocationController::class, 'destroy'])
+        ->name('training-schedules.substitute-allocations.destroy');
     Route::resource('training-schedules', TrainingScheduleController::class);
 
     Route::get('special-events/data', [SpecialEventController::class, 'data'])->name('special-events.data');

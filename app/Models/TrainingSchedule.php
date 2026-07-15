@@ -89,6 +89,11 @@ class TrainingSchedule extends Model
         return $this->hasMany(TrainingScheduleTrainer::class);
     }
 
+    public function substituteAllocations(): HasMany
+    {
+        return $this->hasMany(SubstituteAllocation::class);
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');

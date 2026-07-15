@@ -215,6 +215,18 @@ class TrainingScheduleController extends Controller implements HasMiddleware
             );
         }
 
+        $buttons .= sprintf(
+            '<div class="dropdown">
+                <button class="dropdown-toggle tgle-cs-btns" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="%s">Substitute Allocation</a></li>
+                </ul>
+            </div>',
+            route('training-schedules.substitute-allocations.index', $trainingSchedule),
+        );
+
         return '<div class="action-btns">'.$buttons.'</div>';
     }
 }
