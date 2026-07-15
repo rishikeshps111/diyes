@@ -18,7 +18,9 @@
       <div class="row align-items-center mb-3">
         <div class="col-md-6">
           @can('create.training-schedule')
-            <a href="{{ route('training-schedules.substitute-allocations.create', $trainingSchedule) }}" class="add-btn">Add New</a>
+            <div class="btn-flex">
+              <a href="{{ route('training-schedules.substitute-allocations.create', $trainingSchedule) }}" class="add-btn">Add New</a>
+            </div>
           @endcan
         </div>
         <div class="col-md-6"><input id="allocationSearch" class="form-control shadow-none" placeholder="Search..."></div>

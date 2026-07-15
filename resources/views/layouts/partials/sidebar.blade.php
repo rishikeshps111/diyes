@@ -162,13 +162,13 @@
 
         @canany(['view.timetable', 'view.project-week', 'view.training-schedule', 'view.special-event'])
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('timetables.*', 'project-weeks.*', 'training-schedules.*', 'special-events.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('timetables.*', 'project-weeks.*', 'training-schedules.*', 'special-events.*', 'generate-timetable.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarTimetableManagement" data-bs-toggle="collapse" href="#">
               <i class="fa-solid fa-calendar-week"></i><span>Timetable Management</span><i
                 class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarTimetableManagement"
-              class="nav-content collapse sub-menu {{ request()->routeIs('timetables.*', 'project-weeks.*', 'training-schedules.*', 'special-events.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('timetables.*', 'project-weeks.*', 'training-schedules.*', 'special-events.*', 'generate-timetable.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
               @can('view.timetable')
                 <li>
@@ -199,6 +199,14 @@
                   <a href="{{ route('special-events.index') }}"
                     class="{{ request()->routeIs('special-events.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Special Events</span>
+                  </a>
+                </li>
+              @endcan
+              @can('view.timetable')
+                <li>
+                  <a href="{{ route('generate-timetable.index') }}"
+                    class="{{ request()->routeIs('generate-timetable.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-calendar-check"></i><span>Generate Timetable</span>
                   </a>
                 </li>
               @endcan

@@ -8,6 +8,7 @@ use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\GeneratedTimetableController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\ModulePrefixController;
 use App\Http\Controllers\ProjectCategoryController;
@@ -271,6 +272,11 @@ Route::middleware('auth')->group(function () {
     Route::post('special-events/export/excel', [SpecialEventController::class, 'exportExcel'])->name('special-events.export.excel');
     Route::post('special-events/export/pdf', [SpecialEventController::class, 'exportPdf'])->name('special-events.export.pdf');
     Route::resource('special-events', SpecialEventController::class);
+
+    Route::get('generate-timetable', [GeneratedTimetableController::class, 'index'])
+        ->middleware('can:view.timetable')->name('generate-timetable.index');
+    Route::get('generate-timetable/pdf', [GeneratedTimetableController::class, 'pdf'])
+        ->middleware('can:view.timetable')->name('generate-timetable.pdf');
 
     Route::get('timetables/data', [TimetableController::class, 'data'])->name('timetables.data');
     Route::get('timetables/{timetable}/generate', [TimetableController::class, 'generate'])->name('timetables.generate');

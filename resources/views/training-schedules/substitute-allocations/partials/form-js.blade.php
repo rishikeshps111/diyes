@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const teachers = {{ Illuminate\Support\Js::from($teacherData) }};
   const existing = {{ Illuminate\Support\Js::from($existingData) }};
   const rowsBody = document.getElementById('periodRows');
+  const submitButton = document.getElementById('allocationSubmit');
+  const submitButtonHtml = submitButton.innerHTML;
   let rowCount = 0;
 
   if (window.jQuery && jQuery.fn.select2) jQuery('#subject_id, #training_schedule_trainer_id').select2({width:'100%'});
@@ -88,6 +90,8 @@ document.addEventListener('DOMContentLoaded', function () {
     })).filter(row => row.allocation_date);
     const error = document.getElementById('allocationErrors'); error.textContent='';
     if (!document.getElementById('subject_id').value || !document.getElementById('training_schedule_trainer_id').value || !allocations.length) { error.textContent='Add at least one allocation row.'; return; }
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>'+(submitButton.dataset.loadingText || 'Saving...');
     fetch({{ Illuminate\Support\Js::from($submitUrl) }}, {
       method:existing?'PUT':'POST', credentials:'same-origin',
       headers:{'X-CSRF-TOKEN':@json(csrf_token()),'X-Requested-With':'XMLHttpRequest','Content-Type':'application/json',Accept:'application/json'},
@@ -98,7 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!response.ok || !data) throw data || {message:'Unable to save the allocation. Please refresh the page and try again.'};
       return data;
     }).then(data => Swal.fire('Saved',data.message,'success').then(()=>location.href={{ Illuminate\Support\Js::from(route('training-schedules.substitute-allocations.index', $trainingSchedule)) }}))
-      .catch(data => error.textContent=data.message||Object.values(data.errors||{}).flat().join(' '));
+      .catch(data => {
+        error.textContent=data.message||Object.values(data.errors||{}).flat().join(' ');
+        submitButton.disabled = false;
+        submitButton.innerHTML = submitButtonHtml;
+      });
   });
   function option(value,label,selected){return '<option value="'+value+'" '+(String(value)===String(selected)?'selected':'')+'>'+escapeHtml(label)+'</option>';}
   function escapeHtml(value){const div=document.createElement('div');div.textContent=value??'';return div.innerHTML;}

@@ -98,11 +98,13 @@
           <button type="button" id="addAllocationRow" class="add-btn border-0 mt-3">Add Row</button>
         @endunless
         <div id="allocationErrors" class="text-danger mt-2"></div>
-        <div class="d-flex justify-content-end gap-2 mt-3">
-          <a href="{{ route('training-schedules.substitute-allocations.index', $trainingSchedule) }}"
-            class="btn btn-danger">Cancel</a>
-          <button type="submit" id="allocationSubmit" class="btn btn-success"
-            data-loading-text="Saving...">{{ $allocation->exists ? 'Update' : 'Save' }}</button>
+        <div class="col-lg-12 d-flex justify-content-center align-items-center mt-3">
+          <div class="btn-flex">
+            <a href="{{ route('training-schedules.substitute-allocations.index', $trainingSchedule) }}"
+              class="btn btn-danger">Cancel</a>
+            <button type="submit" id="allocationSubmit" class="submit-btn"
+              data-loading-text="{{ $allocation->exists ? 'Updating...' : 'Saving...' }}">{{ $allocation->exists ? 'Update' : 'Save' }}</button>
+          </div>
         </div>
       </form>
     </div>
