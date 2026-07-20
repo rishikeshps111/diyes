@@ -3,7 +3,7 @@
         const csrfToken = '{{ csrf_token() }}';
         const schedulesDataUrl = '{{ route('projects.schedules.data', $project) }}';
         const schedulesStoreUrl = '{{ route('projects.schedules.store', $project) }}';
-        const projectDuration = @json((int) $project->duration_days);
+        const scheduleDayLimit = @json((int) $scheduleDayLimit);
         const formElement = document.getElementById('projectScheduleForm');
         const formModalElement = document.getElementById('projectScheduleFormModal');
         const formModal = formModalElement ? new bootstrap.Modal(formModalElement) : null;
@@ -79,8 +79,8 @@
 
         if (addButton && formElement) {
             addButton.addEventListener('click', function () {
-                if (nextDayNumber > projectDuration) {
-                    Swal.fire('Project Duration Reached', 'You cannot add more schedules than the project duration.', 'warning');
+                if (nextDayNumber > scheduleDayLimit) {
+                    warningToast('All ' + scheduleDayLimit + ' project schedule records have already been added.');
                     return;
                 }
                 openScheduleForm('Add Schedule', schedulesStoreUrl, {
@@ -191,7 +191,7 @@
 
         function refreshAddButton() {
             if (addButton) {
-                addButton.disabled = nextDayNumber > projectDuration;
+                addButton.disabled = false;
             }
         }
 
@@ -274,6 +274,18 @@
                 title: message,
                 showConfirmButton: false,
                 timer: 1800
+            });
+        }
+
+        function warningToast(message) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'warning',
+                title: message,
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true
             });
         }
 

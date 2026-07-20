@@ -28,6 +28,7 @@ class ProjectScheduleController extends Controller implements HasMiddleware
         return view('projects.schedules.index', [
             'project' => $project,
             'nextDayNumber' => $this->nextDayNumber($project),
+            'scheduleDayLimit' => $project->scheduleDayLimit(),
             'minScheduleDate' => $project->start_date?->format('Y-m-d'),
             'maxScheduleDate' => $project->end_date?->format('Y-m-d'),
         ]);
@@ -118,7 +119,9 @@ class ProjectScheduleController extends Controller implements HasMiddleware
 
     private function ensureDayWithinDuration(Project $project, int $dayNumber): void
     {
-        abort_if($dayNumber > $project->duration_days, 422, 'Project duration allows schedules up to Day '.$project->duration_days.'.');
+        $scheduleDayLimit = $project->scheduleDayLimit();
+
+        abort_if($dayNumber > $scheduleDayLimit, 422, 'Project date range allows schedules up to Day '.$scheduleDayLimit.'.');
     }
 
     private function actionButtons(Project $project, ProjectSchedule $schedule): string

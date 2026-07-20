@@ -72,4 +72,13 @@ class Project extends Model
     {
         return $this->hasMany(ProjectSchedule::class)->orderBy('day_number');
     }
+
+    public function scheduleDayLimit(): int
+    {
+        if ($this->start_date && $this->end_date) {
+            return $this->start_date->diffInDays($this->end_date) + 1;
+        }
+
+        return $this->duration_days;
+    }
 }

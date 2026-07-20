@@ -104,7 +104,7 @@
         <div class="col-lg-12">
           <h4 class="mb-1">{{ $project->project_title }}</h4>
           <p class="mb-1">{{ $project->project_code }} / {{ $project->category?->title ?? '-' }}</p>
-          <span>Duration: {{ $project->duration_days }} day(s)</span>
+          <span>Duration: {{ $scheduleDayLimit }} day(s)</span>
           <span class="ms-3">Date: {{ $project->start_date?->format('d M Y') ?? '-' }} to {{ $project->end_date?->format('d M Y') ?? '-' }}</span>
         </div>
       </div>
@@ -116,8 +116,7 @@
           <div class="btn-flex">
             <a href="{{ route('projects.index') }}" class="btn btn-danger">Back</a>
             @can('edit.project')
-              <button type="button" id="addProjectScheduleBtn" class="add-btn"
-                @disabled($nextDayNumber > $project->duration_days)>Add Schedule</button>
+              <button type="button" id="addProjectScheduleBtn" class="add-btn">Add Schedule</button>
             @endcan
           </div>
         </div>
