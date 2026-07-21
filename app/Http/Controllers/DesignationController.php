@@ -33,18 +33,13 @@ class DesignationController extends Controller implements HasMiddleware
 
     public function index(): View
     {
-        return view('designations.index', [
-            'departments' => $this->designationService->departments(),
-            'grades' => $this->designationService->grades(),
-        ]);
+        return view('designations.index');
     }
 
     public function data(Request $request): JsonResponse
     {
         $query = $this->designationService->query($request->only([
-            'department_id',
             'designation_name',
-            'grade_id',
             'is_active',
         ]));
 
@@ -54,27 +49,12 @@ class DesignationController extends Controller implements HasMiddleware
                 '<input type="checkbox" class="designation-row-check" value="%d">',
                 $designation->id
             ))
-            ->addColumn('department', fn (Designation $designation): string => $designation->department?->department_name ?? '-')
-            ->addColumn('grade', fn (Designation $designation): string => $this->gradeWithYear($designation))
             ->editColumn('is_active', fn (Designation $designation): string => sprintf(
                 '<span class="%s">%s</span>',
                 $designation->is_active ? 'status-green' : 'status-red',
                 $designation->is_active ? 'Active' : 'Inactive'
             ))
             ->addColumn('actions', fn (Designation $designation): string => $this->actionButtons($designation))
-            ->filterColumn('department', function ($query, string $keyword): void {
-                $query->whereHas('department', function ($query) use ($keyword): void {
-                    $query->where('department_name', 'like', "%{$keyword}%");
-                });
-            })
-            ->filterColumn('grade', function ($query, string $keyword): void {
-                $query->whereHas('grade', function ($query) use ($keyword): void {
-                    $query->where('grade', 'like', "%{$keyword}%")
-                        ->orWhereHas('academicYear', function ($query) use ($keyword): void {
-                            $query->where('academic_year', 'like', "%{$keyword}%");
-                        });
-                });
-            })
             ->rawColumns(['select', 'is_active', 'actions'])
             ->toJson();
     }
@@ -86,8 +66,6 @@ class DesignationController extends Controller implements HasMiddleware
                 'code' => $this->designationService->nextCode(),
                 'is_active' => true,
             ]),
-            'departments' => $this->designationService->departments(),
-            'grades' => $this->designationService->grades(),
         ]);
     }
 
@@ -104,8 +82,6 @@ class DesignationController extends Controller implements HasMiddleware
     {
         return view('designations.form', [
             'designation' => $designation,
-            'departments' => $this->designationService->departments(),
-            'grades' => $this->designationService->grades(),
         ]);
     }
 
@@ -202,16 +178,4 @@ class DesignationController extends Controller implements HasMiddleware
         return '<div class="action-btns">'.$buttons.'</div>';
     }
 
-    private function gradeWithYear(Designation $designation): string
-    {
-        if (! $designation->grade) {
-            return '-';
-        }
-
-        $academicYear = $designation->grade->academicYear?->academic_year;
-
-        return $academicYear
-            ? $designation->grade->grade.' - '.$academicYear
-            : $designation->grade->grade;
-    }
 }

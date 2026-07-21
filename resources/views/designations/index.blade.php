@@ -22,33 +22,9 @@
             <div class="row">
               <div class="col-lg-3 mb-3">
                 <div class="o-f-inp">
-                  <label for="department_filter">Department</label>
-                  <select id="department_filter" class="form-select shadow-none">
-                    <option value="">--- Select ---</option>
-                    @foreach ($departments as $department)
-                      <option value="{{ $department->id }}">{{ $department->department_name }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
-              <div class="col-lg-3 mb-3">
-                <div class="o-f-inp">
                   <label for="designation_name_filter">Designation</label>
                   <input type="text" id="designation_name_filter" class="form-control shadow-none"
                     placeholder="Search by designation">
-                </div>
-              </div>
-              <div class="col-lg-3 mb-3">
-                <div class="o-f-inp">
-                  <label for="grade_filter">Grade</label>
-                  <select id="grade_filter" class="form-select shadow-none">
-                    <option value="">--- Select ---</option>
-                    @foreach ($grades as $grade)
-                      <option value="{{ $grade->id }}">
-                        {{ $grade->grade }}{{ $grade->academicYear ? ' - '.$grade->academicYear->academic_year : '' }}
-                      </option>
-                    @endforeach
-                  </select>
                 </div>
               </div>
               <div class="col-lg-3 mb-3">
@@ -129,8 +105,6 @@
                       <th>SL No</th>
                       <th>Code</th>
                       <th>Designation</th>
-                      <th>Department</th>
-                      <th>Grade</th>
                       <th>Status</th>
                       <th>Actions</th>
                       <th class="d-none">Created At</th>

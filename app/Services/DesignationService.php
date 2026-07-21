@@ -16,15 +16,8 @@ class DesignationService
     public function query(array $filters = []): Builder
     {
         return Designation::query()
-            ->with(['department', 'grade.academicYear'])
-            ->when($filters['department_id'] ?? null, function (Builder $query, string $departmentId): void {
-                $query->where('department_id', $departmentId);
-            })
             ->when($filters['designation_name'] ?? null, function (Builder $query, string $designationName): void {
                 $query->where('designation_name', 'like', "%{$designationName}%");
-            })
-            ->when($filters['grade_id'] ?? null, function (Builder $query, string $gradeId): void {
-                $query->where('grade_id', $gradeId);
             })
             ->when(isset($filters['is_active']) && $filters['is_active'] !== '', function (Builder $query) use ($filters): void {
                 $query->where('is_active', (bool) $filters['is_active']);
@@ -65,8 +58,6 @@ class DesignationService
         return Designation::create([
             ...Arr::only($data, [
                 'designation_name',
-                'department_id',
-                'grade_id',
                 'is_active',
                 'description',
             ]),
@@ -78,8 +69,6 @@ class DesignationService
     {
         $designation->update(Arr::only($data, [
             'designation_name',
-            'department_id',
-            'grade_id',
             'is_active',
             'description',
         ]));

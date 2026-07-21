@@ -11,14 +11,12 @@
             serverSide: true,
             searching: true,
             lengthChange: false,
-            order: [[8, 'desc']],
+            order: [[6, 'desc']],
             dom: 'rt<"table_bottom"ip>',
             ajax: {
                 url: '{{ route('designations.data') }}',
                 data: function (data) {
-                    data.department_id = document.getElementById('department_filter').value;
                     data.designation_name = document.getElementById('designation_name_filter').value;
-                    data.grade_id = document.getElementById('grade_filter').value;
                     data.is_active = document.getElementById('status_filter').value;
                 }
             },
@@ -27,8 +25,6 @@
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'code', name: 'code' },
                 { data: 'designation_name', name: 'designation_name' },
-                { data: 'department', name: 'department', orderable: false },
-                { data: 'grade', name: 'grade', orderable: false },
                 { data: 'is_active', name: 'is_active', orderable: false },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false },
                 { data: 'created_at', name: 'created_at', visible: false, searchable: false }
@@ -56,9 +52,7 @@
 
         resetFiltersButton.addEventListener('click', function () {
             setButtonLoading(resetFiltersButton, true);
-            document.getElementById('department_filter').value = '';
             document.getElementById('designation_name_filter').value = '';
-            document.getElementById('grade_filter').value = '';
             document.getElementById('status_filter').value = '';
             table.search('').draw();
         });

@@ -41,35 +41,6 @@
                 @enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
-                <label for="department_id">Department <span class="text-danger">*</span></label>
-                <select name="department_id" id="department_id"
-                  class="form-select shadow-none @error('department_id') is-invalid @enderror">
-                  <option value="">--- Select ---</option>
-                  @foreach ($departments as $department)
-                    <option value="{{ $department->id }}" @selected(old('department_id', $designation->department_id) == $department->id)>
-                      {{ $department->department_name }}
-                    </option>
-                  @endforeach
-                </select>
-                @error('department_id')
-                  <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-              </div>
-              <div class="col-lg-4 o-f-inp mb-3">
-                <label for="grade_id">Grade <span class="text-danger">*</span></label>
-                <select name="grade_id" id="grade_id" class="form-select shadow-none @error('grade_id') is-invalid @enderror">
-                  <option value="">--- Select ---</option>
-                  @foreach ($grades as $grade)
-                    <option value="{{ $grade->id }}" @selected(old('grade_id', $designation->grade_id) == $grade->id)>
-                      {{ $grade->grade }}{{ $grade->academicYear ? ' - '.$grade->academicYear->academic_year : '' }}
-                    </option>
-                  @endforeach
-                </select>
-                @error('grade_id')
-                  <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-              </div>
-              <div class="col-lg-4 o-f-inp mb-3">
                 <label for="is_active">Status <span class="text-danger">*</span></label>
                 <select name="is_active" id="is_active"
                   class="form-select shadow-none @error('is_active') is-invalid @enderror">
