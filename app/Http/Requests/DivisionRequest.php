@@ -26,7 +26,12 @@ class DivisionRequest extends FormRequest
             'division' => ['required', 'string', 'max:255'],
             'grade_id' => ['required', 'integer', Rule::exists('grades', 'id')],
             'capacity' => ['required', 'integer', 'min:1'],
-            'class_teacher' => ['nullable', 'string', 'max:255'],
+            'class_teacher' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::exists('teachers', 'name')->where('status', 'active'),
+            ],
             'room_number' => ['nullable', 'integer', 'min:1'],
             'is_active' => ['required', 'boolean'],
         ];

@@ -65,9 +65,15 @@
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
                 <label for="class_teacher">Class Teacher</label>
-                <input type="text" name="class_teacher" id="class_teacher"
-                  class="form-control shadow-none @error('class_teacher') is-invalid @enderror"
-                  value="{{ old('class_teacher', $division->class_teacher) }}">
+                <select name="class_teacher" id="class_teacher"
+                  class="form-select shadow-none @error('class_teacher') is-invalid @enderror">
+                  <option value="">--- Select ---</option>
+                  @foreach ($teachers as $teacher)
+                    <option value="{{ $teacher->name }}" @selected(old('class_teacher', $division->class_teacher) === $teacher->name)>
+                      {{ $teacher->name }}
+                    </option>
+                  @endforeach
+                </select>
                 @error('class_teacher')
                   <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -116,6 +122,14 @@
     document.addEventListener('DOMContentLoaded', function () {
       const divisionForm = document.getElementById('divisionForm');
       const submitButton = document.getElementById('divisionSubmitBtn');
+
+      if (window.jQuery && jQuery.fn.select2) {
+        jQuery('#class_teacher').select2({
+          width: '100%',
+          placeholder: '--- Select ---',
+          allowClear: true
+        });
+      }
 
       if (!divisionForm || !submitButton) {
         return;

@@ -80,6 +80,7 @@ class DivisionController extends Controller implements HasMiddleware
                 'is_active' => false,
             ]),
             'grades' => $this->divisionService->grades(),
+            'teachers' => $this->divisionService->teachers(),
         ]);
     }
 
@@ -97,6 +98,7 @@ class DivisionController extends Controller implements HasMiddleware
         return view('divisions.form', [
             'division' => $division,
             'grades' => $this->divisionService->grades(),
+            'teachers' => $this->divisionService->teachers(),
         ]);
     }
 

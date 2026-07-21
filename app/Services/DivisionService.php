@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Division;
 use App\Models\Grade;
+use App\Models\Teacher;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
@@ -39,6 +40,14 @@ class DivisionService
             ->with('academicYear')
             ->orderBy('grade')
             ->get(['id', 'grade', 'academic_year_id']);
+    }
+
+    public function teachers(): Collection
+    {
+        return Teacher::query()
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     public function nextCode(): string

@@ -109,7 +109,7 @@
                   <select id="status_filter" class="form-select shadow-none">
                     <option value="">--- Select ---</option>
                     @foreach ($statuses as $statusValue => $statusLabel)
-                      <option value="{{ $statusValue }}">{{ $statusLabel }}</option>
+                      <option value="{{ $statusValue }}" @selected(request('status') === $statusValue)>{{ $statusLabel }}</option>
                     @endforeach
                   </select>
                 </div>
