@@ -216,19 +216,24 @@
 
         @canany(['view.teacher'])
           <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('teachers.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('teachers.*', 'teacher-allotments.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarTeacherManagement" data-bs-toggle="collapse" href="#">
               <i class="fa-solid fa-chalkboard-user"></i><span>Teacher Management</span><i
                 class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="sidebarTeacherManagement"
-              class="nav-content collapse sub-menu {{ request()->routeIs('teachers.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('teachers.*', 'teacher-allotments.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
               @can('view.teacher')
                 <li>
                   <a href="{{ route('teachers.index') }}"
                     class="{{ request()->routeIs('teachers.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Teachers</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="{{ route('teacher-allotments.index') }}" class="{{ request()->routeIs('teacher-allotments.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-calendar-week"></i><span>Teacher Allotment</span>
                   </a>
                 </li>
               @endcan

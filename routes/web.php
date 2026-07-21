@@ -21,6 +21,9 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SubstituteAllocationController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherDocumentController;
+use App\Http\Controllers\TeacherSubjectController;
+use App\Http\Controllers\TeacherSchedulerController;
+use App\Http\Controllers\TeacherAllotmentController;
 use App\Http\Controllers\TimetableController;
 use App\Http\Controllers\TimeTableCategoryController;
 use App\Http\Controllers\TrainerCategoryController;
@@ -202,6 +205,16 @@ Route::middleware('auth')->group(function () {
     Route::post('teachers/{teacher}/documents/{document}', [TeacherDocumentController::class, 'update'])->name('teachers.documents.update');
     Route::delete('teachers/{teacher}/documents/{document}', [TeacherDocumentController::class, 'destroy'])->name('teachers.documents.destroy');
     Route::patch('teachers/{teacher}/documents/{document}/verify', [TeacherDocumentController::class, 'verify'])->name('teachers.documents.verify');
+    Route::get('teachers/{teacher}/subjects', [TeacherSubjectController::class, 'index'])->name('teachers.subjects.index');
+    Route::get('teachers/{teacher}/subjects/data', [TeacherSubjectController::class, 'data'])->name('teachers.subjects.data');
+    Route::post('teachers/{teacher}/subjects', [TeacherSubjectController::class, 'store'])->name('teachers.subjects.store');
+    Route::get('teachers/{teacher}/subjects/{teacherSubject}', [TeacherSubjectController::class, 'show'])->name('teachers.subjects.show');
+    Route::post('teachers/{teacher}/subjects/{teacherSubject}', [TeacherSubjectController::class, 'update'])->name('teachers.subjects.update');
+    Route::delete('teachers/{teacher}/subjects/{teacherSubject}', [TeacherSubjectController::class, 'destroy'])->name('teachers.subjects.destroy');
+    Route::get('teachers/{teacher}/scheduler', [TeacherSchedulerController::class, 'index'])->name('teachers.scheduler.index');
+    Route::get('teachers/{teacher}/scheduler/pdf', [TeacherSchedulerController::class, 'pdf'])->name('teachers.scheduler.pdf');
+    Route::get('teacher-allotments', [TeacherAllotmentController::class, 'index'])->name('teacher-allotments.index');
+    Route::get('teacher-allotments/pdf', [TeacherAllotmentController::class, 'pdf'])->name('teacher-allotments.pdf');
 
     Route::resource('teachers', TeacherController::class);
 

@@ -93,6 +93,11 @@ class Teacher extends Model
         return $this->hasMany(TeacherDocument::class);
     }
 
+    public function subjectAssignments(): HasMany
+    {
+        return $this->hasMany(TeacherSubject::class);
+    }
+
     public function imageUrl(): ?string
     {
         return $this->teacher_image ? Storage::url($this->teacher_image) : null;

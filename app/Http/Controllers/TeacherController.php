@@ -302,13 +302,17 @@ class TeacherController extends Controller implements HasMiddleware
                     <li><a class="dropdown-item" href="%s">View Details</a></li>
                     %s
                     <li><a class="dropdown-item" href="%s">View Documents</a></li>
+                    <li><a class="dropdown-item" href="%s">Manage Subjects</a></li>
+                    <li><a class="dropdown-item" href="%s">Scheduler</a></li>
                 </ul>
             </div>',
             route('teachers.show', $teacher),
             request()->user()?->can('edit.teacher')
                 ? sprintf('<li><button type="button" class="dropdown-item teacher-verify-btn" data-verify-url="%s">Verify</button></li>', route('teachers.verify', $teacher))
                 : '',
-            route('teachers.documents.index', $teacher)
+            route('teachers.documents.index', $teacher),
+            route('teachers.subjects.index', $teacher),
+            route('teachers.scheduler.index', $teacher)
         );
 
         return '<div class="action-btns">' . $buttons . $menu . '</div>';

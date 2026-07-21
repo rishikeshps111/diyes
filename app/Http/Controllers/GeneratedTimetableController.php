@@ -67,10 +67,10 @@ class GeneratedTimetableController extends Controller
         ];
     }
 
-    private function buildPreview(array $filters): array
+    public function buildPreview(array $filters): array
     {
-        $weekStart = now()->startOfWeek(Carbon::MONDAY)->startOfDay();
-        $weekEnd = $weekStart->copy()->addDays(6)->endOfDay();
+        $weekStart = isset($filters['week_start']) ? Carbon::parse($filters['week_start'])->startOfDay() : now()->startOfWeek(Carbon::MONDAY)->startOfDay();
+        $weekEnd = isset($filters['week_end']) ? Carbon::parse($filters['week_end'])->endOfDay() : $weekStart->copy()->addDays(6)->endOfDay();
         $types = collect($filters['types']);
         $days = collect(TimetableEntry::DAYS)->mapWithKeys(fn ($day, $index) => [$day => $weekStart->copy()->addDays($index)]);
 
@@ -101,6 +101,7 @@ class GeneratedTimetableController extends Controller
                     if (! $source || ! $this->dateIsWithin($days->get($entry->day), $projectWeek->applicable_from, $projectWeek->applicable_to)) continue;
                     $cells->put($entry->day.'|'.$entry->period_no, [
                         'title' => $projectWeek->project?->project_title ?? 'Project Week', 'teachers' => collect([$entry->teacherOne?->name, $entry->teacherTwo?->name])->filter()->implode(', '),
+                        'teacher_ids' => collect([$entry->teacher_1_id, $entry->teacher_2_id])->filter()->map(fn ($id) => (int) $id)->values()->all(),
                         'time' => $this->time($source), 'color' => '#dcfce7', 'type' => 'project', 'label' => 'Project Week',
                     ]);
                 }
@@ -116,6 +117,7 @@ class GeneratedTimetableController extends Controller
                 if (! $this->dateIsWithin($days->get($entry->day), $entry->specialEvent->event_start_date, $entry->specialEvent->event_end_date)) continue;
                 $cells->put($entry->day.'|'.$entry->period_no, [
                     'title' => $entry->specialEvent->event_title, 'teachers' => collect($entry->teacher_names)->filter()->implode(', '),
+                    'teacher_ids' => [], 'teacher_names' => collect($entry->teacher_names)->filter()->values()->all(),
                     'time' => substr((string) $entry->start_time, 0, 5).' - '.substr((string) $entry->end_time, 0, 5), 'color' => '#dbeafe', 'type' => 'special', 'label' => 'Special Event',
                 ]);
             }
@@ -132,6 +134,7 @@ class GeneratedTimetableController extends Controller
                 $cell['title'] = $cell['title'] ?? $allocation->subject?->subject_name ?? '-';
                 $cell['time'] = $cell['time'] ?? ($allocation->timetableEntry ? $this->time($allocation->timetableEntry) : '-');
                 $cell['teachers'] = $allocation->substituteTeacher?->name ?? '-';
+                $cell['teacher_ids'] = $allocation->substitute_teacher_id ? [(int) $allocation->substitute_teacher_id] : [];
                 $cell['original_teacher'] = $allocation->teacher?->name;
                 $cell['color'] = '#f3e8ff'; $cell['type'] = 'substitute'; $cell['label'] = 'Substitute Allotted';
                 $cells->put($key, $cell);
@@ -150,7 +153,7 @@ class GeneratedTimetableController extends Controller
 
     private function regularCell(TimetableEntry $entry): array
     {
-        return ['title' => $entry->subject?->subject_name ?? '-', 'teachers' => collect([$entry->teacherOne?->name, $entry->teacherTwo?->name])->filter()->implode(', '), 'time' => $this->time($entry), 'color' => $entry->subject?->color ?? '#ffffff', 'type' => 'regular', 'label' => 'Regular'];
+        return ['title' => $entry->subject?->subject_name ?? '-', 'teachers' => collect([$entry->teacherOne?->name, $entry->teacherTwo?->name])->filter()->implode(', '), 'teacher_ids' => collect([$entry->teacher_1_id, $entry->teacher_2_id])->filter()->map(fn ($id) => (int) $id)->values()->all(), 'time' => $this->time($entry), 'color' => $entry->subject?->color ?? '#ffffff', 'type' => 'regular', 'label' => 'Regular'];
     }
 
     private function time(TimetableEntry $entry): string
