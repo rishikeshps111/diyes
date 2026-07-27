@@ -21,6 +21,8 @@ class ModulePrefix extends Model
         'classroom' => 'Classroom',
         'venue' => 'Venue',
         'holiday' => 'Holiday',
+        'leave_type' => 'Leave Type',
+        'leave_application' => 'Leave Application',
         'time_table_category' => 'Time Table Category',
         'project_category' => 'Project Category',
         'event_type' => 'Event Type',

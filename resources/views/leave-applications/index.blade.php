@@ -1,334 +1,66 @@
 @extends('layouts.app')
-
-@section('title', 'Leave Applications')
-
+@section('title','Leave Applications')
+@push('styles')
+<style>
+.leave-decision-btn{font-size:11px;line-height:1.2;padding:4px 7px;white-space:nowrap}
+.new-leave-badge{animation:leaveBlink 1s step-end infinite}@keyframes leaveBlink{50%{opacity:.25}}
+</style>
+@endpush
 @section('content')
-
- <div class="page-title">
-    <h3>Leave Applications</h3>
-    <nav>
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-        <li class="breadcrumb-item">Teacher Management</li>
-        <li class="breadcrumb-item active">Leave Applications</li>
-      </ol>
-    </nav>
-  </div>
-
-  <section class="section dashboard">
-    <div class="row">
-                <div class="col-lg-12 mb-3">
-
-                    <div class="collapse" id="filterCollapse">
-
-
-                        <div class="main-table-container">
-                            <form method="GET" action="{{ route('leave-applications.index') }}">
-                            <div class="row">
-
-                                <div class="col-lg-4 mb-3">
-                                    <div class="o-f-inp">
-                                        <label>Leave Type </label>
-                                        <select name="leave_type_id" id="" class="form-select shadow-none">
-                                            <option value="">--- Select ---</option>
-                                            @foreach($leaveTypes as $leave)
-                                                <option value="{{$leave->id}}" {{ request('leave_type_id') == $leave->id ? 'selected' : '' }}>{{$leave->leave_name}}</option>
-                                            @endforeach
-
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 mb-3">
-                                    <div class="o-f-inp">
-                                        <label>Teacher </label>
-                                        <select name="teacher_id" id="" class="form-select shadow-none">
-                                            <option value="">--- Select ---</option>
-                                            @foreach($teachers as $teacher)
-                                            <option value="{{$teacher->id}}" {{ request('teacher_id') == $teacher->id ? 'selected' : '' }}>{{$teacher->name}}</option>
-                                            @endforeach
-
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 mb-3">
-                                    <div class="o-f-inp">
-                                            <label>From Date</label>
-                                            <input type="date"
-                                                   name="from_date"
-                                                   value="{{ request('from_date') }}"
-                                                   class="form-control shadow-none">
-                                        </div>
-                                    </div>
-                            
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="o-f-inp">
-                                            <label>To Date</label>
-                                            <input type="date"
-                                                   name="to_date"
-                                                   value="{{ request('to_date') }}"
-                                                   class="form-control shadow-none">
-                                        </div>
-                                </div>
-                                <div class="col-lg-4 mb-3">
-                                    <div class="o-f-inp">
-                                        <label for="">Status</label>
-                                        <select name="status" id="status" class="form-select shadow-none">
-                                            <option value="">--- Select ---</option>
-                                            <option value="Pending" {{ request('status')=='Pending'?'selected':'' }}>Pending</option>
-                                            <option value="Approved" {{ request('status')=='Approved'?'selected':'' }}>Approved</option>
-                                            <option value="Rejected" {{ request('status')=='Rejected'?'selected':'' }}>Rejected</option>
-
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-12">
-                                    <div class="filter-btns-top ">
-                                        <a href="{{ route('leave-applications.index') }}" class="reset-btn">Reset</a>
-                                        <button type="submit" class="search-btn"> Search</button>
-
-
-                                    </div>
-                                </div>
-                            </div>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-    <div class="col-lg-12 mb-3">
-      <div class="main-table-container">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="btn-flex">
-                <a class="add-btn bg-filter" data-bs-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="collapseExample">Filters</a>
-                <a href="{{route('leave-applications.create')}}" class="add-btn">Add New</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="row">
-            
-            
-          <div class="col-lg-12">
-            <div class="mt-3 table-container">
-              <div class="row justify-content-end">
-                <div class="col-lg-5">
-                  <div class="entry-select">
-                    <p>Showing</p>
-                    <select id="teacherPerPage" class="form-select shadow-none">
-                      <option value="10">10</option>
-                      <option value="25">25</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                    </select>
-                    <p>Entries</p>
-                  </div>
-                </div>
-                <div class="col-lg-7">
-                  <!--<div class="table-search">-->
-                  <!--  <label for="teacherTableSearch" class="nowrap">Search</label>-->
-                  <!--  <input type="text" id="teacherTableSearch" class="form-control shadow-none"-->
-                  <!--    placeholder="Name, employee code, email or phone">-->
-                  <!--  <form id="teacherExportForm" method="POST" class="d-inline-flex flex-shrink-0">-->
-                  <!--    @csrf-->
-                  <!--    <button type="button" class="exp-btn" data-loading-text="Exporting..."-->
-                  <!--      data-export-url="{{ route('teachers.export.excel') }}">Export Excel</button>-->
-                  <!--    <button type="button" class="exp-btn" data-loading-text="Exporting..."-->
-                  <!--      data-export-url="{{ route('teachers.export.pdf') }}">Export PDF</button>-->
-                  <!--  </form>-->
-                  <!--</div>-->
-                </div>
-              </div>
-
-              <div class="table-over">
-                <table id="leaveTypeTable" class="align-middle mb-0 table table-custom mt-3">
-                  <thead>
-                    <tr>
-                       <th>#</th>
-                       <th>Application No</th>
-                       <th>Applied Date</th>
-                        <th>Teacher</th>
-
-                        <th>Leave Type</th>
-                        
-                        <th>From</th>
-                        
-                        <th>To</th>
-                        
-                        <th>Days</th>
-                        
-                        <th>Status</th>
-                        
-                        <th>Action</th>
-
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse($leaves as $leave)
-
-                    <tr>
-                    <td>{{$loop->iteration}}</td>
-                    <td>{{$leave->application_no}}</td>
-                    <td>{{$leave->applied_date}}</td>
-                    <td>
-                    
-                    {{ $leave->teacher->name ?? '' }}
-                    
-                    </td>
-                    
-                    <td>
-                    
-                    {{ $leave->leaveType->leave_name ?? '' }}
-                    
-                    </td>
-                    
-                    <td>
-                    
-                    {{ $leave->from_date }}
-                    
-                    </td>
-                    
-                    <td>
-                    
-                    {{ $leave->to_date }}
-                    
-                    </td>
-                    
-                    <td>
-                    
-                    {{ $leave->days }}
-                    
-                    </td>
-                    
-                    <td>
-                    
-                    {{ $leave->status }}
-                    
-                    </td>
-                    
-                    <td>
-                         <div class="action-btns">
-                            <a href="{{route('leave-applications.edit',$leave->id)}}" class="btn-edit"> <i
-                                    class="fa-solid fa-pen-to-square"></i></a>
-                            <div class="dropdown">
-                                <button class="dropdown-toggle tgle-cs-btns" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu dromenu-cs">
-                                    <li><a class="dropdown-item" href="{{ route('leave-applications.show',$leave->id) }}">View </a></li>
-                                     @if($leave->status == 'Pending')
-                                        <li>
-                                            <form id="approve-form-{{ $leave->id }}"
-                                                  action="{{ route('leave-applications.approve', $leave->id) }}"
-                                                  method="POST">
-                                                @csrf
-                                                <button type="button"
-                                                        class="dropdown-item text-success"
-                                                        onclick="approveLeave({{ $leave->id }})">
-                                                    Approve
-                                                </button>
-                                            </form>
-                                        </li>
-                                        
-                                        <li>
-                                            <form id="reject-form-{{ $leave->id }}"
-                                                  action="{{ route('leave-applications.reject', $leave->id) }}"
-                                                  method="POST">
-                                                @csrf
-                                                <button type="button"
-                                                        class="dropdown-item text-danger"
-                                                        onclick="rejectLeave({{ $leave->id }})">
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        </li>
-                                    @else
-                                
-                                        <li>
-                                            <span class="dropdown-item text-muted">
-                                                {{ $leave->status }}
-                                            </span>
-                                        </li>
-                                
-                                    @endif
-
-
-
-                                </ul>
-                            </div>
-
-
-
-                            <a href="#!" class=" btn-delete"> <i
-                                    class="fa-solid fa-trash"></i></a>
-
-                        </div>
-                    
-                    
-                    </td>
-                    
-                    </tr>
-                    @empty
-
-                    <tr>
-
-                        <td colspan="9" class="text-center">
-
-                            No Leave Applications Found
-
-                        </td>
-
-                    </tr>
-
-                    @endforelse
-                  </tbody>
-                </table>
-                {{ $leaves->links() }}
-              </div>
-            </div>
-          </div>
-        </div>
-        
-      </div>
+<div class="page-title"><h3>Leave Applications</h3><nav><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li><li class="breadcrumb-item">Leave Management</li><li class="breadcrumb-item active">Manage Leave</li></ol></nav></div>
+<section class="section dashboard">
+  <div class="row"><div class="col-12 mb-3"><div class="collapse" id="filterCollapse"><div class="main-table-container"><div class="row">
+    <div class="col-lg-3 mb-3"><div class="o-f-inp"><label>Applicant Type</label><select id="applicant_type_filter" class="form-select shadow-none"><option value="">--- Select ---</option><option value="teacher">Teacher</option><option value="user">Other Roles</option></select></div></div>
+    <div class="col-lg-3 mb-3"><div class="o-f-inp"><label>Leave Type</label><select id="leave_type_filter" class="form-select shadow-none"><option value="">--- Select ---</option>@foreach($leaveTypes as $type)<option value="{{ $type->id }}">{{ $type->leave_name }}</option>@endforeach</select></div></div>
+    <div class="col-lg-2 mb-3"><div class="o-f-inp"><label>Status</label><select id="status_filter" class="form-select shadow-none"><option value="">--- Select ---</option>@foreach($statuses as $status)<option>{{ $status }}</option>@endforeach</select></div></div>
+    <div class="col-lg-2 mb-3"><div class="o-f-inp"><label>From Date</label><input type="date" id="from_date_filter" class="form-control shadow-none"></div></div>
+    <div class="col-lg-2 mb-3"><div class="o-f-inp"><label>To Date</label><input type="date" id="to_date_filter" class="form-control shadow-none"></div></div>
+    <div class="col-12"><div class="filter-btns-top"><button id="resetFilters" type="button" class="reset-btn border-0">Reset</button><button id="applyFilters" type="button" class="search-btn">Search</button></div></div>
+  </div></div></div></div></div>
+  <div class="main-table-container">
+    <div class="btn-flex"><a class="add-btn bg-filter" data-bs-toggle="collapse" href="#filterCollapse">Filters</a>@can('create.leave-application')<a href="{{ route('leave-applications.create') }}" class="add-btn">Add New</a>@endcan</div>
+    <div class="mt-3 table-container"><div class="row justify-content-end"><div class="col-lg-5"><div class="entry-select"><p>Showing</p><select id="leavePerPage" class="form-select shadow-none"><option>10</option><option>25</option><option>50</option><option>100</option></select><p>Entries</p></div></div><div class="col-lg-7"><div class="table-search"><label for="leaveSearch">Search</label><input id="leaveSearch" class="form-control shadow-none" placeholder="Application number, applicant, leave type or reason"></div></div></div>
+      <div class="table-over"><table id="leaveApplicationsTable" class="align-middle mb-0 table table-custom mt-3 w-100"><thead><tr><th>SL No</th><th>Application No</th><th>Applied Date</th><th>User Type</th><th>Applicant</th><th>Applied By</th><th>Leave Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Actions</th><th class="d-none">Created</th></tr></thead></table></div>
     </div>
-  </section>
-        
+  </div>
+</section>
 
+<div class="modal fade" id="leaveDecisionModal" tabindex="-1" aria-labelledby="leaveDecisionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" class="modal-content" id="leaveDecisionForm">
+      @csrf
+      <div class="modal-header">
+        <h5 class="modal-title" id="leaveDecisionModalLabel">Process Leave Application</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" id="leaveDecisionDescription"></p>
+        <div class="o-f-inp">
+          <label for="leaveDecisionRemarks" id="leaveDecisionRemarksLabel">Remark</label>
+          <textarea name="remarks" id="leaveDecisionRemarks" class="form-control shadow-none" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn" id="leaveDecisionSubmit" data-loading-text="Processing...">Confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
 @endsection
 @push('scripts')
 <script>
-function approveLeave(id) {
-    Swal.fire({
-        title: 'Approve Leave?',
-        text: 'Are you sure you want to approve this leave application?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#198754',
-        confirmButtonText: 'Yes, Approve'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('approve-form-' + id).submit();
-        }
-    });
-}
-
-function rejectLeave(id) {
-    Swal.fire({
-        title: 'Reject Leave?',
-        text: 'Are you sure you want to reject this leave application?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        confirmButtonText: 'Yes, Reject'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('reject-form-' + id).submit();
-        }
-    });
-}
+document.addEventListener('DOMContentLoaded',function(){
+ const table=new DataTable('#leaveApplicationsTable',{processing:true,serverSide:true,searching:true,lengthChange:false,order:[[12,'desc']],dom:'rt<"table_bottom"ip>',ajax:{url:'{{ route('leave-applications.data') }}',data:function(d){d.applicant_type=document.getElementById('applicant_type_filter').value;d.leave_type_id=document.getElementById('leave_type_filter').value;d.status=document.getElementById('status_filter').value;d.from_date=document.getElementById('from_date_filter').value;d.to_date=document.getElementById('to_date_filter').value;}},columns:[
+ {data:'DT_RowIndex',orderable:false,searchable:false},{data:'application_no',name:'application_no'},{data:'applied_date',name:'applied_date'},{data:'user_type',orderable:false,searchable:false},{data:'applicant',orderable:false,searchable:false},{data:'applied_by_name',orderable:false,searchable:false},{data:'leave_type',orderable:false,searchable:false},{data:'from_date',name:'from_date'},{data:'to_date',name:'to_date'},{data:'days',name:'days'},{data:'status',name:'status',orderable:false},{data:'actions',orderable:false,searchable:false},{data:'created_at',name:'created_at',visible:false,searchable:false}
+ ]});
+ document.getElementById('leaveSearch').addEventListener('keyup',function(){table.search(this.value).draw();});
+ document.getElementById('leavePerPage').addEventListener('change',function(){table.page.len(Number(this.value)).draw();});
+ document.getElementById('applyFilters').addEventListener('click',function(){table.draw();});
+ document.getElementById('resetFilters').addEventListener('click',function(){['applicant_type_filter','leave_type_filter','status_filter','from_date_filter','to_date_filter'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('leaveSearch').value='';table.search('').draw();});
+ const decisionModal=new bootstrap.Modal(document.getElementById('leaveDecisionModal')),decisionForm=document.getElementById('leaveDecisionForm'),decisionTitle=document.getElementById('leaveDecisionModalLabel'),decisionDescription=document.getElementById('leaveDecisionDescription'),remarks=document.getElementById('leaveDecisionRemarks'),remarksLabel=document.getElementById('leaveDecisionRemarksLabel'),decisionSubmit=document.getElementById('leaveDecisionSubmit');
+ document.getElementById('leaveApplicationsTable').addEventListener('click',function(event){const button=event.target.closest('.leave-decision-btn');if(!button)return;const approve=button.dataset.decision==='approve';decisionForm.action=button.dataset.actionUrl;decisionTitle.textContent=approve?'Approve Leave Application':'Reject Leave Application';decisionDescription.textContent=(approve?'Approve ':'Reject ')+button.dataset.application+'?';remarksLabel.innerHTML=(approve?'Approval Remark':'Rejection Remark <span class="text-danger">*</span>');remarks.placeholder=approve?'Enter approval remark (optional)':'Enter the reason for rejection';remarks.required=!approve;remarks.value='';decisionSubmit.className='btn '+(approve?'btn-success':'btn-danger');decisionSubmit.textContent=approve?'Approve':'Reject';decisionModal.show();});
+ decisionForm.addEventListener('submit',function(){decisionSubmit.disabled=true;decisionSubmit.innerHTML='<span class="spinner-border spinner-border-sm me-1"></span>'+decisionSubmit.dataset.loadingText;});
+});
 </script>
 @endpush

@@ -26,6 +26,7 @@
           @endif
 
           <div class="main-table-container mb-3">
+            <h5 class="mb-3">Department Details</h5>
             <div class="row">
               <div class="col-lg-4 o-f-inp mb-3">
                 <label for="department_code">Department Code</label>

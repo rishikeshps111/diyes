@@ -16,7 +16,7 @@ class RoleService
         return Role::query()
             ->with('permissions')
             ->withCount('users')
-            ->where('name', '!=', 'admin');
+            ->whereNotIn('name', ['admin', 'Teacher']);
     }
 
     public function create(array $data): Role
@@ -135,6 +135,18 @@ class RoleService
                 'create.holiday',
                 'edit.holiday',
                 'delete.holiday',
+            ],
+            'Leave Type' => [
+                'view.leave-type',
+                'create.leave-type',
+                'edit.leave-type',
+                'delete.leave-type',
+            ],
+            'Leave Application' => [
+                'view.leave-application',
+                'create.leave-application',
+                'edit.leave-application',
+                'approve.leave-application',
             ],
             'Time Table Category' => [
                 'view.time-table-category',

@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(ClassroomSeeder::class);
         // $this->call(VenueSeeder::class);
         // $this->call(HolidaySeeder::class);
+        // $this->call(LeaveTypeSeeder::class);
         // $this->call(TimeTableCategorySeeder::class);
         // $this->call(ProjectCategorySeeder::class);
         // $this->call(EventTypeSeeder::class);

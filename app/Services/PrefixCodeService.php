@@ -18,6 +18,8 @@ class PrefixCodeService
         'classroom' => 'CLS',
         'venue' => 'VEN',
         'holiday' => 'HOL',
+        'leave_type' => 'LT',
+        'leave_application' => 'LA',
         'time_table_category' => 'TTC',
         'project_category' => 'PRC',
         'event_type' => 'ET',

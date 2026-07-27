@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 #[Fillable([
     'employee_id',
+    'user_id',
     'teacher_image',
     'name',
     'gender',
@@ -63,6 +64,11 @@ class Teacher extends Model
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function designation(): BelongsTo

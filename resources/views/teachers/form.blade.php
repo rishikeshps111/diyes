@@ -265,6 +265,26 @@
             </div>
           </div>
 
+          <div class="main-table-container mb-3">
+            <h5 class="mb-1">Teacher Login</h5>
+            <p class="text-muted small mb-3">The teacher signs in from the main login page using their email address.</p>
+            <div class="row">
+              <div class="col-lg-6 o-f-inp mb-3">
+                <label for="login_password">Password @if(!$teacher->exists || !$teacher->user_id)<span class="text-danger">*</span>@endif</label>
+                <input type="password" name="login_password" id="login_password"
+                  class="form-control shadow-none @error('login_password') is-invalid @enderror"
+                  autocomplete="new-password">
+                @if($teacher->user_id)<small class="text-muted">Leave blank to keep the current password.</small>@endif
+                @error('login_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+              </div>
+              <div class="col-lg-6 o-f-inp mb-3">
+                <label for="login_password_confirmation">Confirm Password @if(!$teacher->exists || !$teacher->user_id)<span class="text-danger">*</span>@endif</label>
+                <input type="password" name="login_password_confirmation" id="login_password_confirmation"
+                  class="form-control shadow-none" autocomplete="new-password">
+              </div>
+            </div>
+          </div>
+
           <div class="col-lg-12 d-flex justify-content-center align-items-center">
             <div class="btn-flex">
               <a href="{{ route('teachers.index') }}" class="btn btn-danger">Cancel</a>

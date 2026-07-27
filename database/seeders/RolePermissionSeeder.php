@@ -47,6 +47,9 @@ class RolePermissionSeeder extends Seeder
         $staff = Role::findOrCreate('staff', $guard);
         $staff->syncPermissions(['dashboard.view']);
 
+        $teacher = Role::findOrCreate('Teacher', $guard);
+        $teacher->syncPermissions(['dashboard.view']);
+
         $academicSupervisor = Role::findOrCreate('Academic Supervisor', $guard);
         $academicSupervisor->syncPermissions([
             'dashboard.view',
@@ -65,6 +68,14 @@ class RolePermissionSeeder extends Seeder
             'view.holiday',
             'create.holiday',
             'edit.holiday',
+            'view.leave-type',
+            'create.leave-type',
+            'edit.leave-type',
+            'delete.leave-type',
+            'view.leave-application',
+            'create.leave-application',
+            'edit.leave-application',
+            'approve.leave-application',
             'view.time-table-category',
             'create.time-table-category',
             'edit.time-table-category',

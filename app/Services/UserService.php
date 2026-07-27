@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,6 +21,7 @@ class UserService
     {
         return User::query()
             ->with(['department', 'role'])
+            ->whereDoesntHave('teacher')
             ->where(function (Builder $query): void {
                 $query->whereDoesntHave('role', fn (Builder $query) => $query->where('name', 'admin'))
                     ->whereDoesntHave('roles', fn (Builder $query) => $query->where('name', 'admin'));
@@ -34,6 +36,7 @@ class UserService
     {
         return User::query()
             ->with(['department', 'role'])
+            ->whereDoesntHave('teacher')
             ->where(function (Builder $query): void {
                 $query->whereDoesntHave('role', fn (Builder $query) => $query->where('name', 'admin'))
                     ->whereDoesntHave('roles', fn (Builder $query) => $query->where('name', 'admin'));
@@ -45,7 +48,18 @@ class UserService
 
     public function nextEmployeeCode(): string
     {
-        return $this->prefixCodeService->next('user', User::class, 'employee_code');
+        $code = $this->prefixCodeService->next('user', User::class, 'employee_code');
+
+        while (
+            User::query()->where('employee_code', $code)->exists()
+            || Teacher::query()->where('employee_id', $code)->exists()
+        ) {
+            preg_match('/^(.*?)(\d+)$/', $code, $matches);
+            $number = ((int) ($matches[2] ?? 0)) + 1;
+            $code = ($matches[1] ?? $code).str_pad((string) $number, strlen($matches[2] ?? '0000'), '0', STR_PAD_LEFT);
+        }
+
+        return $code;
     }
 
     public function create(array $data): User
@@ -126,7 +140,7 @@ class UserService
     {
         return Role::query()
             ->where('guard_name', RoleService::GUARD)
-            ->where('name', '!=', 'admin')
+            ->whereNotIn('name', ['admin', 'Teacher'])
             ->orderBy('name')
             ->get(['id', 'name']);
     }

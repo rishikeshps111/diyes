@@ -8,6 +8,11 @@
       </div>
 
       <ul class="sidebar-nav" id="sidebar-nav">
+        @if(auth()->user()?->teacher)
+        <li class="nav-item"><a class="nav-link {{ request()->routeIs('dashboard') ? '' : 'collapsed' }}" href="{{ route('dashboard') }}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->routeIs('teacher.profile') ? '' : 'collapsed' }}" href="{{ route('teacher.profile') }}"><i class="fa-solid fa-user"></i><span>Profile</span></a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->routeIs('teacher.leave.*') ? '' : 'collapsed' }}" href="{{ route('teacher.leave.index') }}"><i class="fa-solid fa-calendar-check"></i><span>Leave Management</span></a></li>
+        @else
         <li class="nav-item">
           <a class="nav-link {{ request()->routeIs('dashboard') ? '' : 'collapsed' }}" href="{{ route('dashboard') }}">
             <i class="bi bi-grid"></i>
@@ -256,23 +261,32 @@
         @endcanany
         
          <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('leave-types.*') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('leave-types.*', 'leave-applications.*') ? '' : 'collapsed' }}"
               data-bs-target="#sidebarApprovalManagement" data-bs-toggle="collapse" href="#">
-              <i class="fa-solid fa-users-gear"></i><span>Leave Management</span><i class="bi bi-chevron-down ms-auto"></i>
+              <i class="fa-solid fa-users-gear"></i><span>Leave Management</span>
+              @if(($newLeaveApplicationCount ?? 0) > 0)
+                <span class="badge bg-danger rounded-pill ms-auto me-2">{{ $newLeaveApplicationCount }}</span>
+              @endif
+              <i class="bi bi-chevron-down {{ ($newLeaveApplicationCount ?? 0) > 0 ? '' : 'ms-auto' }}"></i>
             </a>
             <ul id="sidebarApprovalManagement"
-              class="nav-content collapse sub-menu {{ request()->routeIs('leave-types.*') ? 'show' : '' }}"
+              class="nav-content collapse sub-menu {{ request()->routeIs('leave-types.*', 'leave-applications.*') ? 'show' : '' }}"
               data-bs-parent="#sidebar-nav">
+                @can('view.leave-type')
                 <li>
                   <a href="{{ route('leave-types.index') }}" class="{{ request()->routeIs('leave-types.*') ? 'sub-active' : '' }}">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Leave Type</span>
                   </a>
                 </li>
+                @endcan
+                 @can('view.leave-application')
                  <li>
-                  <a href="{{ route('leave-applications.index') }}" class="{{ request()->routeIs('leave-applications.index.*') ? 'sub-active' : '' }}">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Manage Leave</span>
+                  <a href="{{ route('leave-applications.index') }}" class="{{ request()->routeIs('leave-applications.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Manage Leave Application</span>
+                    @if(($newLeaveApplicationCount ?? 0) > 0)<span class="badge bg-danger rounded-pill ms-auto">{{ $newLeaveApplicationCount }}</span>@endif
                   </a>
                 </li>
+                @endcan
             </ul>
           </li>
 
@@ -317,6 +331,7 @@
           </a>
         </li>
 
+        @endif
       </ul>
     </div>
   </div>

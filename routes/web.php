@@ -28,6 +28,7 @@ use App\Http\Controllers\TeacherDocumentController;
 use App\Http\Controllers\TeacherSubjectController;
 use App\Http\Controllers\TeacherSchedulerController;
 use App\Http\Controllers\TeacherAllotmentController;
+use App\Http\Controllers\TeacherProfileController;
 use App\Http\Controllers\TimetableController;
 use App\Http\Controllers\TimeTableCategoryController;
 use App\Http\Controllers\TrainerCategoryController;
@@ -52,6 +53,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('teacher/profile', [TeacherProfileController::class, 'show'])->name('teacher.profile');
+    Route::put('teacher/profile/password', [TeacherProfileController::class, 'updatePassword'])->name('teacher.profile.password');
 
     Route::get('roles/data', [RoleController::class, 'data'])->name('roles.data');
     Route::resource('roles', RoleController::class)
@@ -307,46 +310,33 @@ Route::middleware('auth')->group(function () {
         ->except('show');
         
     
-    Route::resource('leave-types', LeaveTypeController::class);
+    Route::get('leave-types/data', [LeaveTypeController::class, 'data'])->name('leave-types.data');
+    Route::post('leave-types/export/excel', [LeaveTypeController::class, 'exportExcel'])->name('leave-types.export.excel');
+    Route::post('leave-types/export/pdf', [LeaveTypeController::class, 'exportPdf'])->name('leave-types.export.pdf');
+    Route::resource('leave-types', LeaveTypeController::class)->except('show');
   
     Route::get('/teacher/leave',[TeacherLeaveController::class,'index'])->name('teacher.leave.index');
+    Route::get('/teacher/leave/data',[TeacherLeaveController::class,'data'])->name('teacher.leave.data');
     Route::get('/teacher/leave/create',[TeacherLeaveController::class,'create'])->name('teacher.leave.create');
     Route::post('/teacher/leave/store',[TeacherLeaveController::class,'store'])->name('teacher.leave.store');
+    Route::get('/teacher/leave/{leave}',[TeacherLeaveController::class,'show'])->name('teacher.leave.show');
+    Route::get('/teacher/leave/{leave}/edit',[TeacherLeaveController::class,'edit'])->name('teacher.leave.edit');
+    Route::put('/teacher/leave/{leave}',[TeacherLeaveController::class,'update'])->name('teacher.leave.update');
     Route::delete('/teacher/leave/{leave}',[TeacherLeaveController::class,'cancel'])->name('teacher.leave.cancel');
     Route::get('teacher/get-leave-balance/{leaveType}',[TeacherLeaveController::class,'getLeaveBalance'])->name('teacher.leave.balance');
     
-     Route::get('leave-applications',[LeaveApplicationController::class,'index'])->name('leave-applications.index');
-
-        Route::get('leave-applications/{leave}',[LeaveApplicationController::class,'show'])->name('leave-applications.show');
-        Route::get('leave/applications/add', [LeaveApplicationController::class, 'create'])->name('leave-applications.create');
-        Route::post('leave-applications/store', [LeaveApplicationController::class, 'store'])->name('leave-applications.store');
-        Route::get('leave/applications/edit/{id}', [LeaveApplicationController::class, 'edit'])->name('leave-applications.edit');
-        Route::post('leave-applications/update/{id}', [LeaveApplicationController::class, 'update'])->name('leave-applications.update');
-            
-        Route::post(
-            'leave-applications/{leave}/approve',
-            [LeaveApplicationController::class,'approve']
-        )->name('leave-applications.approve');
-
-        Route::post(
-            'leave-applications/{leave}/reject',
-            [LeaveApplicationController::class,'reject']
-        )->name('leave-applications.reject');
+        Route::get('leave-applications/data', [LeaveApplicationController::class, 'data'])->name('leave-applications.data');
+        Route::post('leave-applications/{leave}/approve', [LeaveApplicationController::class, 'approve'])->name('leave-applications.approve');
+        Route::post('leave-applications/{leave}/reject', [LeaveApplicationController::class, 'reject'])->name('leave-applications.reject');
+        Route::resource('leave-applications', LeaveApplicationController::class)
+            ->parameters(['leave-applications' => 'leave'])
+            ->except('destroy');
 
          Route::get( 'user-logs',[UserLogController::class,'index'])->name('user-logs.index');
          Route::get('activity-logs',[ UserLogController::class,'activityLog'])->name('activity-logs');
          Route::get('activity-logs/{id}', [UserLogController::class,'activityShow'])->name('activity-logs.show');
 
 
-    Route::post(
-        'leave/{leave}/approve',
-        [LeaveApplicationController::class,'approve']
-    );
-
-    Route::post(
-        'leave/{leave}/reject',
-        [LeaveApplicationController::class,'reject']
-    );    
         
     
 });

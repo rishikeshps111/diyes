@@ -11,12 +11,14 @@ use App\Models\State;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeacherDocument;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
 class TeacherService
 {
@@ -45,7 +47,18 @@ class TeacherService
 
     public function nextEmployeeId(): string
     {
-        return $this->prefixCodeService->next('teacher', Teacher::class, 'employee_id');
+        $code = $this->prefixCodeService->next('teacher', Teacher::class, 'employee_id');
+
+        while (
+            Teacher::query()->where('employee_id', $code)->exists()
+            || User::query()->where('employee_code', $code)->exists()
+        ) {
+            preg_match('/^(.*?)(\d+)$/', $code, $matches);
+            $number = ((int) ($matches[2] ?? 0)) + 1;
+            $code = ($matches[1] ?? $code).str_pad((string) $number, strlen($matches[2] ?? '0000'), '0', STR_PAD_LEFT);
+        }
+
+        return $code;
     }
 
     public function create(array $data): Teacher
@@ -60,6 +73,9 @@ class TeacherService
                 'teacher_image' => $image instanceof UploadedFile ? $image->store('teacher-images', 'public') : null,
                 'is_verified' => false,
             ]);
+
+            $user = $this->syncPortalUser($teacher, $data);
+            $teacher->forceFill(['user_id' => $user->id])->save();
 
             $this->syncSubjects($teacher, $data['subject_ids']);
 
@@ -83,6 +99,8 @@ class TeacherService
 
         DB::transaction(function () use ($teacher, $payload, $data): void {
             $teacher->update($payload);
+            $user = $this->syncPortalUser($teacher, $data);
+            $teacher->forceFill(['user_id' => $user->id])->save();
             $this->syncSubjects($teacher, $data['subject_ids']);
         });
 
@@ -91,10 +109,12 @@ class TeacherService
 
     public function delete(Teacher $teacher): void
     {
+        $portalUser = $teacher->user;
         if ($teacher->teacher_image) {
             Storage::disk('public')->delete($teacher->teacher_image);
         }
         $teacher->delete();
+        $portalUser?->delete();
     }
 
     public function bulkDelete(array $ids): int
@@ -252,5 +272,34 @@ class TeacherService
             'subject_id' => $subject->id,
             'grade_id' => $subject->grade_id,
         ])->all());
+    }
+
+    private function syncPortalUser(Teacher $teacher, array $data): User
+    {
+        $role = Role::findOrCreate('Teacher', 'web');
+        $user = $teacher->user
+            ?: User::query()->where('employee_code', $teacher->employee_id)->first()
+            ?: User::query()->where('username', $teacher->employee_id)->first()
+            ?: User::query()->where('email', $data['email'])->first()
+            ?: new User();
+        $user->fill([
+            'employee_code' => $teacher->employee_id,
+            'username' => $teacher->employee_id,
+            'name' => $teacher->name,
+            'email' => $teacher->email,
+            'phone_country_code' => $teacher->phone_country_code,
+            'phone' => $teacher->phone,
+            'department_id' => $teacher->department_id,
+            'designation_id' => $teacher->designation_id,
+            'role_id' => $role->id,
+            'is_active' => $teacher->status === 'active',
+        ]);
+        if (! $user->exists || ! empty($data['login_password'])) {
+            $user->password = $data['login_password'];
+        }
+        $user->save();
+        $user->syncRoles([$role]);
+
+        return $user;
     }
 }

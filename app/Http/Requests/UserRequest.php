@@ -30,7 +30,7 @@ class UserRequest extends FormRequest
             'role_id' => [
                 'required',
                 'integer',
-                Rule::exists('roles', 'id')->where(fn ($query) => $query->where('name', '!=', 'admin')),
+                Rule::exists('roles', 'id')->where(fn ($query) => $query->whereNotIn('name', ['admin', 'Teacher'])),
             ],
             'password' => $passwordRules,
             'profile_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],

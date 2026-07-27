@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -16,6 +17,7 @@ class TeacherRequest extends FormRequest
     public function rules(): array
     {
         $teacher = $this->route('teacher');
+        $needsPortalPassword = ! $teacher?->exists || ! $teacher?->user_id;
 
         return [
             'teacher_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
@@ -26,7 +28,12 @@ class TeacherRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20'],
             'alternative_phone_country_code' => ['nullable', 'string', 'max:10'],
             'alternative_phone' => ['nullable', 'string', 'max:20'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('teachers', 'email')->ignore($teacher)],
+            'email' => [
+                'required', 'email', 'max:255',
+                Rule::unique('teachers', 'email')->ignore($teacher),
+                Rule::unique('users', 'email')->ignore($teacher?->user_id),
+            ],
+            'login_password' => [$needsPortalPassword ? 'required' : 'nullable', 'string', 'min:8', 'confirmed'],
             'qualification' => ['required', 'string', 'max:255'],
             'experience' => ['required', 'integer', 'min:0'],
             'date_of_joining' => ['required', 'date'],
