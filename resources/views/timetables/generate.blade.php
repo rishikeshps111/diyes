@@ -234,6 +234,10 @@
               {{ $day }}
             </label>
           @endforeach
+          <button type="button" class="add-btn border-0" data-bs-toggle="modal"
+            data-bs-target="#timetableInstructionModal">
+            <i class="fa-solid fa-circle-info me-1"></i> Instruction
+          </button>
         </div>
         @error('working_days')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
       </div>
@@ -353,6 +357,49 @@
         </div>
       </div>
     </form>
+
+    <div class="modal fade" id="timetableInstructionModal" tabindex="-1" aria-labelledby="timetableInstructionModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="timetableInstructionModalLabel">How to Add the TimeTable</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ol class="mb-0 ps-3">
+              <li class="mb-3">
+                Select the periods after which the short break, lunch break, and short break after lunch should appear.
+                Each break must be assigned to a different period.
+              </li>
+              <li class="mb-3">
+                Select one or more working days. The timetable rows you enter will be applied to every selected day.
+              </li>
+              <li class="mb-3">
+                Click <strong>Add Row</strong> and enter the period, subject, teacher, start time, and end time.
+                You can select up to two teachers for a period.
+              </li>
+              <li class="mb-3">
+                Use the copy icon to duplicate a row or the delete icon to remove one. Each period can be added only
+                once for the currently selected days.
+              </li>
+              <li class="mb-3">
+                Click <strong>Save</strong> to add those rows to the preview. To create a different schedule for other
+                days, select those days, add their rows, and click <strong>Save</strong> again.
+              </li>
+              <li>
+                Review the complete preview, then click
+                <strong>{{ $isGenerated ? 'Regenerate Time Table' : 'Generate Time Table' }}</strong> to store the
+                timetable.
+              </li>
+            </ol>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 @endsection
 

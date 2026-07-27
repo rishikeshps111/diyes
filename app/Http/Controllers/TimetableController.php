@@ -290,7 +290,9 @@ class TimetableController extends Controller implements HasMiddleware
                 'lunch_break_minutes' => $timetable->lunch_break_minutes,
                 'short_break_after_lunch_minutes' => $timetable->short_break_after_lunch_minutes,
             ],
-            'days' => $entries->pluck('day')->filter()->unique()->values(),
+            'days' => collect(TimetableEntry::DAYS)
+                ->filter(fn (string $day): bool => $entries->contains('day', $day))
+                ->values(),
             'periods' => $entries
                 ->where('entry_type', 'period')
                 ->map(fn (TimetableEntry $entry): array => [
