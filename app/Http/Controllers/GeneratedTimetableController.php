@@ -74,13 +74,38 @@ class GeneratedTimetableController extends Controller
         $types = collect($filters['types']);
         $days = collect(TimetableEntry::DAYS)->mapWithKeys(fn ($day, $index) => [$day => $weekStart->copy()->addDays($index)]);
 
+        $projectWeeks = collect();
+        if ($types->contains('project')) {
+            $projectWeeks = ProjectWeek::query()
+                ->with(['project', 'entries.teacherOne', 'entries.teacherTwo', 'entries.timetableEntry'])
+                ->where('academic_year_id', $filters['academic_year_id'])
+                ->where('grade_id', $filters['grade_id'])
+                ->whereHas('divisions', fn ($query) => $query->whereKey($filters['division_id']))
+                ->whereDate('applicable_from', '<=', $weekEnd)
+                ->whereDate('applicable_to', '>=', $weekStart)
+                ->get();
+        }
+
+        $projectSourceTimetableIds = $projectWeeks->pluck('source_timetable_id')->filter()->unique();
         $timetable = Timetable::query()
             ->with(['entries.subject', 'entries.teacherOne', 'entries.teacherTwo', 'grade', 'divisions'])
             ->where('academic_year_id', $filters['academic_year_id'])
             ->where('grade_id', $filters['grade_id'])
             ->whereHas('divisions', fn ($query) => $query->whereKey($filters['division_id']))
-            ->whereDate('applicable_from', '<=', $weekEnd)
-            ->whereDate('applicable_to', '>=', $weekStart)
+            ->when(! ($filters['ignore_regular_dates'] ?? false), function ($query) use ($weekStart, $weekEnd, $projectSourceTimetableIds): void {
+                $query->where(function ($dateQuery) use ($weekStart, $weekEnd, $projectSourceTimetableIds): void {
+                    $dateQuery
+                        ->where(function ($overlapQuery) use ($weekStart, $weekEnd): void {
+                            $overlapQuery
+                                ->whereDate('applicable_from', '<=', $weekEnd)
+                                ->whereDate('applicable_to', '>=', $weekStart);
+                        })
+                        ->when(
+                            $projectSourceTimetableIds->isNotEmpty(),
+                            fn ($sourceQuery) => $sourceQuery->orWhereIn('id', $projectSourceTimetableIds),
+                        );
+                });
+            })
             ->latest('applicable_from')->first();
 
         $cells = collect();
@@ -90,14 +115,10 @@ class GeneratedTimetableController extends Controller
             }
         }
 
-        if ($timetable && $types->contains('project')) {
-            $projectWeeks = ProjectWeek::query()->with(['project', 'entries.teacherOne', 'entries.teacherTwo'])
-                ->where('academic_year_id', $filters['academic_year_id'])->where('grade_id', $filters['grade_id'])
-                ->whereHas('divisions', fn ($query) => $query->whereKey($filters['division_id']))
-                ->whereDate('applicable_from', '<=', $weekEnd)->whereDate('applicable_to', '>=', $weekStart)->get();
+        if ($types->contains('project')) {
             foreach ($projectWeeks as $projectWeek) {
                 foreach ($projectWeek->entries as $entry) {
-                    $source = $timetable->entries->firstWhere('id', $entry->timetable_entry_id);
+                    $source = $entry->timetableEntry;
                     if (! $source || ! $this->dateIsWithin($days->get($entry->day), $projectWeek->applicable_from, $projectWeek->applicable_to)) continue;
                     $cells->put($entry->day.'|'.$entry->period_no, [
                         'title' => $projectWeek->project?->project_title ?? 'Project Week', 'teachers' => collect([$entry->teacherOne?->name, $entry->teacherTwo?->name])->filter()->implode(', '),

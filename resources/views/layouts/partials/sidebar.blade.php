@@ -225,7 +225,7 @@
                 </li>
                 <li>
                   <a href="{{ route('teacher-allotments.index') }}" class="{{ request()->routeIs('teacher-allotments.*') ? 'sub-active' : '' }}">
-                    <i class="fa-solid fa-calendar-week"></i><span>Teacher Allotment</span>
+                    <i class="fa-solid fa-calendar-week"></i><span>Teacher Work Load</span>
                   </a>
                 </li>
               @endcan
