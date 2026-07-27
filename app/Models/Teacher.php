@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Storage;
     'designation_id',
     'subject',
     'class_in_charge_id',
+    'is_class_in_charge',
     'country_id',
     'state_id',
     'district_id',
@@ -55,6 +56,7 @@ class Teacher extends Model
             'experience' => 'integer',
             'salary' => 'decimal:2',
             'is_verified' => 'boolean',
+            'is_class_in_charge' => 'boolean',
         ];
     }
 

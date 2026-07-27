@@ -8,6 +8,7 @@ use App\Models\Designation;
 use App\Models\District;
 use App\Models\Grade;
 use App\Models\State;
+use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeacherDocument;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class TeacherService
 {
@@ -51,12 +53,18 @@ class TeacherService
         $image = $data['teacher_image'] ?? null;
         unset($data['teacher_image']);
 
-        return Teacher::create([
-            ...$this->teacherPayload($data),
-            'employee_id' => $this->nextEmployeeId(),
-            'teacher_image' => $image instanceof UploadedFile ? $image->store('teacher-images', 'public') : null,
-            'is_verified' => false,
-        ]);
+        return DB::transaction(function () use ($data, $image): Teacher {
+            $teacher = Teacher::create([
+                ...$this->teacherPayload($data),
+                'employee_id' => $this->nextEmployeeId(),
+                'teacher_image' => $image instanceof UploadedFile ? $image->store('teacher-images', 'public') : null,
+                'is_verified' => false,
+            ]);
+
+            $this->syncSubjects($teacher, $data['subject_ids']);
+
+            return $teacher;
+        });
     }
 
     public function update(Teacher $teacher, array $data): Teacher
@@ -73,7 +81,10 @@ class TeacherService
             $payload['teacher_image'] = $image->store('teacher-images', 'public');
         }
 
-        $teacher->update($payload);
+        DB::transaction(function () use ($teacher, $payload, $data): void {
+            $teacher->update($payload);
+            $this->syncSubjects($teacher, $data['subject_ids']);
+        });
 
         return $teacher;
     }
@@ -179,6 +190,15 @@ class TeacherService
         return Grade::query()->orderBy('grade')->get(['id', 'grade']);
     }
 
+    public function subjects(): Collection
+    {
+        return Subject::query()
+            ->active()
+            ->with('grade')
+            ->orderBy('subject_name')
+            ->get(['id', 'subject_name', 'grade_id']);
+    }
+
     public function countries(): Collection
     {
         return Country::query()->orderBy('name')->get(['id', 'name', 'phone_code']);
@@ -209,9 +229,8 @@ class TeacherService
             'experience',
             'date_of_joining',
             'department_id',
-            'designation_id',
             'subject',
-            'class_in_charge_id',
+            'is_class_in_charge',
             'country_id',
             'state_id',
             'district_id',
@@ -221,5 +240,17 @@ class TeacherService
             'salary',
             'status',
         ]);
+    }
+
+    private function syncSubjects(Teacher $teacher, array $subjectIds): void
+    {
+        $subjects = Subject::query()->whereKey($subjectIds)->get(['id', 'subject_name', 'grade_id']);
+
+        $teacher->forceFill(['subject' => $subjects->pluck('subject_name')->implode(', ')])->save();
+        $teacher->subjectAssignments()->delete();
+        $teacher->subjectAssignments()->createMany($subjects->map(fn (Subject $subject): array => [
+            'subject_id' => $subject->id,
+            'grade_id' => $subject->grade_id,
+        ])->all());
     }
 }

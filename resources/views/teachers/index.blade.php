@@ -31,7 +31,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-lg-4 mb-3">
+              {{-- <div class="col-lg-4 mb-3">
                 <div class="o-f-inp">
                   <label for="designation_filter">Designation</label>
                   <select id="designation_filter" class="form-select shadow-none">
@@ -41,7 +41,7 @@
                     @endforeach
                   </select>
                 </div>
-              </div>
+              </div> --}}
               <div class="col-lg-4 mb-3">
                 <div class="o-f-inp">
                   <label for="status_filter">Status</label>
@@ -149,7 +149,7 @@
                       <th>Employee Code</th>
                       <th>Name</th>
                       <th>Department</th>
-                      <th>Designation</th>
+                      {{-- <th>Designation</th> --}}
                       <th>Email</th>
                       <th>Phone</th>
                       <th>Date of Joining</th>

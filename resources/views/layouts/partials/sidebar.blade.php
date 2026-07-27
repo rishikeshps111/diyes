@@ -116,14 +116,6 @@
                   </a>
                 </li>
               @endcan
-              @can('view.time-table-category')
-                <li>
-                  <a href="{{ route('time-table-categories.index') }}"
-                    class="{{ request()->routeIs('time-table-categories.*') ? 'sub-active' : '' }}">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Time Table Categories</span>
-                  </a>
-                </li>
-              @endcan
               @can('view.project-category')
                 <li>
                   <a href="{{ route('project-categories.index') }}"

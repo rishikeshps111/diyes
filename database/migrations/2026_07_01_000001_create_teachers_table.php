@@ -35,7 +35,7 @@ return new class extends Migration
             $table->foreignId('department_id')->constrained()->restrictOnDelete();
             $table->foreignId('designation_id')->constrained()->restrictOnDelete();
 
-            $table->string('subject');
+            $table->string('subject')->nullable();
 
             $table->foreignId('class_in_charge_id')
                 ->nullable()

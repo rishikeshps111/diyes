@@ -27,7 +27,7 @@
                 url: '{{ route('teachers.data') }}',
                 data: function (data) {
                     data.department_id = document.getElementById('department_filter').value;
-                    data.designation_id = document.getElementById('designation_filter').value;
+                    //data.designation_id = document.getElementById('designation_filter').value;
                     data.status = document.getElementById('status_filter').value;
                     data.gender = document.getElementById('gender_filter').value;
                     data.date_of_joining = document.getElementById('date_of_joining_filter').value;
@@ -40,7 +40,7 @@
                 { data: 'employee_id', name: 'employee_id' },
                 { data: 'name', name: 'name' },
                 { data: 'department', name: 'department.department_name', orderable: false, searchable: false },
-                { data: 'designation', name: 'designation.designation_name', orderable: false, searchable: false },
+                // { data: 'designation', name: 'designation.designation_name', orderable: false, searchable: false },
                 { data: 'email', name: 'email' },
                 { data: 'phone', name: 'phone' },
                 { data: 'date_of_joining', name: 'date_of_joining' },
@@ -72,11 +72,11 @@
 
         resetFiltersButton.addEventListener('click', function () {
             setButtonLoading(resetFiltersButton, true);
-            ['department_filter', 'designation_filter', 'status_filter', 'gender_filter', 'date_of_joining_filter', 'qualification_filter'].forEach(function (id) {
+            ['department_filter', 'status_filter', 'gender_filter', 'date_of_joining_filter', 'qualification_filter'].forEach(function (id) {
                 document.getElementById(id).value = '';
             });
             if (window.jQuery && jQuery.fn.select2) {
-                jQuery('#department_filter, #designation_filter, #status_filter, #gender_filter').val(null).trigger('change');
+                jQuery('#department_filter, #status_filter, #gender_filter').val(null).trigger('change');
             }
             table.search('').draw();
         });
@@ -143,7 +143,7 @@
                         .catch(function () {
                             Swal.fire('Error', 'Unable to verify teacher. Please try again.', 'error');
                         });
-                    });
+                });
                 return;
             }
 

@@ -11,11 +11,7 @@ class DistrictSeeder extends Seeder
     public function run(): void
     {
         $districtsByState = [
-            'Kerala' => ['Thiruvananthapuram', 'Kollam', 'Pathanamthitta', 'Alappuzha', 'Kottayam', 'Idukki', 'Ernakulam', 'Thrissur', 'Palakkad', 'Malappuram', 'Kozhikode', 'Wayanad', 'Kannur', 'Kasaragod'],
-            'Tamil Nadu' => ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli'],
-            'Karnataka' => ['Bengaluru Urban', 'Mysuru', 'Mangaluru', 'Belagavi', 'Hubballi-Dharwad'],
-            'Maharashtra' => ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Thane'],
-            'Delhi' => ['Central Delhi', 'New Delhi', 'North Delhi', 'South Delhi', 'West Delhi'],
+            'Kerala' => ['Thiruvananthapuram', 'Kollam', 'Pathanamthitta', 'Alappuzha', 'Kottayam', 'Idukki', 'Ernakulam', 'Thrissur', 'Palakkad', 'Malappuram', 'Kozhikode', 'Wayanad', 'Kannur', 'Kasaragod']
         ];
 
         foreach ($districtsByState as $stateName => $districts) {

@@ -49,6 +49,7 @@ class TimetableService
     {
         $timetable = Timetable::create([
             ...Arr::only($data, $this->fillableFields()),
+            'timetable_category_id' => $this->regularCategoryId(),
             'code' => $this->nextCode(),
             'prepared_by_id' => $user->id,
             'prepared_at' => now(),
@@ -107,7 +108,6 @@ class TimetableService
     {
         return [
             'timetable_name',
-            'timetable_category_id',
             'applicable_from',
             'applicable_to',
             'academic_year_id',
@@ -121,5 +121,11 @@ class TimetableService
             'description',
             'status',
         ];
+    }
+
+    private function regularCategoryId(): int
+    {
+        return TimeTableCategory::query()->where('title', 'Regular')->value('id')
+            ?? throw new \RuntimeException('The Regular timetable category is not configured.');
     }
 }

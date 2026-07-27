@@ -78,7 +78,7 @@
                   <li><label>Subject :</label> <span>{{ $teacher->subject }}</span></li>
                   <li><label>Joining Date :</label> <span>{{ $teacher->date_of_joining?->format('d-m-Y') ?? '-' }}</span>
                   </li>
-                  <li><label>Class In Charge :</label> <span>{{ $teacher->classInCharge?->grade ?? '-' }}</span></li>
+                  <li><label>Class In Charge :</label> <span>{{ $teacher->is_class_in_charge ? 'Yes' : 'No' }}</span></li>
                 </ul>
               </div>
             </div>

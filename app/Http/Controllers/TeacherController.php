@@ -96,6 +96,7 @@ class TeacherController extends Controller implements HasMiddleware
     public function create(): View
     {
         $defaultCountry = $this->teacherService->countries()->first();
+        $defaultState = $this->teacherService->states()->firstWhere('country_id', $defaultCountry?->id);
 
         return view('teachers.form', [
             'teacher' => new Teacher([
@@ -103,6 +104,8 @@ class TeacherController extends Controller implements HasMiddleware
                 'phone_country_code' => '+91',
                 'alternative_phone_country_code' => '+91',
                 'country_id' => $defaultCountry?->id,
+                'state_id' => $defaultState?->id,
+                'is_class_in_charge' => false,
                 'status' => 'active',
                 'employment_type' => 'permanent',
             ]),
@@ -121,7 +124,7 @@ class TeacherController extends Controller implements HasMiddleware
 
     public function show(Request $request, Teacher $teacher): View|JsonResponse
     {
-        $teacher->load(['department', 'designation', 'classInCharge', 'country', 'state', 'district', 'documents.verifier']);
+        $teacher->load(['department', 'designation', 'country', 'state', 'district', 'documents.verifier', 'subjectAssignments.subject']);
 
         if (! $request->expectsJson()) {
             return view('teachers.show', compact('teacher'));
@@ -142,7 +145,7 @@ class TeacherController extends Controller implements HasMiddleware
             'department' => $teacher->department?->department_name ?? '-',
             'designation' => $teacher->designation?->designation_name ?? '-',
             'subject' => $teacher->subject,
-            'class_in_charge' => $teacher->classInCharge?->grade ?? '-',
+            'class_in_charge' => $teacher->is_class_in_charge ? 'Yes' : 'No',
             'country' => $teacher->country?->name ?? '-',
             'state' => $teacher->state?->name ?? '-',
             'district' => $teacher->district?->name ?? '-',
@@ -157,6 +160,8 @@ class TeacherController extends Controller implements HasMiddleware
 
     public function edit(Teacher $teacher): View
     {
+        $teacher->load('subjectAssignments');
+
         return view('teachers.form', [
             'teacher' => $teacher,
             ...$this->formOptions(),
@@ -267,8 +272,7 @@ class TeacherController extends Controller implements HasMiddleware
     {
         return [
             'departments' => $this->teacherService->departments(),
-            'designations' => $this->teacherService->designations(),
-            'grades' => $this->teacherService->grades(),
+            'subjects' => $this->teacherService->subjects(),
             'countries' => $this->teacherService->countries(),
             'states' => $this->teacherService->states(),
             'districts' => $this->teacherService->districts(),

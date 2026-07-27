@@ -17,7 +17,6 @@ class TimetableRequest extends FormRequest
     {
         return [
             'timetable_name' => ['required', 'string', 'max:255'],
-            'timetable_category_id' => ['required', 'integer', Rule::exists('time_table_categories', 'id')],
             'applicable_from' => [
                 'required',
                 'date',

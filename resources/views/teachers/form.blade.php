@@ -111,7 +111,7 @@
                 @error('date_of_joining')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
-                <label for="department_id">Department <span class="text-danger">*</span></label>
+                <label for="department_id">Department</label>
                 <select name="department_id" id="department_id"
                   class="form-select shadow-none @error('department_id') is-invalid @enderror">
                   <option value="">--- Select ---</option>
@@ -124,37 +124,27 @@
                 @error('department_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
-                <label for="designation_id">Designation <span class="text-danger">*</span></label>
-                <select name="designation_id" id="designation_id"
-                  class="form-select shadow-none @error('designation_id') is-invalid @enderror">
-                  <option value="">--- Select ---</option>
-                  @foreach ($designations as $designation)
-                    <option value="{{ $designation->id }}" @selected(old('designation_id', $teacher->designation_id) == $designation->id)>
-                      {{ $designation->designation_name }}
+                <label for="subject_ids">Subjects <span class="text-danger">*</span></label>
+                <select name="subject_ids[]" id="subject_ids" multiple
+                  class="form-select shadow-none @error('subject_ids') is-invalid @enderror @error('subject_ids.*') is-invalid @enderror">
+                  @php($selectedSubjectIds = collect(old('subject_ids', $teacher->subjectAssignments->pluck('subject_id')->all()))->map(fn ($id) => (int) $id))
+                  @foreach ($subjects as $subject)
+                    <option value="{{ $subject->id }}" @selected($selectedSubjectIds->contains($subject->id))>
+                      {{ $subject->subject_name }}{{ $subject->grade ? ' - '.$subject->grade->grade : '' }}
                     </option>
                   @endforeach
                 </select>
-                @error('designation_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('subject_ids')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('subject_ids.*')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
-                <label for="subject">Subject <span class="text-danger">*</span></label>
-                <input type="text" name="subject" id="subject"
-                  class="form-control shadow-none @error('subject') is-invalid @enderror"
-                  value="{{ old('subject', $teacher->subject) }}">
-                @error('subject')<div class="invalid-feedback">{{ $message }}</div>@enderror
-              </div>
-              <div class="col-lg-4 o-f-inp mb-3">
-                <label for="class_in_charge_id">Class In Charge</label>
-                <select name="class_in_charge_id" id="class_in_charge_id"
-                  class="form-select shadow-none @error('class_in_charge_id') is-invalid @enderror">
-                  <option value="">--- Select ---</option>
-                  @foreach ($grades as $grade)
-                    <option value="{{ $grade->id }}" @selected(old('class_in_charge_id', $teacher->class_in_charge_id) == $grade->id)>
-                      {{ $grade->grade }}
-                    </option>
-                  @endforeach
+                <label for="is_class_in_charge">Class In Charge <span class="text-danger">*</span></label>
+                <select name="is_class_in_charge" id="is_class_in_charge"
+                  class="form-select shadow-none @error('is_class_in_charge') is-invalid @enderror">
+                  <option value="1" @selected((string) old('is_class_in_charge', (int) $teacher->is_class_in_charge) === '1')>Yes</option>
+                  <option value="0" @selected((string) old('is_class_in_charge', (int) $teacher->is_class_in_charge) === '0')>No</option>
                 </select>
-                @error('class_in_charge_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('is_class_in_charge')<div class="invalid-feedback">{{ $message }}</div>@enderror
               </div>
               <div class="col-lg-4 o-f-inp mb-3">
                 <label for="employment_type">Employment Type <span class="text-danger">*</span></label>
@@ -316,7 +306,7 @@
           selected: option.selected
         };
       });
-      const select2Fields = '#gender, #department_id, #designation_id, #class_in_charge_id, #employment_type, #status, #country_id, #state_id, #district_id';
+      const select2Fields = '#gender, #department_id, #subject_ids, #is_class_in_charge, #employment_type, #status, #country_id, #state_id, #district_id';
 
       if (window.jQuery && jQuery.fn.select2) {
         jQuery(select2Fields).select2({
