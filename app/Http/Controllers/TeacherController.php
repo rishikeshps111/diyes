@@ -7,6 +7,7 @@ use App\Http\Requests\TeacherRequest;
 use App\Models\Teacher;
 use App\Models\TeacherDocument;
 use App\Services\TeacherService;
+use App\Services\ActivityLogService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -115,7 +116,13 @@ class TeacherController extends Controller implements HasMiddleware
 
     public function store(TeacherRequest $request): RedirectResponse
     {
-        $this->teacherService->create($request->validated());
+        $teacher=$this->teacherService->create($request->validated());
+        ActivityLogService::log(
+            'Teacher',
+            'Create',
+            $teacher->id,
+            'Teacher created successfully.'
+        );
 
         return redirect()
             ->route('teachers.index')
@@ -170,7 +177,14 @@ class TeacherController extends Controller implements HasMiddleware
 
     public function update(TeacherRequest $request, Teacher $teacher): RedirectResponse
     {
-        $this->teacherService->update($teacher, $request->validated());
+       $teacher= $this->teacherService->update($teacher, $request->validated());
+        
+        ActivityLogService::log(
+            'Teacher',
+            'Update',
+            $teacher->id,
+            'Teacher details updated.'
+        );
 
         return redirect()
             ->route('teachers.index')
@@ -179,6 +193,13 @@ class TeacherController extends Controller implements HasMiddleware
 
     public function destroy(Request $request, Teacher $teacher): JsonResponse|RedirectResponse
     {
+        
+        ActivityLogService::log(
+            'Teacher',
+            'Delete',
+            $teacher,
+            'Teacher deleted.'
+        );
         $this->teacherService->delete($teacher);
 
         if ($request->expectsJson()) {

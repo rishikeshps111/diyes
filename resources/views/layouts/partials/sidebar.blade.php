@@ -254,6 +254,27 @@
             </ul>
           </li>
         @endcanany
+        
+         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('leave-types.*') ? '' : 'collapsed' }}"
+              data-bs-target="#sidebarApprovalManagement" data-bs-toggle="collapse" href="#">
+              <i class="fa-solid fa-users-gear"></i><span>Leave Management</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="sidebarApprovalManagement"
+              class="nav-content collapse sub-menu {{ request()->routeIs('leave-types.*') ? 'show' : '' }}"
+              data-bs-parent="#sidebar-nav">
+                <li>
+                  <a href="{{ route('leave-types.index') }}" class="{{ request()->routeIs('leave-types.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Leave Type</span>
+                  </a>
+                </li>
+                 <li>
+                  <a href="{{ route('leave-applications.index') }}" class="{{ request()->routeIs('leave-applications.index.*') ? 'sub-active' : '' }}">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i><span>Manage Leave</span>
+                  </a>
+                </li>
+            </ul>
+          </li>
 
         @canany(['view.user', 'view.role'])
           <li class="nav-item">
@@ -281,6 +302,20 @@
             </ul>
           </li>
         @endcanany
+        
+         <li class="nav-item">
+          <a class="nav-link {{ request()->routeIs('user-logs.index') ? '' : 'collapsed' }}" href="{{ route('user-logs.index') }}">
+            <i class="bi bi-journal-text"></i>
+            <span>User Logs</span>
+          </a>
+        </li>
+        
+         <li class="nav-item">
+          <a class="nav-link {{ request()->routeIs('activity-logs') ? '' : 'collapsed' }}" href="{{ route('activity-logs') }}">
+            <i class="bi bi-activity"></i>
+            <span>Activity Logs</span>
+          </a>
+        </li>
 
       </ul>
     </div>

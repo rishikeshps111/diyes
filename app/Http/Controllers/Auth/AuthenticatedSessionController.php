@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,12 +40,31 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
         $request->user()->forceFill(['last_login_at' => now()])->save();
+        
+        UserLog::create([
+            'user_id'    => auth()->id(),
+            'name'       => auth()->user()->name,
+            'email'      => auth()->user()->email,
+            'action'     => 'Login',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'logged_at'  => now(),
+        ]);
 
         return redirect()->intended(route('dashboard'));
     }
 
     public function destroy(Request $request): RedirectResponse
     {
+         UserLog::create([
+            'user_id'    => auth()->id(),
+            'name'       => auth()->user()->name,
+            'email'      => auth()->user()->email,
+            'action'     => 'Logout',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'logged_at'  => now(),
+        ]);
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

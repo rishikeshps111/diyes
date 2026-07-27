@@ -11,6 +11,8 @@ use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GeneratedTimetableController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\LeaveTypeController;
+use App\Http\Controllers\LeaveApplicationController;
 use App\Http\Controllers\ModulePrefixController;
 use App\Http\Controllers\ProjectCategoryController;
 use App\Http\Controllers\ProjectController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\SpecialEventController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SubstituteAllocationController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TeacherLeaveController;
 use App\Http\Controllers\TeacherDocumentController;
 use App\Http\Controllers\TeacherSubjectController;
 use App\Http\Controllers\TeacherSchedulerController;
@@ -32,6 +35,7 @@ use App\Http\Controllers\TrainerTypeController;
 use App\Http\Controllers\TrainingScheduleController;
 use App\Http\Controllers\TrainingScheduleTrainerController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserLogController;
 use App\Http\Controllers\VenueController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -301,6 +305,50 @@ Route::middleware('auth')->group(function () {
     Route::post('timetables/export/pdf', [TimetableController::class, 'exportPdf'])->name('timetables.export.pdf');
     Route::resource('timetables', TimetableController::class)
         ->except('show');
+        
+    
+    Route::resource('leave-types', LeaveTypeController::class);
+  
+    Route::get('/teacher/leave',[TeacherLeaveController::class,'index'])->name('teacher.leave.index');
+    Route::get('/teacher/leave/create',[TeacherLeaveController::class,'create'])->name('teacher.leave.create');
+    Route::post('/teacher/leave/store',[TeacherLeaveController::class,'store'])->name('teacher.leave.store');
+    Route::delete('/teacher/leave/{leave}',[TeacherLeaveController::class,'cancel'])->name('teacher.leave.cancel');
+    Route::get('teacher/get-leave-balance/{leaveType}',[TeacherLeaveController::class,'getLeaveBalance'])->name('teacher.leave.balance');
+    
+     Route::get('leave-applications',[LeaveApplicationController::class,'index'])->name('leave-applications.index');
+
+        Route::get('leave-applications/{leave}',[LeaveApplicationController::class,'show'])->name('leave-applications.show');
+        Route::get('leave/applications/add', [LeaveApplicationController::class, 'create'])->name('leave-applications.create');
+        Route::post('leave-applications/store', [LeaveApplicationController::class, 'store'])->name('leave-applications.store');
+        Route::get('leave/applications/edit/{id}', [LeaveApplicationController::class, 'edit'])->name('leave-applications.edit');
+        Route::post('leave-applications/update/{id}', [LeaveApplicationController::class, 'update'])->name('leave-applications.update');
+            
+        Route::post(
+            'leave-applications/{leave}/approve',
+            [LeaveApplicationController::class,'approve']
+        )->name('leave-applications.approve');
+
+        Route::post(
+            'leave-applications/{leave}/reject',
+            [LeaveApplicationController::class,'reject']
+        )->name('leave-applications.reject');
+
+         Route::get( 'user-logs',[UserLogController::class,'index'])->name('user-logs.index');
+         Route::get('activity-logs',[ UserLogController::class,'activityLog'])->name('activity-logs');
+         Route::get('activity-logs/{id}', [UserLogController::class,'activityShow'])->name('activity-logs.show');
+
+
+    Route::post(
+        'leave/{leave}/approve',
+        [LeaveApplicationController::class,'approve']
+    );
+
+    Route::post(
+        'leave/{leave}/reject',
+        [LeaveApplicationController::class,'reject']
+    );    
+        
+    
 });
 
 

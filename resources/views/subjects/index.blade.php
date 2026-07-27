@@ -27,7 +27,7 @@
                     <option value="">--- Select ---</option>
                     @foreach ($grades as $grade)
                       <option value="{{ $grade->id }}">
-                        {{ $grade->grade }}{{ $grade->academicYear ? ' - '.$grade->academicYear->academic_year : '' }}
+                        {{ $grade->grade }}{{ $grade->academicYear ? ' - ' . $grade->academicYear->academic_year : '' }}
                       </option>
                     @endforeach
                   </select>
@@ -45,8 +45,10 @@
               </div>
               <div class="col-lg-12">
                 <div class="filter-btns-top ">
-                  <button type="button" id="resetFilters" class="reset-btn border-0" data-loading-text="Resetting...">Reset</button>
-                  <button type="button" id="applyFilters" class="search-btn" data-loading-text="Searching...">Search</button>
+                  <button type="button" id="resetFilters" class="reset-btn border-0"
+                    data-loading-text="Resetting...">Reset</button>
+                  <button type="button" id="applyFilters" class="search-btn"
+                    data-loading-text="Searching...">Search</button>
                 </div>
               </div>
             </div>
@@ -88,8 +90,7 @@
                 <div class="col-lg-7">
                   <div class="table-search">
                     <label for="subjectTableSearch" class="nowrap">Search</label>
-                    <input type="text" id="subjectTableSearch" class="form-control shadow-none"
-                      placeholder="Search...">
+                    <input type="text" id="subjectTableSearch" class="form-control shadow-none" placeholder="Search...">
                     <form id="subjectExportForm" method="POST" class="d-inline-flex flex-shrink-0">
                       @csrf
                       <button type="button" class="exp-btn" data-loading-text="Exporting..."
